@@ -49,7 +49,7 @@ namespace CraftingSystem
         /// 현재 해당 슬롯이 사용중인 레시피
         /// </summary>
         [HideInInspector] public CraftingRecipe CurrentRecipe;
-        private Coroutine? mCoCraftItem; //제작 연출 및 시간 계산 코루틴
+        private Coroutine mCoCraftItem; //제작 연출 및 시간 계산 코루틴
 
         //제작 다이얼로그 창을 닫아 제작을 더 이상 하지 않거나 제작중인 아이템을 취소할때 호출됨
         //현재 실행중인 코루틴 중단 misCrafting 을 false로 설정
@@ -75,7 +75,7 @@ namespace CraftingSystem
 
             //제작 결과 아이템을 슬롯에 등록
             mResultItemSlot.ClearSlot();
-            InventoryMain.Instance.AcquireItem(recipe.resultItem.item, mResultItemSlot,recipe.resultItem.count);
+            //InventoryMain.Instance.AcquireItem(recipe.resultItem.item, mResultItemSlot,recipe.resultItem.count);
 
             //UI 요소 초기화
             mCraftingTimeLabel.text = $"{recipe.craftingTime.ToString("F1")}s";
@@ -85,7 +85,7 @@ namespace CraftingSystem
             //제작 레시피의 재료 아이템 슬롯이 부족하면 개수에 맞게 인스턴스
             for (int i = mRecipeContentTransform.childCount; i < recipe.reqItems.Length; i++)
             {
-                Instantiate(mResultItemSlot,Vector3.zero, Quaternion.identity, mRecipeContentTransform);
+                //Instantiate(mResultItemSlot,Vector3.zero, Quaternion.identity, mRecipeContentTransform);
             }
 
             //모든 재료 슬롯을 초기화
@@ -99,12 +99,12 @@ namespace CraftingSystem
                 {
                     //재료 아이템을 슬롯에 등록
                     recipeSlot.ClearSlot();
-                    InventoryMain.Instance.AcquireItem(recipe.reqItems[i].item, recipeSlot, recipe.reqItems[i].count);
-                    recipeSlot.gameObject.SetActive(true);
+                    //InventoryMain.Instance.AcquireItem(recipe.reqItems[i].item, recipeSlot, recipe.reqItems[i].count);
+                    //recipeSlot.gameObject.SetActive(true);
                 }
                 else
                 {
-                    recipeSlot.gameObject.SetActive(false);
+                    //recipeSlot.gameObject.SetActive(false);
                 }
             }
         }
@@ -124,20 +124,20 @@ namespace CraftingSystem
         //플레이어의 인벤토리에서 재료 아이템을 제거하고 제작결과아이템을 인벤토리에 지급
         private void RefreshItems()
         {
-            InventorySlot mainInventoryslot = null;
+            //InventorySlot mainInventoryslot = null;
 
             //재료 아이템 정보를 확인하여 메인 인벤토리의 아이템을 제거
             foreach(CraftingItemInfo info in CurrentRecipe.reqItems)
             {
-                InventoryMain.Instance.HasItemInInventory(info.item.ID, out mainInventoryslot, info.count);
-                mainInventoryslot.UpdateItemCount(-info.count);
+                //InventoryMain.Instance.HasItemInInventory(info.item.ID, out mainInventoryslot, info.count);
+                //mainInventoryslot.UpdateItemCount(-info.count);
             }
 
             //제작 후 결과 아이템을 인벤토리에 획득
-            InventoryMain.Instance.AcquireItem(CurrentRecipe.resultItem.item,CurrentRecipe.resultItem.count);
+            //InventoryMain.Instance.AcquireItem(CurrentRecipe.resultItem.item,CurrentRecipe.resultItem.count);
 
             //아이템을 교환 후 슬롯들을 업데이트
-            CraftingManager.Instance.RefreshAllslots();
+            //CraftingManager.Instance.RefreshAllslots();
         }
 
         //아이템을 제작하는 소요시간만큼 UI요소를 갱신하고 시간이 경과했다면 아이템 교환을 하기위한 코루틴
@@ -146,7 +146,7 @@ namespace CraftingSystem
             misCrafting = true;
 
             // 사운드 재생
-            SoundManager.Instance.PlaySound2d("Craft Sound" + SoundManager.Range(1, 2));
+            //SoundManager.Instance.PlaySound2d("Craft Sound" + SoundManager.Range(1, 2));
 
             float process = 0f;
             while(process < 1f)
@@ -168,8 +168,8 @@ namespace CraftingSystem
         {
             if(misCrafting)
             {
-                DialogBox.DialogBoxController dialogBox = DialogBoxGenerator.Instance.CreateSimpleDialogBox("알림",$"이미 제작중입니다.", "확인",dialogBox.DialogBoxController.RESERVED_EVENT_CLOSE,null,160,100);
-                dialogBox.modifyBottomLayoutPadding(50, 50);
+                //DialogBox.DialogBoxController dialogBox = DialogBoxGenerator.Instance.CreateSimpleDialogBox("알림",$"이미 제작중입니다.", "확인",dialogBox.DialogBoxController.RESERVED_EVENT_CLOSE,null,160,100);
+                //dialogBox.modifyBottomLayoutPadding(50, 50);
                 return;
             }
 

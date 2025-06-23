@@ -53,13 +53,13 @@ namespace CraftingSystem
 
         private int mCurrentCraftingCount;//현재 제작 스테이션의 별도 레시피 개수
 
-        private void Awake()
-        {
-            //초기화시 전역 활성화 상태 해제
-            CraftingManager.mIsDialogActive = false;
+        //private void Awake()
+        //{
+        //    //초기화시 전역 활성화 상태 해제
+        //    CraftingManager.mIsDialogActive = false;
 
-            Init();
-        }
+        //    Init();
+        //}
 
         /// <summary>   
         /// 전역 레시피를 초기화
@@ -132,7 +132,7 @@ namespace CraftingSystem
             mTitleLabel.text = title;
             mCurrentCraftingCount = recipes.Length;
             mIsDialogActive = true;
-            UtilityManager.UnlockCursor();
+            //UtilityManager.UnlockCursor();
 
             //모든 슬롯을 갱신
             RefreshAllSlots();
@@ -153,7 +153,7 @@ namespace CraftingSystem
             mCraftingDialogGo.gameObject.SetActive(false);
 
             mIsDialogActive = false;
-            UtilityManager.TryLockCursor();
+            //UtilityManager.TryLockCursor();
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace CraftingSystem
             for (int i = 0; i < craftingSlot.CurrentRecipe.reqItems.Length; i++)
             {
                 //하나라도 아이템 재료가 없다면 비활성화 상태로 전환
-                if (InventoryMain.Instance.HasItemInInventory(craftingSlot.CurrentRecipe.reqItems[i].item.ID, craftingSlot.CurrentRecipe.reqItems[i].count) == false)
+                /*if (InventoryMain.Instance.HasItemInInventory(craftingSlot.CurrentRecipe.reqItems[i].item.ID, craftingSlot.CurrentRecipe.reqItems[i].count) == false)
                 {
                     //제작이 불간으한 상태에서 ViewCraftableOnly가 켜져있다면
                     if (mViewCraftableOnlyToggle.isOn)
@@ -183,7 +183,7 @@ namespace CraftingSystem
                         craftingSlot.ToggleSlotState(false);//제작이 불가능한 상태로 보여지게함
                     }
                     return;
-                }
+                }*/
             }
             //요구 아이템이 모두 있는경우 활성화 상태로 전화
             craftingSlot.ToggleSlotState(true);

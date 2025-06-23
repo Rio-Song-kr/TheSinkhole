@@ -11,6 +11,7 @@ namespace CraftingSystem
     [CreateAssetMenu(fileName = "Recipe", menuName = "scriptable Object/Crafting Recipe", order = int.MaxValue)]
     public class CraftingRecipe : ScriptableObject
     {
+        
         //CraftingItemInfo를 배열로 사용하여 아이템 제작에 필요한 아이템들을 정의
         [Header("제작에 필요한 재료 아이템들")]//제작에 필요한 재료아이템s
         [SerializeField] public CraftingItemInfo[] reqItems;
@@ -44,7 +45,7 @@ namespace CraftingSystem
             if (GUILayout.Button("이름 자동 변경"))
             {
                 //이름 변경
-                AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(recipe), $"RECIPE__{recipe.resultItem.item.ID.ToStirng()}");
+                //AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(recipe), $"RECIPE__{recipe.resultItem.item.ID.ToStirng()}");
             }
         }
     }
