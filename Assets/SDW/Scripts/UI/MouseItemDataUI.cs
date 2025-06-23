@@ -28,7 +28,8 @@ public class MouseItemDataUI : MonoBehaviour
 
         m_itemSprite.sprite = slot.ItemDataSO.Icon;
         m_itemSprite.color = Color.white;
-        m_itemCount.text = slot.ItemCount.ToString();
+
+        m_itemCount.text = slot.ItemCount > 1 ? slot.ItemCount.ToString() : "";
     }
 
     private void Update()

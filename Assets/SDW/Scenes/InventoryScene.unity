@@ -156,7 +156,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 18.1, y: -18.1}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &42194929
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3561,8 +3561,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 729989319}
   - {fileID: 1342444385}
+  - {fileID: 729989319}
   m_Father: {fileID: 961679178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3582,8 +3582,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AspectMode: 0
-  m_AspectRatio: 1.5111111
+  m_AspectMode: 1
+  m_AspectRatio: 1.7777777
 --- !u!224 &1338324183 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6201982808566799419, guid: 2b2589d8cca0c344d8fb9563df3cbe83,
@@ -3693,7 +3693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.39607847, g: 0.2901961, b: 0.17254902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3730,7 +3730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 029dad257cb71684a9baa6f040887c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mouseInventoryItem: {fileID: 729989320}
+  m_mouseInventorySlot: {fileID: 729989320}
   m_inventory: {fileID: 1779321554}
 --- !u!1 &1343524287
 GameObject:
@@ -5120,7 +5120,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 16.566002}
+  m_AnchoredPosition: {x: 18.10001, y: -1.534008}
   m_SizeDelta: {x: 87.97, y: 33.132}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1870123301
@@ -5137,7 +5137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
