@@ -360,12 +360,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 100
   CurHealth: 0
-  MaxHunger: 0
+  MaxHunger: 100
   CurHunger: 0
-  MaxThirst: 0
+  moveSpeedDescAmount: 0.5
+  actionSpeedDescAmount: 0.5
+  MaxThirst: 100
   CurThirst: 0
-  MaxMentality: 0
+  MaxMentality: 100
   CurMentality: 0
+  MaxPlayerMoveSpeed: 5
+  CurPlayerMoveSpeed: 0
+  ActionSpeed: 1
 --- !u!1 &153971054
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,8 +17,8 @@ public class PlayerStatus : MonoBehaviour
     [Header("Hunger")]
     public float MaxHunger;
     public float CurHunger;
-    [SerializeField] float moveSpeedDescAmount = 0.5f;
-    [SerializeField] float actionSpeedDescAmount = 0.5f;
+    [SerializeField] float moveSpeedDebuffStat = 0.5f;
+    [SerializeField] float actionSpeedDebuffStat = 0.5f;
     private bool isStarving;
     // 갈증
     [Header("Thirst")]
@@ -84,15 +84,46 @@ public class PlayerStatus : MonoBehaviour
             ActionSpeed = 1;
             isStarving = false;
         }
-        if (CurHunger <= 0f && isStarving == false)
+        if (CurHunger <= 0f)
         {
-            StarvationDebuff(moveSpeedDescAmount, actionSpeedDescAmount);
-            isStarving = true;
+            if (isStarving == false)
+            {
+                StarvationDebuff(moveSpeedDebuffStat, actionSpeedDebuffStat);
+                isStarving = true;
+            }
             CurHunger = 0f;
         }
     }
-    // 갈증을 관리하는 로직
-    // 정신력을 관리하는 로직
+    /// <summary>
+    /// 갈증 스텟의 변화
+    /// </summary>
+    /// <param name="value">변화할 체력의 퍼센트 float값</param>
+    public void SetThirst(float value)
+    {
+        float deltaValue = MaxThirst * value;
+        CurThirst += deltaValue;
+        if (CurThirst >= MaxThirst) CurThirst = MaxThirst;
+        if (CurThirst <= 0f)
+        {
+            PlayerDeath();
+            CurThirst = 0f;
+        }
+    }
+    /// <summary>
+    /// 정신력 수치의 변화
+    /// </summary>
+    /// <param name="value">변화할 체력의 퍼센트 float값</param>
+    public void SetMentality(float value)
+    {
+        float deltaValue = MaxHealth * value;
+        CurMentality += deltaValue;
+        if (CurMentality >= MaxMentality) CurMentality = MaxMentality;
+        if (CurMentality <= 0f)
+        {
+            PlayerDeath();
+            CurMentality = 0f;
+        }
+    }
     // 플레이어 사망시 처리되는 로직들
     public void PlayerDeath()
     {
