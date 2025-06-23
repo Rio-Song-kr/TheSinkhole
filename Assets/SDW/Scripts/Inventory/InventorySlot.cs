@@ -98,4 +98,19 @@ public class InventorySlot
 
         if (m_itemCount <= 0) ClearSlot();
     }
+
+    public bool SplitItemAmount(out InventorySlot slot)
+    {
+        if (ItemCount <= 1)
+        {
+            slot = null;
+            return false;
+        }
+
+        int halfAmount = Mathf.RoundToInt(ItemCount / 2);
+        RemoveItem(halfAmount);
+
+        slot = new InventorySlot(m_itemDataSO, halfAmount);
+        return true;
+    }
 }

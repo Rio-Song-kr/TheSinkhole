@@ -31,10 +31,18 @@ public abstract class InventoryDisplay : MonoBehaviour
 
     public void OnSlotClicked(InventorySlotUI slot)
     {
+        bool shiftPressed = Input.GetKey(KeyCode.LeftShift);
+
         //# 슬롯에 아이템이 있고, 마우스에 없는 경우
         if (slot.InventorySlot.ItemDataSO != null && m_mouseInventorySlot.InventorySlot.ItemDataSO == null)
         {
             //# Shift + 클릭 - 분할
+            if (shiftPressed && slot.InventorySlot.SplitItemAmount(out var halfAmountSlot))
+            {
+                m_mouseInventorySlot.UpdateMouseSlot(halfAmountSlot);
+                slot.UpdateUISlot();
+                return;
+            }
             m_mouseInventorySlot.UpdateMouseSlot(slot.InventorySlot);
             slot.ClearSlot();
             return;
