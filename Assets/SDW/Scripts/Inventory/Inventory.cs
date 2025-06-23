@@ -10,7 +10,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private int m_inventorySize;
 
     [SerializeField] private InventorySystem m_inventorySystem;
-    public InventorySystem MInventorySystem => m_inventorySystem;
+    public InventorySystem InventorySystem => m_inventorySystem;
 
     public static UnityAction<InventorySystem> OnUpdateInventoryUI;
 

@@ -42,7 +42,7 @@ public class TestItemPickUp : MonoBehaviour
         var inventory = other.transform.GetComponent<Inventory>();
         if (!inventory) return;
 
-        int remainingAmount = inventory.MInventorySystem.AddItem(ItemData, ItemAmount);
+        int remainingAmount = inventory.InventorySystem.AddItem(ItemData, ItemAmount);
         if (remainingAmount == 0) Destroy(gameObject);
         else ItemAmount = remainingAmount;
     }

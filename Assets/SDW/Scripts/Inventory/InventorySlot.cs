@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [Serializable]
 public class InventorySlot
@@ -12,7 +11,7 @@ public class InventorySlot
     public int ItemCount => m_itemCount;
 
     /// <summary>
-    /// Item Slot이 비어있는 경우(초기 상태), Slot은 존재하지만 아이콘 등을 표시하지 않기 위해 사용
+    /// Item Slot이 비어있는 경우(초기 상태), Slot은 존재하기에 아이콘 등을 표시하지 않기 위해 사용
     /// </summary>
     public InventorySlot()
     {
@@ -65,10 +64,13 @@ public class InventorySlot
     /// <param name="amount">추가할 수량</param>
     public void AddItem(int amount) => m_itemCount += amount;
 
+    /// <summary>
+    /// 동일한 아이템인지 확인하여 기존 아이템에 추가하거나, 다르다면 새로운 Slot(아이템)을 추가
+    /// </summary>
+    /// <param name="slot">추가할 슬롯(아이템)</param>
     public void AddItem(InventorySlot slot)
     {
-        if (m_itemDataSO == slot.ItemDataSO)
-            AddItem(slot.ItemCount);
+        if (m_itemDataSO == slot.ItemDataSO) AddItem(slot.ItemCount);
         else
         {
             m_itemDataSO = slot.ItemDataSO;
@@ -99,6 +101,12 @@ public class InventorySlot
         if (m_itemCount <= 0) ClearSlot();
     }
 
+    /// <summary>
+    /// 인벤토리의 슬롯 아이템을 분할
+    /// 현재 슬롯을 Shift + Click하면 절반으로 나눠짐
+    /// </summary>
+    /// <param name="slot">분할할 슬롯</param>
+    /// <returns>분할이 가능하면 true, 1개 이하라 분할이 불가능하면 false</returns>
     public bool SplitItemAmount(out InventorySlot slot)
     {
         if (ItemCount <= 1)

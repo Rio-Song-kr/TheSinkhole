@@ -37,6 +37,7 @@ public class InventorySystem
     public int AddItem(ItemDataSO item, int amount)
     {
         int remainingAmount = amount;
+
         if (FindItemSlots(item, out var existingSlots))
         {
             foreach (var slot in existingSlots)
@@ -70,7 +71,7 @@ public class InventorySystem
     /// </summary>
     /// <param name="item">추가할 아이템</param>
     /// <param name="inventorySlot">해당 아이템이 있을 때 각 슬롯을 저장할 리스트</param>
-    /// <returns></returns>
+    /// <returns>추가하려는 아이템이 슬롯에 있으면 true, 없으면 false</returns>
     public bool FindItemSlots(ItemDataSO item, out List<InventorySlot> inventorySlot)
     {
         inventorySlot = new List<InventorySlot>();

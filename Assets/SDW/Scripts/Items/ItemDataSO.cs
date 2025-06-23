@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Game에서 사용할 Item의 데이터를 포함하고, Icon, Prefab 등을 정의하기 위한 Scriptable Object
+/// </summary>
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Items/New Item")]
 public class ItemDataSO : ScriptableObject
 {
@@ -18,8 +19,6 @@ public class ItemDataSO : ScriptableObject
 
     [Header("Data")]
     public Item ItemData = new Item();
-
-    public bool IsStackable => ItemMaxOwn > 1;
 
     private void OnValidate()
     {
