@@ -19,7 +19,7 @@ public class PlayerStatus : MonoBehaviour
     public float MaxHunger;
     public float CurHunger;
     [SerializeField] float moveSpeedDebuffStat = 0.5f;
-    [SerializeField] float actionSpeedDebuffStat = 0.5f;
+    [SerializeField] float actionSpeedDebuffStat = 2f;
     private bool isStarving;
     private Coroutine starvationCoroutine;
     private bool isDehydrated;
@@ -55,7 +55,7 @@ public class PlayerStatus : MonoBehaviour
     }
 
     /// <summary>
-    /// 체력 스텟의 변화, 체력이 0이 될경우 플레이어 사망
+    /// 체력 스텟의 변화 퍼센트, 체력이 0이 될경우 플레이어 사망
     /// </summary>
     /// <param name="value">변화할 체력의 퍼센트 float값</param>
     // 능력치들이 전부 퍼센트로 변화하기 때문에 이 방식을 채택
@@ -66,10 +66,11 @@ public class PlayerStatus : MonoBehaviour
         float deltaValue = MaxHealth * value;
         CurHealth += deltaValue;
         CurHealth = Math.Clamp(CurHealth, 0f, MaxHealth);
+        // 체력이 0이 될 경우 발생할 로직
         if (CurHealth <= 0f) PlayerDeath();
     }
     /// <summary>
-    /// 배고픔 스텟의 변화, 체력이 0이 될 경우 허기(이동속도 -50% , 행동속도 -50%)발동
+    /// 배고픔 스텟의 변화 퍼센트, 배고픔이 0이 될 경우 허기 디버프(이동속도 -50% , 행동속도 -50%)발동
     /// </summary>
     /// <param name="value">변화할 체력의 퍼센트 float값</param>
     // 배고픔이 0 이하가 될 경우 허기 디버프 발동
@@ -79,7 +80,7 @@ public class PlayerStatus : MonoBehaviour
         float deltaValue = MaxHunger * value;
         CurHunger += deltaValue;
         CurHunger = Mathf.Clamp(CurHunger, 0f, MaxHunger);
-        
+        // 배고픔이 0이 될 경우 발생할 로직
         if (CurHunger <= 0f)
         {
             if (!isStarving)
@@ -97,7 +98,7 @@ public class PlayerStatus : MonoBehaviour
         }
     }
     /// <summary>
-    /// 갈증 스텟의 변화
+    /// 갈증 스텟의 변화 퍼센트, 갈증이 0이 될 경우 탈수 디버프(이동속도 -50% , 행동속도 -50%)발동
     /// </summary>
     /// <param name="value">변화할 체력의 퍼센트 float값</param>
     public void SetThirst(float value)
@@ -105,7 +106,7 @@ public class PlayerStatus : MonoBehaviour
         float deltaValue = MaxThirst * value;
         CurThirst += deltaValue;
         CurThirst = Mathf.Clamp(CurThirst, 0f, MaxThirst);
-
+        // 갈증이 0이 될 경우 발생할 로직
         if (CurThirst <= 0f)
         {
             if (!isDehydrated)
@@ -121,7 +122,7 @@ public class PlayerStatus : MonoBehaviour
         }
     }
     /// <summary>
-    /// 정신력 수치의 변화
+    /// 정신력 수치의 변화, 정신력이 0이 될 경우 체력이 0으로 설정, 사망
     /// </summary>
     /// <param name="value">변화할 체력의 퍼센트 float값</param>
     public void SetMentality(float value)
@@ -129,6 +130,7 @@ public class PlayerStatus : MonoBehaviour
         float deltaValue = MaxHealth * value;
         CurMentality += deltaValue;
         CurMentality = Mathf.Clamp(CurMentality, 0f, MaxMentality);
+        // 정신력이 0이 될 경우 발생할 로직
         if (CurMentality <= 0f)
         {
             SetHealth(0f);
@@ -139,11 +141,12 @@ public class PlayerStatus : MonoBehaviour
     {
         Debug.Log("플레이어 사망!");
     }
+    // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
     private IEnumerator StarvationDebuff(float moveSpeed, float actionSpeed)
     {
         Debug.Log("굶주렸다..");
         CurPlayerMoveSpeed -= MaxPlayerMoveSpeed * moveSpeed;
-        ActionSpeed /= actionSpeed;
+        ActionSpeed *= actionSpeed;
         while (true)
         {
             SetHealth(-0.2f);
