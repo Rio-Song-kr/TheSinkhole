@@ -5,11 +5,11 @@ using UnityEngine.Events;
 [System.Serializable]
 public class InventorySystem
 {
-    [SerializeField] private List<InventorySlot> _inventorySlots;
-    public List<InventorySlot> InventorySlots => _inventorySlots;
-    public int InventorySize => _inventorySlots.Count;
+    [SerializeField] private List<InventorySlot> m_inventorySlots;
+    public List<InventorySlot> InventorySlots => m_inventorySlots;
+    public int InventorySize => m_inventorySlots.Count;
 
-    // public UnityAction<InventorySlot> OnSlotChanged;
+    public UnityAction<InventorySlot> OnSlotChanged;
 
     /// <summary>
     /// 초기 InventorySystem 생성 시 size 만큼 생성
@@ -17,11 +17,11 @@ public class InventorySystem
     /// <param name="size">인벤토리 슬롯 수</param>
     public InventorySystem(int size)
     {
-        _inventorySlots = new List<InventorySlot>(size);
+        m_inventorySlots = new List<InventorySlot>(size);
 
         for (int i = 0; i < size; i++)
         {
-            _inventorySlots.Add(new InventorySlot());
+            m_inventorySlots.Add(new InventorySlot());
         }
     }
 
@@ -47,7 +47,7 @@ public class InventorySystem
                     slot.AddItem(addAmount);
                     remainingAmount -= addAmount;
 
-                    // OnInventorySlotChanged?.Invoke(slot);
+                    OnSlotChanged?.Invoke(slot);
                     if (remainingAmount == 0) return 0;
                 }
             }
@@ -59,7 +59,7 @@ public class InventorySystem
             emptySlot.AddItemToEmptySlot(item, addAmount);
             remainingAmount -= addAmount;
 
-            // OnInventorySlotChanged?.Invoke(emptySlot);
+            OnSlotChanged?.Invoke(emptySlot);
         }
 
         return remainingAmount;
@@ -75,12 +75,11 @@ public class InventorySystem
     {
         inventorySlot = new List<InventorySlot>();
 
-        foreach (var slot in _inventorySlots)
+        foreach (var slot in m_inventorySlots)
         {
-            if (slot.ItemDataSo == item) inventorySlot.Add(slot);
+            if (slot.ItemDataSO == item) inventorySlot.Add(slot);
         }
 
-        // return inventorySlot != null;
         return inventorySlot.Count > 0;
     }
 
@@ -93,9 +92,9 @@ public class InventorySystem
     {
         emptySlot = null;
 
-        foreach (var slot in _inventorySlots)
+        foreach (var slot in m_inventorySlots)
         {
-            if (slot.ItemDataSo == null)
+            if (slot.ItemDataSO == null)
             {
                 emptySlot = slot;
                 break;

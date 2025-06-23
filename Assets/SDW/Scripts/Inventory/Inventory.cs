@@ -7,12 +7,12 @@ using UnityEngine.Events;
 [System.Serializable]
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private int _inventorySize;
+    [SerializeField] private int m_inventorySize;
 
-    [SerializeField] private InventorySystem _inventorySystem;
-    public InventorySystem InventorySystem => _inventorySystem;
+    [SerializeField] private InventorySystem m_inventorySystem;
+    public InventorySystem MInventorySystem => m_inventorySystem;
 
-    // public static UnityAction<InventorySystem> OnUpdateInventoryUI;
+    public static UnityAction<InventorySystem> OnUpdateInventoryUI;
 
-    private void Awake() => _inventorySystem = new InventorySystem(_inventorySize);
+    private void Awake() => m_inventorySystem = new InventorySystem(m_inventorySize);
 }

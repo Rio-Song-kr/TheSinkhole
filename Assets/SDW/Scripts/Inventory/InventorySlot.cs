@@ -1,14 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[System.Serializable]
+[Serializable]
 public class InventorySlot
 {
-    [SerializeField] private ItemDataSO _itemDataSO;
-    public ItemDataSO ItemDataSo => _itemDataSO;
+    [SerializeField] private ItemDataSO m_itemDataSO;
+    public ItemDataSO ItemDataSO => m_itemDataSO;
 
-    [SerializeField] private int _itemCount;
-    public int ItemCount => _itemCount;
+    [SerializeField] private int m_itemCount;
+    public int ItemCount => m_itemCount;
 
     /// <summary>
     /// Item Slot이 비어있는 경우(초기 상태), Slot은 존재하지만 아이콘 등을 표시하지 않기 위해 사용
@@ -25,17 +26,17 @@ public class InventorySlot
     /// <param name="amount">해당 슬롯에 추가되는 아이템의 초기 수량</param>
     public InventorySlot(ItemDataSO item, int amount)
     {
-        _itemDataSO = item;
-        _itemCount = amount;
+        m_itemDataSO = item;
+        m_itemCount = amount;
     }
 
     /// <summary>
     /// Item을 버리거나, 모두 사용/파괴될 때 슬롯을 비우기 위해 사용
     /// </summary>
-    private void ClearSlot()
+    public void ClearSlot()
     {
-        _itemDataSO = null;
-        _itemCount = -1;
+        m_itemDataSO = null;
+        m_itemCount = -1;
     }
 
     /// <summary>
@@ -46,9 +47,8 @@ public class InventorySlot
     /// <returns>추가 가능 여부</returns>
     public bool CanAdd(int amount, out int amountRemaining)
     {
-        // amountRemaining = _itemData.MaxItemCount - _itemCount;
-        amountRemaining = _itemDataSO.ItemMaxOwn - _itemCount;
-        // return amountRemaining >= amount;
+        amountRemaining = m_itemDataSO.ItemMaxOwn - m_itemCount;
+
         return amountRemaining != 0;
     }
 
@@ -57,13 +57,25 @@ public class InventorySlot
     /// </summary>
     /// <param name="amount">추가할 수량</param>
     /// <returns>해당 아이템이 최대 수량보다 적으면 true, 그렇지 않으면 false</returns>
-    public bool CanAdd(int amount) => _itemCount + amount <= _itemDataSO.ItemMaxOwn;
+    public bool CanAdd(int amount) => m_itemCount + amount <= m_itemDataSO.ItemMaxOwn;
 
     /// <summary>
     /// Amount만큼 아이템 추가
     /// </summary>
     /// <param name="amount">추가할 수량</param>
-    public void AddItem(int amount) => _itemCount += amount;
+    public void AddItem(int amount) => m_itemCount += amount;
+
+    public void AddItem(InventorySlot slot)
+    {
+        if (m_itemDataSO == slot.ItemDataSO)
+            AddItem(slot.ItemCount);
+        else
+        {
+            m_itemDataSO = slot.ItemDataSO;
+            m_itemCount = 0;
+            AddItem(slot.ItemCount);
+        }
+    }
 
     /// <summary>
     /// 빈 슬롯에 Item을 추가
@@ -72,8 +84,8 @@ public class InventorySlot
     /// <param name="amount">추가할 수량</param>
     public void AddItemToEmptySlot(ItemDataSO item, int amount)
     {
-        _itemDataSO = item;
-        _itemCount = amount;
+        m_itemDataSO = item;
+        m_itemCount = amount;
     }
 
     /// <summary>
@@ -82,8 +94,8 @@ public class InventorySlot
     /// <param name="amount">제거할 수량</param>
     public void RemoveItem(int amount)
     {
-        _itemCount -= amount;
+        m_itemCount -= amount;
 
-        if (_itemCount <= 0) ClearSlot();
+        if (m_itemCount <= 0) ClearSlot();
     }
 }

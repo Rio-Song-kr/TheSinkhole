@@ -34,6 +34,7 @@ public class TestItemPickUp : MonoBehaviour
         }
     }
 
+    //# 추후 Player의 인터렉션키(e.g. E)에 맞춰서 동작하도록 변경해야 함
     private void OnTriggerEnter(Collider other)
     {
         if ((1 << other.gameObject.layer & PlayerLayer) == 0) return;
@@ -41,7 +42,7 @@ public class TestItemPickUp : MonoBehaviour
         var inventory = other.transform.GetComponent<Inventory>();
         if (!inventory) return;
 
-        int remainingAmount = inventory.InventorySystem.AddItem(ItemData, ItemAmount);
+        int remainingAmount = inventory.MInventorySystem.AddItem(ItemData, ItemAmount);
         if (remainingAmount == 0) Destroy(gameObject);
         else ItemAmount = remainingAmount;
     }
