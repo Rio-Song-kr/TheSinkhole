@@ -20,7 +20,7 @@ public class PlayerStatus : MonoBehaviour
     public float CurHunger;
     [SerializeField] float moveSpeedDebuffStat = 0.5f;
     [SerializeField] float actionSpeedDebuffStat = 2f;
-    private bool isStarving;
+    public bool isStarving;
     private Coroutine starvationCoroutine;
     private bool isDehydrated;
     private Coroutine dehydrationCoroutine;
@@ -140,6 +140,12 @@ public class PlayerStatus : MonoBehaviour
     public void PlayerDeath()
     {
         Debug.Log("플레이어 사망!");
+    }
+
+    // 플레이어의 현재 스텟들을 전부 출력하는 로직
+    public void PrintAllCurStatus()
+    {
+        Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}");
     }
     // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
     private IEnumerator StarvationDebuff(float moveSpeed, float actionSpeed)
