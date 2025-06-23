@@ -54,8 +54,8 @@ namespace CraftingSystem
     [System.Serializable]
     public struct CraftingItemInfo
     {
-        //[SerializeField] public Item item; //아이템 (Item 부분은 인벤토리와 아이템이 만들어지면 수정)
-        //[SerializeField] public int amount; //아이템 개수
+        [SerializeField] public Item item; //아이템 (Item 부분은 인벤토리와 아이템이 만들어지면 수정)
+        [SerializeField] public int amount; //아이템 개수
     }
 }
 
