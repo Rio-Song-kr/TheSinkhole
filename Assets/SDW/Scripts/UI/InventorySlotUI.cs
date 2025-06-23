@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class InventorySlotUI : MonoBehaviour
+public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private InventorySlot m_inventorySlot;
 
@@ -60,8 +61,8 @@ public class InventorySlotUI : MonoBehaviour
         m_itemCount.text = "";
     }
 
-    private void OnUISlotClick()
-    {
-        ParentDisplay?.OnSlotClicked(this);
-    }
+    private void OnUISlotClick() => ParentDisplay?.OnSlotClicked(this);
+    public void OnBeginDrag(PointerEventData eventData) => ParentDisplay?.OnBeginDragSlot(this, eventData);
+    public void OnDrag(PointerEventData eventData) => ParentDisplay?.OnDragSlot(this, eventData);
+    public void OnEndDrag(PointerEventData eventData) => ParentDisplay?.OnEndDragSlot(this, eventData);
 }
