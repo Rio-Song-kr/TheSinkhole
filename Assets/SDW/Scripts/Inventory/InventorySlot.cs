@@ -4,8 +4,8 @@ using UnityEngine.Serialization;
 [System.Serializable]
 public class InventorySlot
 {
-    [SerializeField] private InventoryItemDataSO _itemData;
-    public InventoryItemDataSO ItemData => _itemData;
+    [SerializeField] private ItemDataSO _itemDataSO;
+    public ItemDataSO ItemDataSo => _itemDataSO;
 
     [SerializeField] private int _itemCount;
     public int ItemCount => _itemCount;
@@ -23,9 +23,9 @@ public class InventorySlot
     /// </summary>
     /// <param name="item">해당 슬롯에 표시될 아이템</param>
     /// <param name="amount">해당 슬롯에 추가되는 아이템의 초기 수량</param>
-    public InventorySlot(InventoryItemDataSO item, int amount)
+    public InventorySlot(ItemDataSO item, int amount)
     {
-        _itemData = item;
+        _itemDataSO = item;
         _itemCount = amount;
     }
 
@@ -34,7 +34,7 @@ public class InventorySlot
     /// </summary>
     private void ClearSlot()
     {
-        _itemData = null;
+        _itemDataSO = null;
         _itemCount = -1;
     }
 
@@ -46,7 +46,8 @@ public class InventorySlot
     /// <returns>추가 가능 여부</returns>
     public bool CanAdd(int amount, out int amountRemaining)
     {
-        amountRemaining = _itemData.MaxItemCount - _itemCount;
+        // amountRemaining = _itemData.MaxItemCount - _itemCount;
+        amountRemaining = _itemDataSO.ItemMaxOwn - _itemCount;
         // return amountRemaining >= amount;
         return amountRemaining != 0;
     }
@@ -56,7 +57,7 @@ public class InventorySlot
     /// </summary>
     /// <param name="amount">추가할 수량</param>
     /// <returns>해당 아이템이 최대 수량보다 적으면 true, 그렇지 않으면 false</returns>
-    public bool CanAdd(int amount) => _itemCount + amount <= _itemData.MaxItemCount;
+    public bool CanAdd(int amount) => _itemCount + amount <= _itemDataSO.ItemMaxOwn;
 
     /// <summary>
     /// Amount만큼 아이템 추가
@@ -69,9 +70,9 @@ public class InventorySlot
     /// </summary>
     /// <param name="item">추가할 아이템</param>
     /// <param name="amount">추가할 수량</param>
-    public void AddItemToEmptySlot(InventoryItemDataSO item, int amount)
+    public void AddItemToEmptySlot(ItemDataSO item, int amount)
     {
-        _itemData = item;
+        _itemDataSO = item;
         _itemCount = amount;
     }
 

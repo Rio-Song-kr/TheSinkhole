@@ -4,7 +4,7 @@ using UnityEngine;
 public class TestItemPickUp : MonoBehaviour
 {
     [Header("Item Settings")]
-    public InventoryItemDataSO ItemData;
+    public ItemDataSO ItemData;
     public int ItemAmount = 1;
 
     [Header("Pickup Settings")]

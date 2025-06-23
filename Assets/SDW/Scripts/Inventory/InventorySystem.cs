@@ -34,7 +34,7 @@ public class InventorySystem
     /// <param name="item">추가할 아이템</param>
     /// <param name="amount">추가할 수량</param>
     /// <returns>남은 amount를 반환</returns>
-    public int AddItem(InventoryItemDataSO item, int amount)
+    public int AddItem(ItemDataSO item, int amount)
     {
         int remainingAmount = amount;
         if (FindItemSlots(item, out var existingSlots))
@@ -55,7 +55,7 @@ public class InventorySystem
 
         while (remainingAmount > 0 && GetEmptySlot(out var emptySlot))
         {
-            int addAmount = Mathf.Min(remainingAmount, item.MaxItemCount);
+            int addAmount = Mathf.Min(remainingAmount, item.ItemMaxOwn);
             emptySlot.AddItemToEmptySlot(item, addAmount);
             remainingAmount -= addAmount;
 
@@ -71,13 +71,13 @@ public class InventorySystem
     /// <param name="item">추가할 아이템</param>
     /// <param name="inventorySlot">해당 아이템이 있을 때 각 슬롯을 저장할 리스트</param>
     /// <returns></returns>
-    public bool FindItemSlots(InventoryItemDataSO item, out List<InventorySlot> inventorySlot)
+    public bool FindItemSlots(ItemDataSO item, out List<InventorySlot> inventorySlot)
     {
         inventorySlot = new List<InventorySlot>();
 
         foreach (var slot in _inventorySlots)
         {
-            if (slot.ItemData == item) inventorySlot.Add(slot);
+            if (slot.ItemDataSo == item) inventorySlot.Add(slot);
         }
 
         // return inventorySlot != null;
@@ -95,7 +95,7 @@ public class InventorySystem
 
         foreach (var slot in _inventorySlots)
         {
-            if (slot.ItemData == null)
+            if (slot.ItemDataSo == null)
             {
                 emptySlot = slot;
                 break;
