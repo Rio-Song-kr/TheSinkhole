@@ -23,7 +23,7 @@ namespace CraftingSystem
         //CraftingManager에게 호출하여 자신의 레시피와 글로벌레시피를 사용하는지 타이틀 이름을 함께 전달하여 창을 열도록 함
         public void TryOpenDialog()
         {
-            CraftingManager.Instance.TryOpenDialog(mRecipes,mUseGlobalRecipes,mTitle);
+            //CraftingManager.Instance.TryOpenDialog(mRecipes,mUseGlobalRecipes,mTitle);
         }
     }
 }
