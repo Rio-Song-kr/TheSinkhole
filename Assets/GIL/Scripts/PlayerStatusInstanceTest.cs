@@ -29,22 +29,22 @@ public class PlayerStatusInstanceTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             PlayerStatus.Instance.SetThirst(+0.1f);
-            Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurThirst}");
+            Debug.Log($"현재 갈증 : {PlayerStatus.Instance.CurThirst}");
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             PlayerStatus.Instance.SetThirst(-0.1f);
-            Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurThirst}");
+            Debug.Log($"현재 갈증 : {PlayerStatus.Instance.CurThirst}");
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
             PlayerStatus.Instance.SetMentality(+0.1f);
-            Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurMentality}");
+            Debug.Log($"현재 정신력 : {PlayerStatus.Instance.CurMentality}");
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
             PlayerStatus.Instance.SetMentality(-0.1f);
-            Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurMentality}");
+            Debug.Log($"현재 정신력 : {PlayerStatus.Instance.CurMentality}");
         }
     }
 }

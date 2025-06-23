@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour
@@ -8,6 +8,7 @@ public class PlayerStatus : MonoBehaviour
     [Tooltip("값을 변화하고 싶을 땐 PlayerStatus.Instance.Set스텟명(변화량 퍼센트) 사용")]
     [Header("Attributes")]
     public const int StatId = 10000;
+    public const int RealtimeOneMinute = 60;
     // UI를 고려하여 최대체력과 현재 체력을 두개 보유
     // Slider.value 혹은 Image.FillAmount 방식을 사용해야 할 때를 고려
     // 체력
@@ -20,6 +21,10 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] float moveSpeedDebuffStat = 0.5f;
     [SerializeField] float actionSpeedDebuffStat = 0.5f;
     private bool isStarving;
+    private Coroutine starvationCoroutine;
+    private bool isDehydrated;
+    private Coroutine dehydrationCoroutine;
+
     // 갈증
     [Header("Thirst")]
     public float MaxThirst;
@@ -60,12 +65,8 @@ public class PlayerStatus : MonoBehaviour
     {
         float deltaValue = MaxHealth * value;
         CurHealth += deltaValue;
-        if (CurHealth >= MaxHealth) CurHealth = MaxHealth;
-        if (CurHealth <= 0f)
-        {
-            PlayerDeath();
-            CurHealth = 0f;
-        }
+        CurHealth = Math.Clamp(CurHealth, 0f, MaxHealth);
+        if (CurHealth <= 0f) PlayerDeath();
     }
     /// <summary>
     /// 배고픔 스텟의 변화, 체력이 0이 될 경우 허기(이동속도 -50% , 행동속도 -50%)발동
@@ -77,21 +78,22 @@ public class PlayerStatus : MonoBehaviour
     {
         float deltaValue = MaxHunger * value;
         CurHunger += deltaValue;
-        if (CurHunger >= MaxHealth) CurHunger = MaxHunger;
-        if (CurHunger >= 0f && isStarving == true)
-        {
-            CurPlayerMoveSpeed = MaxPlayerMoveSpeed;
-            ActionSpeed = 1;
-            isStarving = false;
-        }
+        CurHunger = Mathf.Clamp(CurHunger, 0f, MaxHunger);
+        
         if (CurHunger <= 0f)
         {
-            if (isStarving == false)
+            if (!isStarving)
             {
-                StarvationDebuff(moveSpeedDebuffStat, actionSpeedDebuffStat);
+                starvationCoroutine = StartCoroutine(StarvationDebuff(moveSpeedDebuffStat, actionSpeedDebuffStat));
                 isStarving = true;
             }
-            CurHunger = 0f;
+        }
+        else if (isStarving)
+        {
+            if (starvationCoroutine != null) StopCoroutine(starvationCoroutine);
+            CurPlayerMoveSpeed = MaxPlayerMoveSpeed;
+            ActionSpeed = 1f;
+            isStarving = false;
         }
     }
     /// <summary>
@@ -102,11 +104,20 @@ public class PlayerStatus : MonoBehaviour
     {
         float deltaValue = MaxThirst * value;
         CurThirst += deltaValue;
-        if (CurThirst >= MaxThirst) CurThirst = MaxThirst;
+        CurThirst = Mathf.Clamp(CurThirst, 0f, MaxThirst);
+
         if (CurThirst <= 0f)
         {
-            PlayerDeath();
-            CurThirst = 0f;
+            if (!isDehydrated)
+            {
+                dehydrationCoroutine = StartCoroutine(DehydrationDebuff());
+                isDehydrated = true;
+            }
+        }
+        else if (isDehydrated)
+        {
+            if (dehydrationCoroutine != null) StopCoroutine(dehydrationCoroutine);
+            isDehydrated = false;
         }
     }
     /// <summary>
@@ -117,11 +128,10 @@ public class PlayerStatus : MonoBehaviour
     {
         float deltaValue = MaxHealth * value;
         CurMentality += deltaValue;
-        if (CurMentality >= MaxMentality) CurMentality = MaxMentality;
+        CurMentality = Mathf.Clamp(CurMentality, 0f, MaxMentality);
         if (CurMentality <= 0f)
         {
-            PlayerDeath();
-            CurMentality = 0f;
+            SetHealth(0f);
         }
     }
     // 플레이어 사망시 처리되는 로직들
@@ -129,11 +139,26 @@ public class PlayerStatus : MonoBehaviour
     {
         Debug.Log("플레이어 사망!");
     }
-    private void StarvationDebuff(float moveSpeed, float actionSpeed)
+    private IEnumerator StarvationDebuff(float moveSpeed, float actionSpeed)
     {
         Debug.Log("굶주렸다..");
         CurPlayerMoveSpeed -= MaxPlayerMoveSpeed * moveSpeed;
         ActionSpeed /= actionSpeed;
+        while (true)
+        {
+            SetHealth(-0.2f);
+            yield return new WaitForSecondsRealtime(RealtimeOneMinute);
+        }
+    }
+
+    private IEnumerator DehydrationDebuff()
+    {
+        Debug.Log("목이 마르다..");
+        while (true)
+        {
+            SetHealth(-0.1f);
+            yield return new WaitForSecondsRealtime(RealtimeOneMinute);
+        }
     }
     private void Init()
     {
