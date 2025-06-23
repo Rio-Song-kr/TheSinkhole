@@ -53,13 +53,13 @@ namespace CraftingSystem
 
         private int mCurrentCraftingCount;//현재 제작 스테이션의 별도 레시피 개수
 
-        private void Awake()
-        {
-            //초기화시 전역 활성화 상태 해제
-            CraftingManager.mIsDialogActive = false;
+        //private void Awake()
+        //{
+        //    //초기화시 전역 활성화 상태 해제
+        //    CraftingManager.mIsDialogActive = false;
 
-            Init();
-        }
+        //    Init();
+        //}
 
         /// <summary>   
         /// 전역 레시피를 초기화

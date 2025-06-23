@@ -49,7 +49,7 @@ namespace CraftingSystem
         /// 현재 해당 슬롯이 사용중인 레시피
         /// </summary>
         [HideInInspector] public CraftingRecipe CurrentRecipe;
-        private Coroutine? mCoCraftItem; //제작 연출 및 시간 계산 코루틴
+        private Coroutine mCoCraftItem; //제작 연출 및 시간 계산 코루틴
 
         //제작 다이얼로그 창을 닫아 제작을 더 이상 하지 않거나 제작중인 아이템을 취소할때 호출됨
         //현재 실행중인 코루틴 중단 misCrafting 을 false로 설정
@@ -124,7 +124,7 @@ namespace CraftingSystem
         //플레이어의 인벤토리에서 재료 아이템을 제거하고 제작결과아이템을 인벤토리에 지급
         private void RefreshItems()
         {
-            InventorySlot mainInventoryslot = null;
+            //InventorySlot mainInventoryslot = null;
 
             //재료 아이템 정보를 확인하여 메인 인벤토리의 아이템을 제거
             foreach(CraftingItemInfo info in CurrentRecipe.reqItems)
