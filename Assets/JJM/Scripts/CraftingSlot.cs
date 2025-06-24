@@ -17,7 +17,7 @@ namespace CraftingSystem
 
         //제작 아이템의 결과를 보여줄 슬롯
         [Header("제작 결과 아이템의 슬롯")]
-        [SerializeField] private InventorySlot mResultItemSlot;
+        [SerializeField] private GameObject mResultItemSlotPrefab;
 
         //아이템 제가에 요구되는 재료 아이템들을 보여줄 때 요구되는 아이템의 종류가 많은경우 한 슬롯에 모두 표시할 수 없음
         //스크롤 뷰를 사용하여 스크롤을 하여 어떤 아이템이 필요한지 모두 확인할 수 있게함
