@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CraftingSystem
-{
+
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T _instance;
@@ -34,4 +33,3 @@ namespace CraftingSystem
             }
         }
     }
-}
