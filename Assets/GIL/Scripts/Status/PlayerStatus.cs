@@ -151,7 +151,7 @@ public class PlayerStatus : MonoBehaviour
     // 플레이어의 현재 스텟들을 전부 출력하는 로직
     public void PrintAllCurStatus()
     {
-        Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}");
+        Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}, 이동속도: {CurPlayerMoveSpeed}, 행동속도: {ActionSpeed}");
     }
     // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
     private void Init()

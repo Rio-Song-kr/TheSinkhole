@@ -10,6 +10,8 @@ public class StatusUITest : MonoBehaviour
     [SerializeField] TextMeshProUGUI curHungerUIText;
     [SerializeField] TextMeshProUGUI curThirstUIText;
     [SerializeField] TextMeshProUGUI curMentalityUIText;
+    [SerializeField] TextMeshProUGUI curMoveSpeedUIText;
+    [SerializeField] TextMeshProUGUI curActionSpeedUIText;
     [Header("Slider UI")]
     [SerializeField] Slider sliderTest;
     [SerializeField] GameObject sliderFill;
@@ -26,6 +28,8 @@ public class StatusUITest : MonoBehaviour
         curHungerUIText.text = PlayerStatus.Instance.CurHunger.ToString();
         curThirstUIText.text = PlayerStatus.Instance.CurThirst.ToString();
         curMentalityUIText.text = PlayerStatus.Instance.CurMentality.ToString();
+        curMoveSpeedUIText.text = PlayerStatus.Instance.CurPlayerMoveSpeed.ToString();
+        curActionSpeedUIText.text = PlayerStatus.Instance.ActionSpeed.ToString();
         StatusSlider();
         StatusImageFill();
     }
