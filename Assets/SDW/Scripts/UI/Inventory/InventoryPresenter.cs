@@ -32,7 +32,7 @@ public class InventoryPresenter : MonoBehaviour
         m_inventoryView = inventoryView;
         m_slotMapping = new Dictionary<int, InventorySlot>();
 
-        // 핸들러들 초기화
+        //# 핸들러들 초기화
         m_itemController = new InventoryItemController(m_slotMapping, mouseItemView, UpdateSlotView);
         m_dragHandler = new InventoryDragHandler(mouseItemView, m_itemController);
         m_inputHandler = new InventoryInputHandler(mouseItemView);
