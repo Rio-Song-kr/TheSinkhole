@@ -23,9 +23,9 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] float actionSpeedDebuffStat = 2f;
     [Header("Debuff")]
     public bool isStarving;
-    private Coroutine starvationCoroutine;
     private bool isDehydrated;
-    private Coroutine dehydrationCoroutine;
+    private StarvationDebuff starvationDebuff;
+    private DehydrationDebuff dehydrationDebuff;
 
     // 갈증
     [Header("Thirst")]
@@ -57,6 +57,9 @@ public class PlayerStatus : MonoBehaviour
         CurThirst = MaxThirst;
         CurMentality = MaxMentality;
         CurPlayerMoveSpeed = MaxPlayerMoveSpeed;
+
+        starvationDebuff = new StarvationDebuff(this, moveSpeedDebuffStat, actionSpeedDebuffStat);
+        dehydrationDebuff = new DehydrationDebuff(this);
     }
 
     /// <summary>
@@ -90,15 +93,13 @@ public class PlayerStatus : MonoBehaviour
         {
             if (!isStarving)
             {
-                starvationCoroutine = StartCoroutine(StarvationDebuff(moveSpeedDebuffStat, actionSpeedDebuffStat));
+                starvationDebuff.StartDebuff(this);
                 isStarving = true;
             }
         }
         else if (isStarving)
         {
-            if (starvationCoroutine != null) StopCoroutine(starvationCoroutine);
-            CurPlayerMoveSpeed = MaxPlayerMoveSpeed;
-            ActionSpeed = 1f;
+            starvationDebuff.StopDebuff(this);
             isStarving = false;
         }
     }
@@ -116,13 +117,13 @@ public class PlayerStatus : MonoBehaviour
         {
             if (!isDehydrated)
             {
-                dehydrationCoroutine = StartCoroutine(DehydrationDebuff());
+                dehydrationDebuff.StartDebuff(this);
                 isDehydrated = true;
             }
         }
         else if (isDehydrated)
         {
-            if (dehydrationCoroutine != null) StopCoroutine(dehydrationCoroutine);
+            dehydrationDebuff.StopDebuff(this);
             isDehydrated = false;
         }
     }
@@ -153,27 +154,6 @@ public class PlayerStatus : MonoBehaviour
         Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}");
     }
     // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
-    private IEnumerator StarvationDebuff(float moveSpeed, float actionSpeed)
-    {
-        Debug.Log("굶주렸다..");
-        CurPlayerMoveSpeed -= MaxPlayerMoveSpeed * moveSpeed;
-        ActionSpeed *= actionSpeed;
-        while (true)
-        {
-            SetHealth(-0.2f);
-            yield return new WaitForSecondsRealtime(RealtimeOneMinute);
-        }
-    }
-
-    private IEnumerator DehydrationDebuff()
-    {
-        Debug.Log("목이 마르다..");
-        while (true)
-        {
-            SetHealth(-0.1f);
-            yield return new WaitForSecondsRealtime(RealtimeOneMinute);
-        }
-    }
     private void Init()
     {
         if (Instance != null && Instance != this)
