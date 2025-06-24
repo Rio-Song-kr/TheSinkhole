@@ -5,6 +5,7 @@ public enum ToolType
     None,
     Shovel, //삽
     Hoe, //괭이
+    Pick, // 곡괭이
     Book, // 책
     Drill // 농사땅 부수는 용도
 }
@@ -24,7 +25,8 @@ public class ToolControl : MonoBehaviour
 
     void TryInteract()
     {
-        Ray ray = new(m_rayTransform.position, transform.forward);
+        // Ray ray = new(m_rayTransform.position, transform.forward);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, InteractionDistance))
         {
             if (hit.collider.TryGetComponent(out Iinteractable interactable))

@@ -1,7 +1,14 @@
 using UnityEngine;
 
+public enum CropType
+{
+    None = 0,
+    Potato,
+    SweetPotato
+}
 public class Crop : MonoBehaviour
 {
+    public CropType type = CropType.None;
     public float growTime = 3f;
     private float timer = 0f;
     public GameObject grownCropPrefab;
@@ -29,5 +36,5 @@ public class Crop : MonoBehaviour
         //씨앗은 파괴.
         Destroy(gameObject);
     }
-    
+
 }
