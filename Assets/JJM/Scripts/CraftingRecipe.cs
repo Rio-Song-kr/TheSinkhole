@@ -45,7 +45,7 @@ namespace CraftingSystem
             if (GUILayout.Button("이름 자동 변경"))
             {
                 //이름 변경
-                //AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(recipe), $"RECIPE__{recipe.resultItem.item.ID.ToStirng()}");
+                AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(recipe), $"RECIPE__{recipe.resultItem.item}");
             }
         }
     }
@@ -55,8 +55,8 @@ namespace CraftingSystem
     [System.Serializable]
     public struct CraftingItemInfo
     {
-        [SerializeField] public Item item; //아이템 (Item 부분은 인벤토리와 아이템이 만들어지면 수정)
-        [SerializeField] public int amount; //아이템 개수
+        [SerializeField] public ItemDataSO item; //아이템 (Item 부분은 인벤토리와 아이템이 만들어지면 수정)
+        [SerializeField] public int count; //아이템 개수
     }
 }
 
