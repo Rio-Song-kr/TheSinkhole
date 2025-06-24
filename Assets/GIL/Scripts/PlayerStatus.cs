@@ -13,11 +13,11 @@ public class PlayerStatus : MonoBehaviour
     // Slider.value 혹은 Image.FillAmount 방식을 사용해야 할 때를 고려
     // 체력
     public float MaxHealth;
-    public float CurHealth;
+    public float CurHealth { get; private set;}
     // 배고픔
     [Header("Hunger")]
     public float MaxHunger;
-    public float CurHunger;
+    public float CurHunger { get; private set;}
     [SerializeField] float moveSpeedDebuffStat = 0.5f;
     [SerializeField] float actionSpeedDebuffStat = 2f;
     public bool isStarving;
@@ -28,11 +28,11 @@ public class PlayerStatus : MonoBehaviour
     // 갈증
     [Header("Thirst")]
     public float MaxThirst;
-    public float CurThirst;
+    public float CurThirst { get; private set;}
     // 정신력
     [Header("Mentality")]
     public float MaxMentality;
-    public float CurMentality;
+    public float CurMentality { get; private set;}
     [Header("Speed")]
     // 이동속도
     // TODO: 추후에 이동 구현 시 이동속도 관련 코드에다가 옮길지 고민하기.
@@ -133,7 +133,7 @@ public class PlayerStatus : MonoBehaviour
         // 정신력이 0이 될 경우 발생할 로직
         if (CurMentality <= 0f)
         {
-            SetHealth(0f);
+            SetHealth(-1f);
         }
     }
     // 플레이어 사망시 처리되는 로직들
