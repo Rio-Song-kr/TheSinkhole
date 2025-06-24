@@ -53,13 +53,18 @@ namespace CraftingSystem
 
         private int mCurrentCraftingCount;//현재 제작 스테이션의 별도 레시피 개수
 
-        //private void Awake()
-        //{
-        //    //초기화시 전역 활성화 상태 해제
-        //    CraftingManager.mIsDialogActive = false;
+        private Inventory playerInventory;
+        /*private void Awake()
+        {
+            //초기화시 전역 활성화 상태 해제
+            CraftingManager.mIsDialogActive = false;
 
-        //    Init();
-        //}
+            var playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null)
+                playerInventory = playerObj.GetComponent<Inventory>();
+
+            Init();
+        }*/
 
         /// <summary>   
         /// 전역 레시피를 초기화
@@ -74,7 +79,7 @@ namespace CraftingSystem
             {
                 //인스턴스 및 초기화
                 CraftingSlot craftingSlot = Instantiate(mRecipeSlotPrefab, Vector3.zero, Quaternion.identity, mGlobalRecipesTemporaryPlacement).GetComponent<CraftingSlot>();
-                craftingSlot.Init(recipe);
+                //craftingSlot.Init(recipe, playerInventory);
 
                 //리스트에 삽입
                 globalRecipeSlots.Add(craftingSlot);
@@ -89,7 +94,7 @@ namespace CraftingSystem
          
         //CraftingStation.cs 로부터 호출되어 매개변수로 레시피와 글로벌 레시피를 사용하는지 타이틀은 무엇인지 넘겨주며 초기화를 할수 있도록 함
         //부족한 레시피 슬롯 프리팹을 인스턴스화하여 레시피 개수에 맞게 만든 후 해당 슬롯 프리팹에 Init을 호출하여 레시피를 설정함
-        public void TryOenDialog(CraftingRecipe[] recipes, bool useGlobalRecipes, string title)
+        public void TryOpenDialog(CraftingRecipe[] recipes, bool useGlobalRecipes, string title)
         {
             //이미 다이얼로그가 켜져있으면
             if (mIsDialogActive)
@@ -110,7 +115,7 @@ namespace CraftingSystem
                 //레시피의 개수보다 작은 인덱스 번호일경우
                 if (i < recipes.Length)
                 {
-                    mStationOnlyRecipeSlots[i].Init(recipes[i]);
+                    mStationOnlyRecipeSlots[i].Init(recipes[i], playerInventory);
                 }
                 else
                 {
@@ -167,11 +172,24 @@ namespace CraftingSystem
             //슬롯을 활성화
             craftingSlot.gameObject.SetActive(true);
 
+            var inventorySystem = playerInventory.InventorySystem;
+
             //요구 아이템이 플레이어의 인벤토리에 있는지 검사
             for (int i = 0; i < craftingSlot.CurrentRecipe.reqItems.Length; i++)
             {
                 //하나라도 아이템 재료가 없다면 비활성화 상태로 전환
-                /*if (InventoryMain.Instance.HasItemInInventory(craftingSlot.CurrentRecipe.reqItems[i].item.ID, craftingSlot.CurrentRecipe.reqItems[i].count) == false)
+                //if (InventoryMain.Instance.HasItemInInventory(craftingSlot.CurrentRecipe.reqItems[i].item.ID, craftingSlot.CurrentRecipe.reqItems[i].count) == false)
+                var reqInfo = craftingSlot.CurrentRecipe.reqItems[i];
+                int requiredCount = reqInfo.count;
+                int ownedCount = 0;
+
+                if (inventorySystem.FindItemSlots(reqInfo.item, out var slots))
+                {
+                    foreach (var slot in slots)
+                        ownedCount += slot.ItemCount;
+                }
+
+                if (ownedCount < requiredCount)
                 {
                     //제작이 불간으한 상태에서 ViewCraftableOnly가 켜져있다면
                     if (mViewCraftableOnlyToggle.isOn)
@@ -183,7 +201,7 @@ namespace CraftingSystem
                         craftingSlot.ToggleSlotState(false);//제작이 불가능한 상태로 보여지게함
                     }
                     return;
-                }*/
+                }
             }
             //요구 아이템이 모두 있는경우 활성화 상태로 전화
             craftingSlot.ToggleSlotState(true);
