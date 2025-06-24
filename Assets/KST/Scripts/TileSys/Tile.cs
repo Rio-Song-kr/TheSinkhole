@@ -1,16 +1,28 @@
 using TMPro;
 using UnityEngine;
 
-public enum TileState
-{
-    None = 0, //개척 안된 타일
-    Frontier, // 개척지 타일
-    Farmable // 농사 가능한 타일
-}
-public class Tile : MonoBehaviour, Iinteractable
+
+public class Tile : MonoBehaviour, IToolInteractable
 {
     public TileState tileState = TileState.None;
- 
+
+
+    public interactType GetInteractType()
+    {
+        return interactType.MouseClick;
+    }
+    public bool CanInteract(ToolType toolType)
+    {
+        switch (tileState)
+        {
+            case TileState.None:
+                return toolType == ToolType.Pick;
+            case TileState.Frontier:
+                return toolType == ToolType.Shovel;
+            default:
+                return false;
+        }
+    }
 
     //타일마다 머터리얼 있어야 할 경우 변경할 수 있도록.
     //public Material farmMaterial, stoneMaterial;

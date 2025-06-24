@@ -1,24 +1,17 @@
 using UnityEngine;
 
-public enum CropType
-{
-    None = 0,
-    Potato,
-    SweetPotato
-}
 public class Crop : MonoBehaviour
 {
-    public CropType type = CropType.None;
-    public float growTime = 3f;
-    private float timer = 0f;
-    public GameObject grownCropPrefab;
-    private bool isGrowing = false;
+    public float GrowTime = 3f;
+    public GameObject GrownCropPrefab;
+    private float m_timer = 0f;
+    private bool m_isGrowing = false;
     void Update()
     {
-        if (!isGrowing) return;
+        if (!m_isGrowing) return;
 
-        timer += Time.deltaTime;
-        if (timer >= growTime)
+        m_timer += Time.deltaTime;
+        if (m_timer >= GrowTime)
         {
             Grow();
         }
@@ -26,13 +19,13 @@ public class Crop : MonoBehaviour
 
     public void StartGrow()
     {
-        isGrowing = true;
-        timer = 0f;
+        m_isGrowing = true;
+        m_timer = 0f;
     }
     void Grow()
     {
         //씨앗 -> 작물로 변경
-        Instantiate(grownCropPrefab, transform.position, Quaternion.identity);
+        Instantiate(GrownCropPrefab, transform.position, Quaternion.identity);
         //씨앗은 파괴.
         Destroy(gameObject);
     }

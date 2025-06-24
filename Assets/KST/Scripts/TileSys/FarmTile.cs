@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class FarmTile : MonoBehaviour, Iinteractable
+public class FarmTile : MonoBehaviour, IToolInteractable
 {
-    private GameObject m_plantedCrop; //작물 프리펩
     private bool m_isPlanted; //심어져 있으면 true, 아니면 false
     private bool m_isPlayerOnFarmTile; //팜타일에 플레이어가 있으면 true, 없으면 false
 
@@ -18,52 +17,51 @@ public class FarmTile : MonoBehaviour, Iinteractable
         m_isPlanted = true;
 
     }
+
+    #region 상호작용 인터페이스 구현
+    public interactType GetInteractType()
+    {
+        return interactType.PressE;
+    }
+
+    public bool CanInteract(ToolType toolType)
+    {
+        return m_isPlayerOnFarmTile && !m_isPlanted && toolType == ToolType.Shovel;
+    }
     public void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None || m_isPlanted) return;
 
-        if (toolType == ToolType.Shovel)
-        {
-            // Debug.Log("작물 심어졌습니다.");
-            // //우선, 해당 위치에 씨앗프리펩 생성.
-            // m_plantedCrop.GetComponent<Crop>().StartGrow();
-            // m_isPlanted = true;
-        }
+        FarmUI.SetActive(true);
+        InteractUiText.SetActive(false);
     }
+    #endregion
 
-    void OnTriggerStay(Collider other)
+    #region 충돌처리
+
+    void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             m_isPlayerOnFarmTile = true;
-            TestPlayerTool player = GetComponent<TestPlayerTool>();
-            if (player.currentToolType == ToolType.Shovel && m_isPlayerOnFarmTile)
-            {
-                InteractUiText.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    FarmUI.SetActive(true);
-                    InteractUiText.SetActive(false);
-                }
-            }
-            else
-            {
-                InteractUiText.SetActive(false);
-                FarmUI.SetActive(true);
-            }
+            InteractUiText.SetActive(true);
+            Interaction player = other.GetComponent<Interaction>();
+            player?.RegisterTrigger(this);
+
         }
     }
-    
+
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             m_isPlayerOnFarmTile = false;
             InteractUiText.SetActive(false);
-
+            Interaction player = other.GetComponent<Interaction>();
+            player?.ClearTrigger(this);
         }
 
     }
-
+    #endregion
 
 }
