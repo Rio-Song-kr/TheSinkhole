@@ -466,7 +466,7 @@ namespace DialogBox
         /// <param name="eventType">이벤트 타입</param>
         public void AddInputFieldEvent(TMP_InputField inputField, string eventID, InputFieldEvent eventType)
         {
-            string argument = null;
+            //string argument = null;
 
             switch (eventType)
             {

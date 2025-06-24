@@ -54,7 +54,7 @@ namespace CraftingSystem
         private int mCurrentCraftingCount;//현재 제작 스테이션의 별도 레시피 개수
 
         private Inventory playerInventory;
-        private void Awake()
+        /*private void Awake()
         {
             //초기화시 전역 활성화 상태 해제
             CraftingManager.mIsDialogActive = false;
@@ -64,7 +64,7 @@ namespace CraftingSystem
                 playerInventory = playerObj.GetComponent<Inventory>();
 
             Init();
-        }
+        }*/
 
         /// <summary>   
         /// 전역 레시피를 초기화
@@ -79,7 +79,7 @@ namespace CraftingSystem
             {
                 //인스턴스 및 초기화
                 CraftingSlot craftingSlot = Instantiate(mRecipeSlotPrefab, Vector3.zero, Quaternion.identity, mGlobalRecipesTemporaryPlacement).GetComponent<CraftingSlot>();
-                craftingSlot.Init(recipe, playerInventory);
+                //craftingSlot.Init(recipe, playerInventory);
 
                 //리스트에 삽입
                 globalRecipeSlots.Add(craftingSlot);
