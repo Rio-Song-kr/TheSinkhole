@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+
 public class PlayerStatus : MonoBehaviour
 {
     public static PlayerStatus Instance { get; set; }
@@ -13,13 +14,14 @@ public class PlayerStatus : MonoBehaviour
     // Slider.value 혹은 Image.FillAmount 방식을 사용해야 할 때를 고려
     // 체력
     public float MaxHealth;
-    public float CurHealth { get; private set;}
+    public float CurHealth { get; private set; }
     // 배고픔
     [Header("Hunger")]
     public float MaxHunger;
-    public float CurHunger { get; private set;}
+    public float CurHunger { get; private set; }
     [SerializeField] float moveSpeedDebuffStat = 0.5f;
     [SerializeField] float actionSpeedDebuffStat = 2f;
+    [Header("Debuff")]
     public bool isStarving;
     private Coroutine starvationCoroutine;
     private bool isDehydrated;
@@ -28,11 +30,11 @@ public class PlayerStatus : MonoBehaviour
     // 갈증
     [Header("Thirst")]
     public float MaxThirst;
-    public float CurThirst { get; private set;}
+    public float CurThirst { get; private set; }
     // 정신력
     [Header("Mentality")]
     public float MaxMentality;
-    public float CurMentality { get; private set;}
+    public float CurMentality { get; private set; }
     [Header("Speed")]
     // 이동속도
     // TODO: 추후에 이동 구현 시 이동속도 관련 코드에다가 옮길지 고민하기.
@@ -41,6 +43,9 @@ public class PlayerStatus : MonoBehaviour
     // 행동속도
     // 추후에 행동을 할 때 속도 배율로 사용할 예정.
     public float ActionSpeed = 1;
+    // 공격속도
+    // 추후에 공격등을 할 때 배율로 사용할 예정.
+    public float AtkSpeed = 1;
 
     // 싱글톤 검정
     private void Awake() => Init();

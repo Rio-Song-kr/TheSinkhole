@@ -27,6 +27,7 @@ public class StatusUITest : MonoBehaviour
         curThirstUIText.text = PlayerStatus.Instance.CurThirst.ToString();
         curMentalityUIText.text = PlayerStatus.Instance.CurMentality.ToString();
         StatusSlider();
+        StatusImageFill();
     }
 
     void StatusSlider()
@@ -35,5 +36,11 @@ public class StatusUITest : MonoBehaviour
         if (value <= 0) sliderFill.SetActive(false);
         else sliderFill.SetActive(true);
         sliderTest.value = value;
+    }
+
+    void StatusImageFill()
+    {
+        float value = PlayerStatus.Instance.CurHunger / PlayerStatus.Instance.MaxHunger;
+        imageTest.fillAmount = value;
     }
 }
