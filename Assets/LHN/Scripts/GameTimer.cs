@@ -22,7 +22,7 @@ public class GameTimer : MonoBehaviour
         TimeSpan realElapsed = now - realStartTime;
         double gameSeconds = realElapsed.TotalSeconds * GameMultiplier;
 
-        // 기준이 되는 0시부터 흐른 게임 시간 생성
+        // 기준이 되는 6시부터 흐른 게임 시간 생성
         DateTime gameTime = new DateTime(1, 1, 1, 6, 0, 0).AddSeconds(gameSeconds);
 
         string realTimeFormatted = now.ToString("tt hh:mm");
