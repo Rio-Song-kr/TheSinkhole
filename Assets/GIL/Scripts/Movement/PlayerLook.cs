@@ -9,6 +9,11 @@ public class PlayerLook : MonoBehaviour
     public float xSens = 30f;
     public float ySens = 30f;
 
+    /// <summary>
+    /// 플레이어 마우스 움직임을 제어
+    /// 정면 기준 -80도, 80도의 상하 각도 제한을 두어 목이 꺾이는 듯한 모습을 방지
+    /// </summary>
+    /// <param name="input"></param>
     public void ProcessLook(Vector2 input)
     {
         float mouseX = input.x;

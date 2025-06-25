@@ -148,6 +148,22 @@ public class PlayerStatus : MonoBehaviour
         Debug.Log("플레이어 사망!");
     }
 
+    /// <summary>
+    /// 리얼 타임 사이클에 따른 스탯 변화를 모아둔 함수
+    /// 낮/밤에 따른 배고픔 게이지 하락 속도,
+    /// 허기 디버프에 따른 정신력 감소 속도가 다름
+    /// </summary>
+    /// <param name="isDay">낮인지 확인하는 파라미터, true = 낮, false = 밤</param>
+    public void RealtimeStatusCycle(bool isDay)
+    {
+        // 추후에 낮 or 밤 판정에 따라 변경할 수 있게 함.
+        float hungerDelta = isDay == true ? -0.025f : -0.01f;
+        SetHunger(hungerDelta);
+        SetThirst(-0.1f);
+        float mentalityDelta = isStarving == true ? -0.05f : -0.025f;
+        SetMentality(mentalityDelta);
+    }
+    // [Test] 필요 없어질 경우 바로 지울 것.
     // 플레이어의 현재 스텟들을 전부 출력하는 로직
     public void PrintAllCurStatus()
     {

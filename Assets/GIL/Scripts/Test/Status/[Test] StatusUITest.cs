@@ -11,7 +11,6 @@ public class StatusUITest : MonoBehaviour
     [SerializeField] TextMeshProUGUI curThirstUIText;
     [SerializeField] TextMeshProUGUI curMentalityUIText;
     [SerializeField] TextMeshProUGUI curMoveSpeedUIText;
-    [SerializeField] TextMeshProUGUI curMoveVelocityText;
     [SerializeField] TextMeshProUGUI curActionSpeedUIText;
     [Header("Slider UI")]
     [SerializeField] Slider sliderTest;

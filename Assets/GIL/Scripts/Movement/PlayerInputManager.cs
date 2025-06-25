@@ -10,6 +10,10 @@ public class PlayerInputManager : MonoBehaviour
     private PlayerMotor motor;
     private PlayerLook look;
     public bool isSprinting;
+
+    private float lookDelaytimer = 0.5f;
+    private bool allowMove = false;
+
     private void Awake()
     {
         playerInput = new PlayerInput();
@@ -26,18 +30,19 @@ public class PlayerInputManager : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
-        motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
-        look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
+        if (allowMove)
+        {
+            motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
+            look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
+        }
+        else
+        {
+            lookDelaytimer -= Time.fixedDeltaTime;
+            if (lookDelaytimer <= 0f) allowMove = true;
+        }
     }
 
-    /// <summary>
-    /// LateUpdate is called every frame, if the Behaviour is enabled.
-    /// It is called after all Update functions have been called.
-    /// </summary>
-    void LateUpdate()
-    {
-        
-    }
+
     private void OnEnable()
     {
         onFoot.Enable();

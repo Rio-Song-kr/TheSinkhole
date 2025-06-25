@@ -6,42 +6,42 @@ public class PlayerStatusInstanceTest : MonoBehaviour
 {
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             PlayerStatus.Instance.SetHealth(+0.1f);
             Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurHealth}");
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             PlayerStatus.Instance.SetHealth(-0.1f);
             Debug.Log($"현재 체력 : {PlayerStatus.Instance.CurHealth}");
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             PlayerStatus.Instance.SetHunger(0.1f);
             Debug.Log($"현재 배고픔 : {PlayerStatus.Instance.CurHunger} 현재 이동속도 : {PlayerStatus.Instance.CurPlayerMoveSpeed} 현재 행동속도 : {PlayerStatus.Instance.ActionSpeed}");
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             PlayerStatus.Instance.SetHunger(-0.1f);
             Debug.Log($"현재 배고픔 : {PlayerStatus.Instance.CurHunger} 현재 이동속도 : {PlayerStatus.Instance.CurPlayerMoveSpeed} 현재 행동속도 : {PlayerStatus.Instance.ActionSpeed}");
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             PlayerStatus.Instance.SetThirst(+0.1f);
             Debug.Log($"현재 갈증 : {PlayerStatus.Instance.CurThirst}");
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             PlayerStatus.Instance.SetThirst(-0.1f);
             Debug.Log($"현재 갈증 : {PlayerStatus.Instance.CurThirst}");
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             PlayerStatus.Instance.SetMentality(+0.1f);
             Debug.Log($"현재 정신력 : {PlayerStatus.Instance.CurMentality}");
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             PlayerStatus.Instance.SetMentality(-0.1f);
             Debug.Log($"현재 정신력 : {PlayerStatus.Instance.CurMentality}");
