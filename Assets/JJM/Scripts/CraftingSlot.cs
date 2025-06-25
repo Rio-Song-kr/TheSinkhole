@@ -17,9 +17,10 @@ namespace CraftingSystem
 
         //제작 아이템의 결과를 보여줄 슬롯
         [Header("제작 결과 아이템의 슬롯")]
-        [SerializeField] private InventorySlot mResultItemSlot;
+        [SerializeField] private GameObject mResultItemSlot;
+        //[SerializeField] private InventorySlot mResultItemSlot;
 
-        //아이템 제가에 요구되는 재료 아이템들을 보여줄 때 요구되는 아이템의 종류가 많은경우 한 슬롯에 모두 표시할 수 없음
+        //아이템 제작에 요구되는 재료 아이템들을 보여줄 때 요구되는 아이템의 종류가 많은경우 한 슬롯에 모두 표시할 수 없음
         //스크롤 뷰를 사용하여 스크롤을 하여 어떤 아이템이 필요한지 모두 확인할 수 있게함
         //아이템 슬롯을 인스턴할 때 위치시킬 스크롤뷰의 콘텐츠 트랜스폼을 이곳에 등록
         [Header("제작에 필요한 재료 아이템을 담는 슬라이드 콘텐츠 트랜스폼")]
@@ -51,7 +52,7 @@ namespace CraftingSystem
         //현재 실행중인 코루틴 중단 misCrafting 을 false로 설정
         private void OnDisable()
         {
-            if (mCoCraftItem is not null)
+            if (mCoCraftItem != null)
             {
                 StopCoroutine(mCoCraftItem);
             }
@@ -72,8 +73,8 @@ namespace CraftingSystem
             gameObject.SetActive(true);
 
             //제작 결과 아이템을 슬롯에 등록
-            mResultItemSlot.ClearSlot();
-            mResultItemSlot.AddItemToEmptySlot(recipe.resultItem.item, recipe.resultItem.count);
+            //mResultItemSlot.ClearSlot();
+            //mResultItemSlot.AddItemToEmptySlot(recipe.resultItem.item, recipe.resultItem.count);
 
             //UI 요소 초기화
             mCraftingTimeLabel.text = $"{recipe.craftingTime:F1}s";
