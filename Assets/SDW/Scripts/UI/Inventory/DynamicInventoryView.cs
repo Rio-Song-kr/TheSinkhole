@@ -28,7 +28,7 @@ public class DynamicInventoryView : InventoryView
         if (inventorySystem != null)
         {
             m_dynamicInventorySystem = inventorySystem;
-            Initialize(inventorySystem);
+            Initialize(m_dynamicInventorySystem);
         }
         else
             Debug.LogWarning($"{gameObject.name}: 백팩이 정의되지 않았습니다.");

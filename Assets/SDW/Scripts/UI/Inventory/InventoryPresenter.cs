@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public class InventoryPresenter : MonoBehaviour
 {
+    private static readonly HashSet<IInventoryView> AllInventoryViews = new HashSet<IInventoryView>();
+
     private InventorySystem m_inventorySystem;
     public InventorySystem InventorySystem => m_inventorySystem;
 
@@ -35,7 +38,9 @@ public class InventoryPresenter : MonoBehaviour
     ) => Initialize(inventorySystem, inventoryView, mouseItemView, null);
 
     /// <summary>
-    /// Presenter를 초기화 (확장 버전 - 아이템 정보 표시 콜백 포함)
+    /// Presenter를 초기화
+    /// 내부 초기화를 수행
+    /// 이벤트 연결 및 슬롯 매핑을 설정
     /// </summary>
     /// <param name="inventorySystem">인벤토리 시스템</param>
     /// <param name="inventoryView">인벤토리 뷰 인터페이스</param>
@@ -46,7 +51,7 @@ public class InventoryPresenter : MonoBehaviour
         InventorySystem inventorySystem,
         IInventoryView inventoryView,
         IMouseItemView mouseItemView,
-        System.Action<ItemDataSO, int> onItemInfoRequested
+        Action<ItemDataSO, int> onItemInfoRequested
     )
     {
         m_inventorySystem = inventorySystem;
@@ -66,16 +71,8 @@ public class InventoryPresenter : MonoBehaviour
 
         m_inventoryControllers[m_inventorySystem] = m_itemController;
 
-        Initialize();
-        return this;
-    }
+        RegisterInventoryView(m_inventoryView);
 
-    /// <summary>
-    /// 내부 초기화를 수행
-    /// 이벤트 연결 및 슬롯 매핑을 설정
-    /// </summary>
-    private void Initialize()
-    {
         m_inventorySystem.OnSlotChanged += OnSlotChanged;
 
         for (int i = 0; i < m_inventorySystem.InventorySize; i++)
@@ -83,7 +80,18 @@ public class InventoryPresenter : MonoBehaviour
             m_slotMapping[i] = m_inventorySystem.InventorySlots[i];
             UpdateSlotView(i);
         }
+        return this;
     }
+
+    /// <summary>
+    /// Dynamic Inventory의 경우, Enable 될 때 등록
+    /// </summary>
+    private void OnEnable() => RegisterInventoryView(m_inventoryView);
+
+    /// <summary>
+    /// Dynamic Inventory의 경우, Enable 될 때 등록해제
+    /// </summary>
+    private void OnDisable() => UnregisterInventoryView(m_inventoryView);
 
     /// <summary>
     /// 프레임마다 호출되어 입력을 처리
@@ -184,4 +192,32 @@ public class InventoryPresenter : MonoBehaviour
         m_slotMapping?.Clear();
         m_slotMapping = null;
     }
+
+    /// <summary>
+    /// 인벤토리 뷰를 활성 리스트에 등록
+    /// InventoryView가 활성화될 때 호출되어야 함
+    /// </summary>
+    /// <param name="inventoryView">등록할 인벤토리 뷰(Interface)</param>
+    private static void RegisterInventoryView(IInventoryView inventoryView)
+    {
+        if (inventoryView != null)
+            AllInventoryViews.Add(inventoryView);
+    }
+
+    /// <summary>
+    /// 인벤토리 뷰를 활성 리스트에서 제거
+    /// InventoryView가 비활성화될 때 호출되어야 함
+    /// </summary>
+    /// <param name="inventoryView">제거할 인벤토리 뷰(Interface)</param>
+    private static void UnregisterInventoryView(IInventoryView inventoryView)
+    {
+        if (inventoryView != null)
+            AllInventoryViews.Remove(inventoryView);
+    }
+
+    /// <summary>
+    /// SlotView에서 View 목록에 접근하기 위한 메서드
+    /// </summary>
+    /// <returns>InventroyView Hash Set을 반환</returns>
+    public HashSet<IInventoryView> GetAllViews() => AllInventoryViews;
 }

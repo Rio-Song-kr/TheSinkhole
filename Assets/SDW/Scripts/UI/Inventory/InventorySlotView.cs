@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -165,10 +166,18 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// <returns>인벤토리 영역 내부에 있으면 true, 아니면 false</returns>
     private bool IsInsideInventoryArea(Vector3 position)
     {
-        var inventoryView = GetComponentInParent<InventoryView>();
-        if (inventoryView == null) return false;
+        var iInventoryViews = m_presenter.GetAllViews();
 
-        var canvasRect = inventoryView.GetComponent<RectTransform>();
-        return RectTransformUtility.RectangleContainsScreenPoint(canvasRect, position);
+        foreach (var iInventoryView in iInventoryViews)
+        {
+            var inventoryView = iInventoryView as InventoryView;
+            if (!inventoryView.gameObject.activeInHierarchy) continue;
+
+            var rectTransform = inventoryView.GetComponent<RectTransform>();
+
+            if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, position)) return true;
+        }
+
+        return false;
     }
 }

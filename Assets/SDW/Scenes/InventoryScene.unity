@@ -5988,10 +5988,10 @@ RectTransform:
   - {fileID: 2061956558}
   m_Father: {fileID: 1336669407}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1285854340
 MonoBehaviour:
@@ -6006,7 +6006,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inventoryUiContainer: {fileID: 2061956557}
-  _inventoryPanel: {fileID: 2080976428}
+  _inventoryPanel: {fileID: 2061956563}
 --- !u!1 &1286229378
 GameObject:
   m_ObjectHideFlags: 0
@@ -10098,6 +10098,8 @@ GameObject:
   - component: {fileID: 2061956561}
   - component: {fileID: 2061956560}
   - component: {fileID: 2061956559}
+  - component: {fileID: 2061956564}
+  - component: {fileID: 2061956563}
   m_Layer: 5
   m_Name: DynamicInventory UI Container
   m_TagString: Untagged
@@ -10206,6 +10208,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061956557}
   m_CullTransparentMesh: 1
+--- !u!114 &2061956563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061956557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca379d5c69df00e45b874b870103c8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_closeButton: {fileID: 2055835772}
+  m_trashButton: {fileID: 1040845812}
+  m_itemIcon: {fileID: 1530974450}
+  m_itemNameText: {fileID: 512073609}
+  m_itemAmountText: {fileID: 1312531785}
+  m_itemDescriptionText: {fileID: 1242456352}
+--- !u!114 &2061956564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061956557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5b202ae6c326d44db1bffae4ad28398, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2080976425
 GameObject:
   m_ObjectHideFlags: 0
@@ -10216,8 +10248,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2080976426}
   - component: {fileID: 2080976430}
-  - component: {fileID: 2080976429}
-  - component: {fileID: 2080976428}
   - component: {fileID: 2080976427}
   m_Layer: 5
   m_Name: DynamicInventorySlotUI
@@ -10290,36 +10320,6 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 1
   m_ConstraintCount: 7
---- !u!114 &2080976428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2080976425}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca379d5c69df00e45b874b870103c8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_closeButton: {fileID: 2055835772}
-  m_trashButton: {fileID: 1040845812}
-  m_itemIcon: {fileID: 1530974450}
-  m_itemNameText: {fileID: 512073609}
-  m_itemAmountText: {fileID: 1312531785}
-  m_itemDescriptionText: {fileID: 1242456352}
---- !u!114 &2080976429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2080976425}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b202ae6c326d44db1bffae4ad28398, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2080976430
 MonoBehaviour:
   m_ObjectHideFlags: 0
