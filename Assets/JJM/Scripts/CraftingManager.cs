@@ -42,9 +42,9 @@ namespace CraftingSystem
 
         //UI 요소들을 정의
         //제작 가능한 아이템만 볼 수 있도록 설정하는 토글과 다이얼로그 창의 타이틀 라벨
-        [Space(30)][Header("UI 요소들")]
-        [Header("제작 가능한 아이템만 보도록 하는 토글")]
-        [SerializeField] private Toggle mViewCraftableOnlyToggle;
+        //[Space(30)][Header("UI 요소들")]
+        //[Header("제작 가능한 아이템만 보도록 하는 토글")]
+        //[SerializeField] private Toggle mViewCraftableOnlyToggle;
         [Header("다이얼로그 창 타이틀")]
         [SerializeField] private TextMeshProUGUI mTitleLabel;
 
@@ -189,19 +189,19 @@ namespace CraftingSystem
                         ownedCount += slot.ItemCount;
                 }
 
-                if (ownedCount < requiredCount)
-                {
-                    //제작이 불간으한 상태에서 ViewCraftableOnly가 켜져있다면
-                    if (mViewCraftableOnlyToggle.isOn)
-                    {
-                        craftingSlot.gameObject.SetActive(false);//오브젝트 자체를 비활성화
-                    }
-                    else
-                    {
-                        craftingSlot.ToggleSlotState(false);//제작이 불가능한 상태로 보여지게함
-                    }
-                    return;
-                }
+                //if (ownedCount < requiredCount)
+                //{
+                //    //제작이 불간으한 상태에서 ViewCraftableOnly가 켜져있다면
+                //    if (mViewCraftableOnlyToggle.isOn)
+                //    {
+                //        craftingSlot.gameObject.SetActive(false);//오브젝트 자체를 비활성화
+                //    }
+                //    else
+                //    {
+                //        craftingSlot.ToggleSlotState(false);//제작이 불가능한 상태로 보여지게함
+                //    }
+                //    return;
+                //}
             }
             //요구 아이템이 모두 있는경우 활성화 상태로 전화
             craftingSlot.ToggleSlotState(true);
