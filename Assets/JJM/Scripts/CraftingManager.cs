@@ -172,7 +172,7 @@ namespace CraftingSystem
             //슬롯을 활성화
             craftingSlot.gameObject.SetActive(true);
 
-            var inventorySystem = playerInventory.InventorySystem;
+            //var inventorySystem = playerInventory.InventorySystem;
 
             //요구 아이템이 플레이어의 인벤토리에 있는지 검사
             for (int i = 0; i < craftingSlot.CurrentRecipe.reqItems.Length; i++)
@@ -183,11 +183,11 @@ namespace CraftingSystem
                 int requiredCount = reqInfo.count;
                 int ownedCount = 0;
 
-                if (inventorySystem.FindItemSlots(reqInfo.item, out var slots))
-                {
-                    foreach (var slot in slots)
-                        ownedCount += slot.ItemCount;
-                }
+                //if (inventorySystem.FindItemSlots(reqInfo.item, out var slots))
+                //{
+                //    foreach (var slot in slots)
+                //        ownedCount += slot.ItemCount;
+                //}
 
                 //if (ownedCount < requiredCount)
                 //{

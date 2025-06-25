@@ -128,16 +128,16 @@ namespace CraftingSystem
         private void RefreshItems()
         {
             // 인벤토리 시스템 인스턴스 참조 (싱글톤 또는 직접 참조 방식에 맞게 수정)
-            var inventorySystem = mInventory.InventorySystem;
+            //var inventorySystem = mInventory.InventorySystem;
 
             // 1. 재료 차감
             foreach (var info in CurrentRecipe.reqItems)
             {
-                RemoveItemFromInventory(inventorySystem, info.item, info.count);
+                //RemoveItemFromInventory(inventorySystem, info.item, info.count);
             }
 
             // 2. 결과 아이템 지급
-            inventorySystem.AddItem(CurrentRecipe.resultItem.item, CurrentRecipe.resultItem.count);
+            //inventorySystem.AddItem(CurrentRecipe.resultItem.item, CurrentRecipe.resultItem.count);
 
             // 3. 슬롯 갱신
             CraftingManager.Instance.RefreshAllSlots();
