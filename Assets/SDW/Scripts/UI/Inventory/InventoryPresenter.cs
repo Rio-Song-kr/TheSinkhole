@@ -22,21 +22,45 @@ public class InventoryPresenter : MonoBehaviour
         new Dictionary<InventorySystem, InventoryItemController>();
 
     /// <summary>
-    /// Presenter를 초기화
+    /// Presenter를 초기화 (기본 버전 - 아이템 정보 표시 콜백 없음)
     /// </summary>
     /// <param name="inventorySystem">인벤토리 시스템</param>
     /// <param name="inventoryView">인벤토리 뷰 인터페이스</param>
     /// <param name="mouseItemView">마우스 아이템 뷰 인터페이스</param>
     /// <returns>초기화된 InventoryPresenter 인스턴스</returns>
-    public InventoryPresenter Initialize(InventorySystem inventorySystem,
+    public InventoryPresenter Initialize(
+        InventorySystem inventorySystem,
         IInventoryView inventoryView,
-        IMouseItemView mouseItemView)
+        IMouseItemView mouseItemView
+    ) => Initialize(inventorySystem, inventoryView, mouseItemView, null);
+
+    /// <summary>
+    /// Presenter를 초기화 (확장 버전 - 아이템 정보 표시 콜백 포함)
+    /// </summary>
+    /// <param name="inventorySystem">인벤토리 시스템</param>
+    /// <param name="inventoryView">인벤토리 뷰 인터페이스</param>
+    /// <param name="mouseItemView">마우스 아이템 뷰 인터페이스</param>
+    /// <param name="onItemInfoRequested">아이템 정보 표시 요청 콜백 (Dynamic 인벤토리에서만 사용)</param>
+    /// <returns>초기화된 InventoryPresenter 인스턴스</returns>
+    public InventoryPresenter Initialize(
+        InventorySystem inventorySystem,
+        IInventoryView inventoryView,
+        IMouseItemView mouseItemView,
+        System.Action<ItemDataSO, int> onItemInfoRequested
+    )
     {
         m_inventorySystem = inventorySystem;
         m_inventoryView = inventoryView;
         m_slotMapping = new Dictionary<int, InventorySlot>();
 
-        m_itemController = new InventoryItemController(m_slotMapping, mouseItemView, UpdateSlotView);
+        // InventoryItemController 생성 시 아이템 정보 표시 콜백을 전달
+        m_itemController = new InventoryItemController(
+            m_slotMapping,
+            mouseItemView,
+            UpdateSlotView,
+            inventorySystem,
+            onItemInfoRequested);
+
         m_dragHandler = new InventoryDragHandler(mouseItemView, m_itemController);
         m_inputHandler = new InventoryInputHandler(mouseItemView);
 
@@ -126,7 +150,7 @@ public class InventoryPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// 모든 슬롯의 UI를 업데이트
     /// </summary>
     public void UpdateSlots()
     {

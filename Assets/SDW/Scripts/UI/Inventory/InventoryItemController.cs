@@ -11,19 +11,29 @@ public class InventoryItemController
     private IMouseItemView m_mouseItemView;
     private System.Action<int> m_onSlotUpdated;
 
+    // 인벤토리 타입을 구분하기 위한 추가 필드
+    private InventorySystem m_inventorySystem;
+    private System.Action<ItemDataSO, int> m_onItemInfoRequested; // 아이템 정보 표시 요청 콜백
+
     /// <summary>
     /// InventoryItemController 생성자
     /// </summary>
     /// <param name="slotMapping">슬롯 인덱스와 InventorySlot의 매핑 딕셔너리</param>
     /// <param name="mouseItemView">마우스 아이템 뷰 인터페이스</param>
     /// <param name="onSlotUpdated">슬롯 업데이트 시 호출될 콜백</param>
+    /// <param name="inventorySystem">이 컨트롤러가 관리하는 인벤토리 시스템</param>
+    /// <param name="onItemInfoRequested">아이템 정보 표시 요청 콜백 (Dynamic 인벤토리에서만 사용)</param>
     public InventoryItemController(Dictionary<int, InventorySlot> slotMapping,
         IMouseItemView mouseItemView,
-        System.Action<int> onSlotUpdated)
+        System.Action<int> onSlotUpdated,
+        InventorySystem inventorySystem,
+        System.Action<ItemDataSO, int> onItemInfoRequested = null)
     {
         m_slotMapping = slotMapping;
         m_mouseItemView = mouseItemView;
         m_onSlotUpdated = onSlotUpdated;
+        m_inventorySystem = inventorySystem;
+        m_onItemInfoRequested = onItemInfoRequested;
     }
 
     /// <summary>
@@ -59,15 +69,39 @@ public class InventoryItemController
         var mouseItem = m_mouseItemView.GetCurrentItem();
         bool mouseEmpty = !m_mouseItemView.HasItem();
 
-        //# 슬롯에 아이템이 있고, 마우스에 없는 경우
-        if (clickedSlot.ItemDataSO != null && mouseEmpty)
-            PickupItem(clickedSlot, slotIndex, shiftPressed);
+        // Dynamic 인벤토리에서 아이템이 있는 슬롯을 클릭했을 때 아이템 정보 표시
+        if (IsDynamicInventory() && clickedSlot.ItemDataSO != null && mouseEmpty)
+            RequestItemInfo(clickedSlot.ItemDataSO, clickedSlot.ItemCount);
+
+        // //# 슬롯에 아이템이 있고, 마우스에 없는 경우
+        // if (clickedSlot.ItemDataSO != null && mouseEmpty)
+        //     PickupItem(clickedSlot, slotIndex, shiftPressed);
         //# 슬롯에 아이템이 없고, 마우스에 있는 경우
-        else if (clickedSlot.ItemDataSO == null && !mouseEmpty)
-            PlaceItem(clickedSlot, slotIndex, mouseItem);
+        else if (clickedSlot.ItemDataSO == null && !mouseEmpty) PlaceItem(clickedSlot, slotIndex, mouseItem);
         //# 슬롯에 아이템이 있고, 마우스에 있는 경우
-        else if (clickedSlot.ItemDataSO != null && !mouseEmpty)
-            HandleSlotInteraction(slotIndex, mouseItem);
+        else if (clickedSlot.ItemDataSO != null && !mouseEmpty) HandleSlotInteraction(slotIndex, mouseItem);
+    }
+
+    /// <summary>
+    /// 현재 인벤토리가 Dynamic 인벤토리인지 확인
+    /// Inventory 컴포넌트의 DynamicInventorySystem과 비교
+    /// </summary>
+    /// <returns>Dynamic 인벤토리면 true, 아니면 false</returns>
+    private bool IsDynamicInventory()
+    {
+        // Inventory 컴포넌트를 찾아서 DynamicInventorySystem과 비교
+        var inventory = Object.FindObjectOfType<Inventory>();
+        return inventory != null && inventory.DynamicInventorySystem == m_inventorySystem;
+    }
+
+    /// <summary>
+    /// 아이템 정보 표시를 요청
+    /// Dynamic 인벤토리에서만 호출됨
+    /// </summary>
+    /// <param name="itemData">표시할 아이템 데이터</param>
+    private void RequestItemInfo(ItemDataSO itemData, int amount)
+    {
+        m_onItemInfoRequested?.Invoke(itemData, amount);
     }
 
     /// <summary>
@@ -80,12 +114,9 @@ public class InventoryItemController
     {
         var slot = m_slotMapping[slotIndex];
 
-        if (slot.ItemDataSO == null)
-            PlaceItem(slot, slotIndex, mouseItem);
-        else if (slot.ItemDataSO != mouseItem.ItemDataSO)
-            SwapItems(slot, slotIndex, mouseItem);
-        else
-            StackItems(slot, slotIndex, mouseItem);
+        if (slot.ItemDataSO == null) PlaceItem(slot, slotIndex, mouseItem);
+        else if (slot.ItemDataSO != mouseItem.ItemDataSO) SwapItems(slot, slotIndex, mouseItem);
+        else StackItems(slot, slotIndex, mouseItem);
     }
 
     /// <summary>
