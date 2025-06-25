@@ -2,7 +2,8 @@ using UnityEngine;
 
 /// <summary>
 /// 인벤토리 아이템의 드래그 앤 드롭 기능을 처리하는 핸들러 클래스
-/// </summary>
+/// 드래그 시작/종료, 원본 슬롯 백업/복원, 인벤토리 간 아이템 이동을 담당
+/// </summary> 
 public class InventoryDragHandler
 {
     private int m_originalSlotIndex = -1;
@@ -45,8 +46,30 @@ public class InventoryDragHandler
     /// <param name="targetSlotIndex">드롭 대상 슬롯 인덱스</param>
     /// <param name="isValidDrop">유효한 드롭인지 여부</param>
     /// <param name="isOutsideInventory">인벤토리 영역 밖으로 드롭했는지 여부</param>
-    public void OnEndDrag(int targetSlotIndex, bool isValidDrop, bool isOutsideInventory)
+    /// /// <param name="targetInventoryController">대상 인벤토리의 아이템 컨트롤러. null일 경우 자신의 컨트롤러 사용, null이 아닐 경우 해당 컨트롤러로 처리</param>
+    public void OnEndDrag(
+        int targetSlotIndex,
+        bool isValidDrop,
+        bool isOutsideInventory,
+        InventoryItemController targetInventoryController = null
+    )
     {
+        //# 수정됨
+        //# 마우스가 인벤토리 영역 안에 있고, 슬롯 영역에 영역에 있으면서 아이템을 가지고 있는 경우
+        if (m_mouseItemView.HasItem() && isValidDrop && !isOutsideInventory)
+        {
+            var mouseItem = m_mouseItemView.GetCurrentItem();
+
+            //# targetInventoryController가 현재 itemController와 다른 경우
+            if (targetInventoryController != null && targetInventoryController != m_itemController)
+                targetInventoryController.HandleSlotClick(targetSlotIndex, mouseItem);
+            else
+                m_itemController.HandleSlotClick(targetSlotIndex, mouseItem);
+
+            ClearOriginalSlotState();
+            return;
+        }
+
         //# 마우스가 인벤토리 영역 밖에 있는 경우
         if (isOutsideInventory)
         {
@@ -59,17 +82,7 @@ public class InventoryDragHandler
         if (!isValidDrop)
         {
             RestoreToOriginalSlot();
-            return;
         }
-
-        //# 마우스가 인벤토리 영역 안에 있고, 슬롯 영역에 영역에 있으면서 아이템을 가지고 있는 경우
-        if (m_mouseItemView.HasItem())
-        {
-            var mouseItem = m_mouseItemView.GetCurrentItem();
-            m_itemController.HandleSlotClick(targetSlotIndex, mouseItem);
-        }
-
-        ClearOriginalSlotState();
     }
 
     /// <summary>

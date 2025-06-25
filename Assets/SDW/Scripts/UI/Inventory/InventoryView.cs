@@ -50,6 +50,7 @@ public abstract class InventoryView : MonoBehaviour, IInventoryView
         for (int i = 0; i < m_slotViews.Length; i++)
         {
             m_slotViews[i].Initialize(i, m_presenter);
+            m_presenter.UpdateSlots();
         }
     }
 

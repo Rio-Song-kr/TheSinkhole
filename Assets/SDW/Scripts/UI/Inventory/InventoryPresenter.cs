@@ -9,13 +9,17 @@ using UnityEngine;
 public class InventoryPresenter : MonoBehaviour
 {
     private InventorySystem m_inventorySystem;
+    public InventorySystem InventorySystem => m_inventorySystem;
+
     private IInventoryView m_inventoryView;
     private Dictionary<int, InventorySlot> m_slotMapping;
 
-    // 분리된 핸들러들
     private InventoryDragHandler m_dragHandler;
     private InventoryItemController m_itemController;
     private InventoryInputHandler m_inputHandler;
+
+    private static Dictionary<InventorySystem, InventoryItemController> m_inventoryControllers =
+        new Dictionary<InventorySystem, InventoryItemController>();
 
     /// <summary>
     /// Presenter를 초기화
@@ -32,10 +36,11 @@ public class InventoryPresenter : MonoBehaviour
         m_inventoryView = inventoryView;
         m_slotMapping = new Dictionary<int, InventorySlot>();
 
-        //# 핸들러들 초기화
         m_itemController = new InventoryItemController(m_slotMapping, mouseItemView, UpdateSlotView);
         m_dragHandler = new InventoryDragHandler(mouseItemView, m_itemController);
         m_inputHandler = new InventoryInputHandler(mouseItemView);
+
+        m_inventoryControllers[m_inventorySystem] = m_itemController;
 
         Initialize();
         return this;
@@ -88,8 +93,21 @@ public class InventoryPresenter : MonoBehaviour
     /// <param name="targetSlotIndex">드롭 대상 슬롯 인덱스</param>
     /// <param name="isValidDrop">유효한 드롭인지 여부</param>
     /// <param name="isOutsideInventory">인벤토리 영역 밖으로 드롭했는지 여부</param>
-    public void OnEndDrag(int targetSlotIndex, bool isValidDrop, bool isOutsideInventory)
-        => m_dragHandler.OnEndDrag(targetSlotIndex, isValidDrop, isOutsideInventory);
+    /// <param name="targetInventorySystem">대상 인벤토리 시스템. null일 경우 자신의 인벤토리 시스템 사용</param>
+    public void OnEndDrag(
+        int targetSlotIndex,
+        bool isValidDrop,
+        bool isOutsideInventory,
+        InventorySystem targetInventorySystem = null
+    )
+    {
+        InventoryItemController targetController = null;
+
+        if (targetInventorySystem != null && targetInventorySystem != m_inventorySystem)
+            m_inventoryControllers.TryGetValue(targetInventorySystem, out targetController);
+
+        m_dragHandler.OnEndDrag(targetSlotIndex, isValidDrop, isOutsideInventory, targetController);
+    }
 
     /// <summary>
     /// 인벤토리 시스템에서 슬롯이 변경되었을 때 호출되는 이벤트 핸들러
@@ -104,6 +122,17 @@ public class InventoryPresenter : MonoBehaviour
                 UpdateSlotView(mapping.Key);
                 break;
             }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void UpdateSlots()
+    {
+        foreach (var mapping in m_slotMapping)
+        {
+            UpdateSlotView(mapping.Key);
         }
     }
 

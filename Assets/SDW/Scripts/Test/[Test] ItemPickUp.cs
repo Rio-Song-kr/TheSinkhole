@@ -34,7 +34,11 @@ public class TestItemPickUp : MonoBehaviour
         }
     }
 
-    //# 추후 Player의 인터렉션키(e.g. E)에 맞춰서 동작하도록 변경해야 함
+    /// <summary>
+    /// 플레이어와 충돌 시 아이템을 스마트하게 인벤토리에 추가
+    /// 마인크래프트 스타일로 기존 스택을 우선 채우고 최적 분배
+    /// </summary>
+    /// <param name="other">충돌한 콜라이더</param>
     private void OnTriggerEnter(Collider other)
     {
         if ((1 << other.gameObject.layer & PlayerLayer) == 0) return;
@@ -42,8 +46,25 @@ public class TestItemPickUp : MonoBehaviour
         var inventory = other.transform.GetComponent<Inventory>();
         if (!inventory) return;
 
-        int remainingAmount = inventory.InventorySystem.AddItem(ItemData, ItemAmount);
+        //# 스마트 추가 시도
+        int remainingAmount = inventory.AddItemSmart(ItemData, ItemAmount);
+
+        //@ 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0) Destroy(gameObject);
-        else ItemAmount = remainingAmount;
+        else if (remainingAmount < ItemAmount)
+        {
+            //@ 일부만 추가됨 - 남은 수량으로 업데이트
+            ItemAmount = remainingAmount;
+            Debug.Log($"인벤토리 일부 가득참! 남은 아이템: {remainingAmount}");
+
+            //todo 아이템이 부분적으로 추가되었음을 시각적으로 표시
+            //@ 예: 이펙트 재생, 사운드 등
+        }
+        else
+        {
+            Debug.Log("인벤토리가 완전히 가득참!");
+
+            //todo 인벤토리가 가득 찼다는 UI 메시지 표시
+        }
     }
 }

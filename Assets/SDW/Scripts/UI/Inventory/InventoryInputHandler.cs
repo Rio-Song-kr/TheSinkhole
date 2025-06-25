@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 인벤토리 관련 마우스 입력을 처리하는 핸들러 클래스
 /// 인벤토리 영역 밖에서의 클릭 시 아이템 삭제 등의 기능을 담당
+/// 좌클릭 시 마우스가 인벤토리 영역 밖에 있으면 들고 있던 아이템을 제거
 /// </summary>
 public class InventoryInputHandler
 {
