@@ -6,6 +6,10 @@ public class Tile : MonoBehaviour, IToolInteractable
 {
     public TileState tileState = TileState.None;
 
+    public GameObject InteractUiTextRef;
+    //농사창 UI
+    public GameObject FarmUIRef;
+
 
     public interactType GetInteractType()
     {
@@ -76,7 +80,9 @@ public class Tile : MonoBehaviour, IToolInteractable
 
         if (!TryGetComponent<FarmTile>(out var _))
         {
-            gameObject.AddComponent<FarmTile>();
+            var go = gameObject.AddComponent<FarmTile>();
+            go.FarmUIObj = FarmUIRef;
+            go.InteractUiText = InteractUiTextRef;
         }
     }
     public void SetNoneGround()
