@@ -7,9 +7,7 @@ using UnityEngine;
 /// </summary>
 public class DynamicUIController : MonoBehaviour
 {
-    [SerializeField] private GameObject _uppderAreaContainer;
-    [SerializeField] private GameObject _itemNameContainer;
-    [SerializeField] private GameObject _itemDescriptionContainer;
+    [SerializeField] private GameObject _inventoryUiContainer;
     [SerializeField] private DynamicInventoryView _inventoryPanel;
 
     /// <summary>
@@ -20,13 +18,7 @@ public class DynamicUIController : MonoBehaviour
     /// <summary>
     /// 인벤토리 UI를 닫고 모든 관련 UI 요소들을 비활성화
     /// </summary>
-    private void HandleCloseInventory()
-    {
-        _uppderAreaContainer.SetActive(false);
-        _itemNameContainer.SetActive(false);
-        _itemDescriptionContainer.SetActive(false);
-        _inventoryPanel.gameObject.SetActive(false);
-    }
+    private void HandleCloseInventory() => _inventoryUiContainer.SetActive(false);
 
     /// <summary>
     /// 컴포넌트 활성화 시 Inventory의 동적 표시 요청 이벤트를 구독
@@ -46,10 +38,7 @@ public class DynamicUIController : MonoBehaviour
     /// <param name="isOpen">인벤토리 열림 상태</param>
     private void HandleDisplayInventory(InventorySystem inventorySystem, bool isOpen)
     {
-        _uppderAreaContainer.SetActive(isOpen);
-        _itemNameContainer.SetActive(isOpen);
-        _itemDescriptionContainer.SetActive(isOpen);
-        _inventoryPanel.gameObject.SetActive(isOpen);
+        _inventoryUiContainer.SetActive(isOpen);
 
         if (isOpen) _inventoryPanel.RefreshDisplaySlots(inventorySystem);
     }
