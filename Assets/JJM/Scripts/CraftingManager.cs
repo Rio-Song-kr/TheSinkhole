@@ -42,9 +42,9 @@ namespace CraftingSystem
 
         //UI 요소들을 정의
         //제작 가능한 아이템만 볼 수 있도록 설정하는 토글과 다이얼로그 창의 타이틀 라벨
-        //[Space(30)][Header("UI 요소들")]
-        //[Header("제작 가능한 아이템만 보도록 하는 토글")]
-        //[SerializeField] private Toggle mViewCraftableOnlyToggle;
+        [Space(30)][Header("UI 요소들")]
+        [Header("제작 가능한 아이템만 보도록 하는 토글")]
+        [SerializeField] private Toggle mViewCraftableOnlyToggle;
         [Header("다이얼로그 창 타이틀")]
         [SerializeField] private TextMeshProUGUI mTitleLabel;
 
@@ -54,7 +54,7 @@ namespace CraftingSystem
         private int mCurrentCraftingCount;//현재 제작 스테이션의 별도 레시피 개수
 
         private Inventory playerInventory;
-        /*private void Awake()
+        private void Awake()
         {
             //초기화시 전역 활성화 상태 해제
             CraftingManager.mIsDialogActive = false;
@@ -64,12 +64,12 @@ namespace CraftingSystem
                 playerInventory = playerObj.GetComponent<Inventory>();
 
             Init();
-        }*/
+        }
 
         /// <summary>   
         /// 전역 레시피를 초기화
         /// </summary>
-        
+
         //씬이 로드되면 글로벌 레시피를 미리 로드하고 프리팹화하여 사용 준비를 완료
         //임시로 mGlobalRecipesTemporaryPlacement에 위치하여 글로벌 레시피를 사용할 때만 적절한 위치로 이동
         private void Init()
@@ -91,7 +91,7 @@ namespace CraftingSystem
         /// </summary>
         /// <param name="recipes">다이얼로그에 포함시킬 레시피들</param>
         /// <param name="useGlobalRecipes">글로벌 레시피를 사용할지 여부</param>"
-         
+
         //CraftingStation.cs 로부터 호출되어 매개변수로 레시피와 글로벌 레시피를 사용하는지 타이틀은 무엇인지 넘겨주며 초기화를 할수 있도록 함
         //부족한 레시피 슬롯 프리팹을 인스턴스화하여 레시피 개수에 맞게 만든 후 해당 슬롯 프리팹에 Init을 호출하여 레시피를 설정함
         public void TryOpenDialog(CraftingRecipe[] recipes, bool useGlobalRecipes, string title)
@@ -145,7 +145,7 @@ namespace CraftingSystem
         /// <summary>
         /// 다이얼로그를 닫음
         /// </summary>
-        
+
         //다이얼로그 창을 비활성화
         public void CloseDialog()
         {
@@ -165,7 +165,7 @@ namespace CraftingSystem
         /// 해당 슬롯을 이용 가능한지 검사하여 슬롯에 상태를 적용
         /// </summary>
         /// <param name="craftingslot"></param>
-        
+
         //해당 슬롯이 현재 제작이 간으한지 검사하여 검사 후 제작 여부를 토글
         private void CheckCraftingSlot(CraftingSlot craftingSlot)
         {
@@ -209,7 +209,7 @@ namespace CraftingSystem
         /// <summary>
         /// 모든 슬롯을 갱신
         /// </summary>
-        
+
         //특정 조건에 의해 모든 슬롯이 갱신이 될 필요가 있다면 호출하여 갱신
         //에를 들어 플레이어가 제작을 하여 소지 아이템이 바뀐경우 호출
         public void RefreshAllSlots()

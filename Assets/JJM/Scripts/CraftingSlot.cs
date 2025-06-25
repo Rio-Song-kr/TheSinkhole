@@ -52,7 +52,7 @@ namespace CraftingSystem
         //현재 실행중인 코루틴 중단 misCrafting 을 false로 설정
         private void OnDisable()
         {
-            if (mCoCraftItem is not null)
+            if (mCoCraftItem != null)
             {
                 StopCoroutine(mCoCraftItem);
             }
