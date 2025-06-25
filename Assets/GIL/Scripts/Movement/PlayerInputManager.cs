@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+public class PlayerInputManager : MonoBehaviour
+{
+    private PlayerInput playerInput;
+    private PlayerInput.OnFootActions onFoot;
+
+    private PlayerMotor motor;
+    private PlayerLook look;
+    public bool isSprinting;
+
+    private float lookDelaytimer = 0.5f;
+    private bool allowMove = false;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+        onFoot = playerInput.OnFoot;
+        motor = GetComponent<PlayerMotor>();
+        look = GetComponent<PlayerLook>();
+        onFoot.Jump.performed += ctx => motor.Jump();
+        onFoot.Sprint.started += ctx => motor.ActiveSprint();
+        onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
+    }
+
+    /// <summary>
+    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
+    /// </summary>
+    void FixedUpdate()
+    {
+        if (allowMove)
+        {
+            motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
+            look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
+        }
+        else
+        {
+            lookDelaytimer -= Time.fixedDeltaTime;
+            if (lookDelaytimer <= 0f) allowMove = true;
+        }
+    }
+
+
+    private void OnEnable()
+    {
+        onFoot.Enable();
+    }
+    private void OnDisable()
+    {
+        onFoot.Disable();
+    }
+}
