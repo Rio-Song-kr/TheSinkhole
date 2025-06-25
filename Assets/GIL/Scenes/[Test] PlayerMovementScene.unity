@@ -1266,9 +1266,9 @@ GameObject:
   - component: {fileID: 2113636747}
   - component: {fileID: 2113636746}
   - component: {fileID: 2113636745}
-  - component: {fileID: 2113636744}
   - component: {fileID: 2113636750}
   - component: {fileID: 2113636751}
+  - component: {fileID: 2113636752}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1276,23 +1276,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2113636744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2113636743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45328aa13a2a22d4eb2c0bbb3836b626, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gravity: -9.8
-  jumpHeight: 1
-  sprintingSpeed: 2
-  speed: 5
-  curMoveVelocityText: {fileID: 289289411}
 --- !u!114 &2113636745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1436,6 +1419,23 @@ MonoBehaviour:
   CurPlayerMoveSpeed: 0
   ActionSpeed: 1
   AtkSpeed: 1
+--- !u!114 &2113636752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113636743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45328aa13a2a22d4eb2c0bbb3836b626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravity: -9.8
+  jumpHeight: 1.5
+  sprintingSpeed: 2
+  speed: 0
+  curMoveVelocityText: {fileID: 289289411}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
