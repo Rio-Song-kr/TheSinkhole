@@ -14,7 +14,9 @@ public class PlayerMotor : MonoBehaviour
     public float sprintingSpeed = 2f;
     public float speed;
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
+    [Header("Test")]
     public TextMeshProUGUI curMoveVelocityText;
+    public GameObject panel;
     private void Awake()
     {
         speed = PlayerStatus.Instance.CurPlayerMoveSpeed;
@@ -37,10 +39,14 @@ public class PlayerMotor : MonoBehaviour
     /// 플레이어가 달릴 경우 발동되는 기능들
     /// </summary>
     // 추후에 이펙트 or UI 반응을 추가할 경우 여기다가 추가하기
+    // 우선 달리기가 허기 디버프가 있을 경우 발동하지 못하게 함
+    // 기획자분에게 추가로 물어보면 될듯
     public void ActiveSprint()
     {
+        if (PlayerStatus.Instance.isStarving) return;
         speed *= sprintingSpeed;
         playerInput.isSprinting = true;
+        panel.SetActive(true);
     }
     /// <summary>
     /// 플레이어가 달리기를 멈출 경우 발동되는 기능들
@@ -50,6 +56,7 @@ public class PlayerMotor : MonoBehaviour
     {
         speed *= 1f;
         playerInput.isSprinting = false;
+        panel.SetActive(false);
     }
     /// <summary>
     /// 플레이어 움직임을 제어
