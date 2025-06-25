@@ -6,6 +6,7 @@ using TMPro;
 /// <summary>
 /// 개별 인벤토리 슬롯의 UI 표시 및 상호작용을 담당하는 클래스
 /// 아이템 아이콘, 개수 표시 및 클릭, 드래그 앤 드롭 기능을 제공
+/// Unity EventSystem과 연동하여 포인터 이벤트를 처리하고 인벤토리 간 아이템 이동을 지원
 /// </summary>
 public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
@@ -14,6 +15,8 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     private int m_slotIndex;
     private InventoryPresenter m_presenter;
+
+    private InventorySystem m_inventorySystem;
 
     /// <summary>
     /// 컴포넌트 참조를 초기화
@@ -46,6 +49,8 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
         {
             m_itemCount = GetComponentInChildren<TextMeshProUGUI>();
         }
+
+        m_inventorySystem = presenter.InventorySystem;
 
         ClearDisplay();
     }
@@ -110,27 +115,38 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// <param name="eventData">이벤트 데이터</param>
     public void OnEndDrag(PointerEventData eventData)
     {
-        var targetSlot = GetDropTarget(eventData);
+        var targetSlot = GetDropTarget(eventData, out var targetSystem);
+
         bool isValidDrop = targetSlot != null;
-        bool isOutsideInventory = !IsPointerOverInventory(eventData);
+        bool isOutsideInventory = targetSlot != null ? false : !IsPointerOverInventory(eventData);
 
         int targetIndex = isValidDrop ? targetSlot.m_slotIndex : -1;
-        m_presenter?.OnEndDrag(targetIndex, isValidDrop, isOutsideInventory);
+        m_presenter?.OnEndDrag(targetIndex, isValidDrop, isOutsideInventory, targetSystem);
     }
 
     /// <summary>
-    /// 드롭 대상 슬롯을 찾음
+    /// 드롭 대상 슬롯을 찾고 해당 슬롯이 속한 인벤토리 시스템을 반환
+    /// 인벤토리 간 아이템 이동을 위해 타겟 시스템 정보도 함께 제공
     /// </summary>
-    /// <param name="eventData">이벤트 데이터</param>
-    /// <returns>드롭 대상 슬롯 (없으면 null)</returns>
-    private InventorySlotView GetDropTarget(PointerEventData eventData)
+    /// <param name="eventData">포인터 이벤트 데이터</param>
+    /// <param name="targetSystem">드롭 대상 슬롯이 속한 인벤토리 시스템</param>
+    /// <returns>드롭 대상 슬롯 뷰 (없으면 null)</returns>
+    private InventorySlotView GetDropTarget(PointerEventData eventData, out InventorySystem targetSystem)
     {
+        targetSystem = m_inventorySystem;
+
         foreach (var go in eventData.hovered)
         {
             var slotView = go.GetComponent<InventorySlotView>();
 
-            if (slotView != null && slotView != this) return slotView;
+            // if (slotView != null && slotView != this) return slotView;
+            if (slotView != null)
+            {
+                targetSystem = slotView.m_inventorySystem;
+                return slotView;
+            }
         }
+
         return null;
     }
 
@@ -141,6 +157,12 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// <returns>인벤토리 영역 내에 있으면 true</returns>
     private bool IsPointerOverInventory(PointerEventData eventData) => IsInsideInventoryArea(eventData.position);
 
+    /// <summary>
+    /// 지정된 위치가 현재 슬롯이 속한 인벤토리 영역 내부에 있는지 확인
+    /// RectTransform을 사용하여 화면 좌표를 기준으로 영역 검사 수행
+    /// </summary>
+    /// <param name="position">확인할 화면 위치</param>
+    /// <returns>인벤토리 영역 내부에 있으면 true, 아니면 false</returns>
     private bool IsInsideInventoryArea(Vector3 position)
     {
         var inventoryView = GetComponentInParent<InventoryView>();

@@ -47,11 +47,12 @@ public class InventoryItemController
     }
 
     /// <summary>
-    /// 슬롯 클릭 시의 동작을 처리
-    /// 마우스와 슬롯의 아이템 상태에 따라 적절한 액션을 수행
+    /// 슬롯 클릭 또는 드롭 시의 동작을 처리
+    /// 마우스와 슬롯의 아이템 상태에 따라 픽업, 배치, 교환, 스택 등의 적절한 액션을 수행
+    /// 인벤토리 간 아이템 이동 시에도 사용됨
     /// </summary>
     /// <param name="slotIndex">클릭한 슬롯 인덱스</param>
-    /// <param name="clickedSlot">클릭한 슬롯</param>
+    /// <param name="clickedSlot">클릭한 슬롯 또는 마우스가 들고 있는 아이템</param>
     public void HandleSlotClick(int slotIndex, InventorySlot clickedSlot)
     {
         bool shiftPressed = Input.GetKey(KeyCode.LeftShift);

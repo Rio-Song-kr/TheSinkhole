@@ -90,23 +90,102 @@ public class InventorySystem
     }
 
     /// <summary>
-    /// 빈 슬롯이 있는지 확인
+    /// 빈 슬롯을 찾아서 반환
     /// </summary>
-    /// <param name="emptySlot">빈 슬롯이 있을 경우, 해당 슬롯 그렇지 않을 경우 null을 가짐</param>
-    /// <returns>빈 슬롯이 있을 때는 true, 없을 때는 false를 반환</returns>
+    /// <param name="emptySlot">찾은 빈 슬롯</param>
+    /// <returns>빈 슬롯이 있으면 true</returns>
     public bool GetEmptySlot(out InventorySlot emptySlot)
     {
-        emptySlot = null;
-
         foreach (var slot in m_inventorySlots)
         {
             if (slot.ItemDataSO == null)
             {
                 emptySlot = slot;
-                break;
+                return true;
+            }
+        }
+        emptySlot = null;
+        return false;
+    }
+
+    /// <summary>
+    /// 인벤토리에 아이템을 스마트하게 추가 (기존 스택 우선)
+    /// 동일한 아이템의 기존 슬롯을 먼저 채우고, 이후 빈 슬롯에 추가
+    /// </summary>
+    /// <param name="item">추가할 아이템</param>
+    /// <param name="amount">추가할 수량</param>
+    /// <returns>남은 amount를 반환</returns>
+    public int AddItemSmart(ItemDataSO item, int amount)
+    {
+        int remainingAmount = amount;
+
+        //#기존 슬롯들을 먼저 채우기
+        if (FindItemSlots(item, out var existingSlots))
+        {
+            foreach (var slot in existingSlots)
+            {
+                if (slot.CanAdd(remainingAmount, out int canAddAmount))
+                {
+                    int addAmount = Mathf.Min(remainingAmount, canAddAmount);
+                    slot.AddItem(addAmount);
+                    remainingAmount -= addAmount;
+
+                    OnSlotChanged?.Invoke(slot);
+
+                    if (remainingAmount == 0) return 0;
+                }
             }
         }
 
-        return emptySlot != null;
+        //# 빈 슬롯에 추가
+        while (remainingAmount > 0 && GetEmptySlot(out var emptySlot))
+        {
+            int addAmount = Mathf.Min(remainingAmount, item.ItemMaxOwn);
+            emptySlot.AddItemToEmptySlot(item, addAmount);
+            remainingAmount -= addAmount;
+
+            OnSlotChanged?.Invoke(emptySlot);
+        }
+
+        return remainingAmount;
     }
+
+    /// <summary>
+    /// 인벤토리가 아이템을 수용할 수 있는 총 공간을 계산
+    /// </summary>
+    /// <param name="item">확인할 아이템</param>
+    /// <returns>수용 가능한 총 개수</returns>
+    public int GetAvailableSpace(ItemDataSO item)
+    {
+        int totalSpace = 0;
+
+        //# 기존 스택들의 여유 공간 계산
+        if (FindItemSlots(item, out var existingSlots))
+        {
+            foreach (var slot in existingSlots)
+            {
+                if (slot.CanAdd(1, out int canAddAmount)) totalSpace += canAddAmount;
+            }
+        }
+
+        //# 빈 슬롯들의 공간 계산
+        foreach (var slot in m_inventorySlots)
+        {
+            if (slot.ItemDataSO == null) totalSpace += item.ItemMaxOwn;
+        }
+
+        return totalSpace;
+    }
+
+    /// <summary>
+    /// 인벤토리에 빈 슬롯이 있는지 확인
+    /// </summary>
+    /// <returns>빈 슬롯이 있으면 true</returns>
+    public bool HasEmptySlot() => GetEmptySlot(out _);
+
+    /// <summary>
+    /// 슬롯 변경 알림을 외부에서 호출할 수 있도록 하는 메서드
+    /// </summary>
+    /// <param name="slot">변경된 슬롯</param>
+    public void NotifySlotChanged(InventorySlot slot) => OnSlotChanged?.Invoke(slot);
 }

@@ -6,8 +6,9 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 마우스 커서를 따라다니는 아이템 표시 UI 클래스
-/// 드래그 앤 드롭 시 마우스 포인터에 아이템을 시각적으로 표시하고 위치를 추적
-/// 인벤토리 영역 내외부 감지 기능을 제공
+/// 드래그 앤 드롭 시 마우스 포인터에 아이템을 시각적으로 표시하고 실시간 위치 추적
+/// UI 레이캐스트를 통한 인벤토리 영역 내외부 감지 및 드롭 유효성 검사 기능 제공
+/// 전역적으로 하나의 인스턴스만 존재하며 모든 인벤토리가 공유하여 사용
 /// </summary>
 public class MouseItemView : MonoBehaviour, IMouseItemView
 {
@@ -42,7 +43,7 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     }
 
     /// <summary>
-    /// 마우스에 아이템을 표시
+    /// 마우스에 아이템을 표시하고 드래그 상태로 전환
     /// 아이템 아이콘과 개수를 화면에 표시하고 현재 아이템 정보를 저장
     /// </summary>
     /// <param name="slot">표시할 아이템 슬롯</param>
