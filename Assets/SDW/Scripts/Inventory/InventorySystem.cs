@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// 인벤토리 로직 및 데이터 관리
+/// Inventory와 관련된 모델(데이터 계층) 역할
+/// </summary>
 [System.Serializable]
 public class InventorySystem
 {
@@ -49,6 +53,7 @@ public class InventorySystem
                     remainingAmount -= addAmount;
 
                     OnSlotChanged?.Invoke(slot);
+
                     if (remainingAmount == 0) return 0;
                 }
             }

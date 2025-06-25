@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// 개별 슬롯 데이터를 위한 클래스
+/// Inventory와 관련된 모델(데이터 계층) 역할
+/// </summary>
 [Serializable]
 public class InventorySlot
 {

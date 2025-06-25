@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// UI 슬롯들을 인벤토리 데이터와 연결하는 일종의 바인딩을 위한 클래스
+/// </summary>
 public class QuickSlotUI : InventoryDisplay
 {
     [SerializeField] private Inventory m_inventory;

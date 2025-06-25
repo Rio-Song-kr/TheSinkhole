@@ -9,21 +9,24 @@ public class GameTimer : MonoBehaviour
     private const double GameMultiplier = 3600.0 / 30.0;
     private DateTime realStartTime;
     int count = 1;
-    public TextMeshProUGUI gameTimeText; // UI¿¡ ¿¬°áÇÒ ÅØ½ºÆ®
+
+    public TextMeshProUGUI gameTimeText; // UIì— ì—°ê²°í•  í…ìŠ¤íŠ¸
 
     void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ ½ÃÁ¡ ±â·Ï
+        // ê²Œì„ ì‹œì‘ ì‹œì  ê¸°ë¡
         realStartTime = DateTime.Now;
     }
+
     DateTime beforeTime = new DateTime(1, 1, 1, 6, 0, 0);
+
     void Update()
     {
         DateTime now = DateTime.Now;
         TimeSpan realElapsed = now - realStartTime;
         double gameSeconds = realElapsed.TotalSeconds * GameMultiplier;
 
-        // ±âÁØÀÌ µÇ´Â 6½ÃºÎÅÍ Èå¸¥ °ÔÀÓ ½Ã°£ »ı¼º
+        // ê¸°ì¤€ì´ ë˜ëŠ” 6ì‹œë¶€í„° íë¥¸ ê²Œì„ ì‹œê°„ ìƒì„±
         DateTime gameTime = new DateTime(1, 1, 1, 6, 0, 0).AddSeconds(gameSeconds);
 
         string gameTimeFormatted = gameTime.ToString("tt hh", CultureInfo.GetCultureInfo("en-US"));
@@ -33,7 +36,8 @@ public class GameTimer : MonoBehaviour
             count += 1;
         }
         gameTimeText.text = $"DAY : {count}, {gameTimeFormatted}";
-        // Á¶°Ç¹® ½Ã°£ ºñ±³¸¦ À§ÇÑ ÀÌÀü ½Ã°£ ÀúÀå
+        // ì¡°ê±´ë¬¸ ì‹œê°„ ë¹„êµë¥¼ ìœ„í•œ ì´ì „ ì‹œê°„ ì €ì¥
         beforeTime = gameTime;
+
     }
 }

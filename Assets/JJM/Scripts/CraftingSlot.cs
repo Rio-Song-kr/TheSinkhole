@@ -11,19 +11,16 @@ namespace CraftingSystem
         //현재 제작을 하고 있는지 확인하기 위한 전역 변수
         //제작을 중복으로 하지 않도록 하기위함
         private static bool misCrafting = false;
-        public static bool IsCrafting
-        {
-            get 
-            { 
-                return misCrafting; 
-            }  
-        }
+        public static bool IsCrafting => misCrafting;
+        [Header("재료 슬롯 프리팹")]
+        [SerializeField] private GameObject mRecipeSlotPrefab;
 
         //제작 아이템의 결과를 보여줄 슬롯
         [Header("제작 결과 아이템의 슬롯")]
-        [SerializeField] private InventorySlot mResultItemSlot;
+        [SerializeField] private GameObject mResultItemSlot;
+        //[SerializeField] private InventorySlot mResultItemSlot;
 
-        //아이템 제가에 요구되는 재료 아이템들을 보여줄 때 요구되는 아이템의 종류가 많은경우 한 슬롯에 모두 표시할 수 없음
+        //아이템 제작에 요구되는 재료 아이템들을 보여줄 때 요구되는 아이템의 종류가 많은경우 한 슬롯에 모두 표시할 수 없음
         //스크롤 뷰를 사용하여 스크롤을 하여 어떤 아이템이 필요한지 모두 확인할 수 있게함
         //아이템 슬롯을 인스턴할 때 위치시킬 스크롤뷰의 콘텐츠 트랜스폼을 이곳에 등록
         [Header("제작에 필요한 재료 아이템을 담는 슬라이드 콘텐츠 트랜스폼")]
@@ -55,7 +52,7 @@ namespace CraftingSystem
         //현재 실행중인 코루틴 중단 misCrafting 을 false로 설정
         private void OnDisable()
         {
-            if (mCoCraftItem is not null)
+            if (mCoCraftItem != null)
             {
                 StopCoroutine(mCoCraftItem);
             }
@@ -66,31 +63,34 @@ namespace CraftingSystem
         //레시피를 매개변수로 사용 레시피를 기반으로 이 슬롯 초기화
         //레시피에 필요한 아이템의 개수만큼 인벤토리 슬롯을 생성 해당 슬롯에 등록
         //인벤토리 슬롯이 이미 있으면 해당 슬롯 재사용
-        public void Init(CraftingRecipe recipe)
+        private Inventory mInventory;
+        public void Init(CraftingRecipe recipe, Inventory inventory)
         {
             CurrentRecipe = recipe;
-            
+
+            mInventory = inventory;
             //슬롯 활성화
             gameObject.SetActive(true);
 
             //제작 결과 아이템을 슬롯에 등록
-            mResultItemSlot.ClearSlot();
-            //InventoryMain.Instance.AcquireItem(recipe.resultItem.item, mResultItemSlot,recipe.resultItem.count);
+            //mResultItemSlot.ClearSlot();
+            //mResultItemSlot.AddItemToEmptySlot(recipe.resultItem.item, recipe.resultItem.count);
 
             //UI 요소 초기화
-            mCraftingTimeLabel.text = $"{recipe.craftingTime.ToString("F1")}s";
+            mCraftingTimeLabel.text = $"{recipe.craftingTime:F1}s";
             mCraftingProgressImage.fillAmount = 1.0f;
             mCraftingButton.GetComponent<Image>().sprite = recipe.buttonSprite;
 
             //제작 레시피의 재료 아이템 슬롯이 부족하면 개수에 맞게 인스턴스
             for (int i = mRecipeContentTransform.childCount; i < recipe.reqItems.Length; i++)
             {
-                //Instantiate(mResultItemSlot,Vector3.zero, Quaternion.identity, mRecipeContentTransform);
+                Instantiate(mRecipeSlotPrefab, Vector3.zero, Quaternion.identity, mRecipeContentTransform);
             }
 
             //모든 재료 슬롯을 초기화
             for (int i = 0; i < mRecipeContentTransform.childCount; i++)
             {
+                Transform child = mRecipeContentTransform.GetChild(i);
                 //슬롯 획득
                 InventorySlot recipeSlot = mRecipeContentTransform.GetChild(i).GetComponent<InventorySlot>();
 
@@ -99,11 +99,13 @@ namespace CraftingSystem
                 {
                     //재료 아이템을 슬롯에 등록
                     recipeSlot.ClearSlot();
-                    //InventoryMain.Instance.AcquireItem(recipe.reqItems[i].item, recipeSlot, recipe.reqItems[i].count);
+                    recipeSlot.AddItemToEmptySlot(recipe.reqItems[i].item, recipe.reqItems[i].count);
+                    child.gameObject.SetActive(true); // 여기서 child의 GameObject를 활성화
                     //recipeSlot.gameObject.SetActive(true);
                 }
                 else
                 {
+                    child.gameObject.SetActive(false); // 비활성화도 동일하게
                     //recipeSlot.gameObject.SetActive(false);
                 }
             }
@@ -116,29 +118,68 @@ namespace CraftingSystem
             mCraftingButton.interactable = isCraftable;
         }
 
+
         /// <summary>
         /// 재료 아이템을 제거하고, 결과 아이템을 획득
         /// </summary>
-        
+
         //아이템을 제작해 해당 아이템 제작 소요시간이 지나면 아이템을 교환
         //플레이어의 인벤토리에서 재료 아이템을 제거하고 제작결과아이템을 인벤토리에 지급
         private void RefreshItems()
         {
-            //InventorySlot mainInventoryslot = null;
+            // 인벤토리 시스템 인스턴스 참조 (싱글톤 또는 직접 참조 방식에 맞게 수정)
+            var inventorySystem = mInventory.InventorySystem;
+
+            // 1. 재료 차감
+            foreach (var info in CurrentRecipe.reqItems)
+            {
+                RemoveItemFromInventory(inventorySystem, info.item, info.count);
+            }
+
+            // 2. 결과 아이템 지급
+            inventorySystem.AddItem(CurrentRecipe.resultItem.item, CurrentRecipe.resultItem.count);
+
+            // 3. 슬롯 갱신
+            CraftingManager.Instance.RefreshAllSlots();
+        }
+        // 여러 슬롯에서 차감이 필요할 수 있으므로 아래와 같이 구현
+        private void RemoveItemFromInventory(InventorySystem inventorySystem, ItemDataSO itemDataSO, int amount)
+        {
+            int remaining = amount;
+            if (inventorySystem.FindItemSlots(itemDataSO, out var slots))
+            {
+                foreach (var slot in slots)
+                {
+                    if (slot.ItemCount >= remaining)
+                    {
+                        slot.RemoveItem(remaining);
+                        break;
+                    }
+                    else
+                    {
+                        remaining -= slot.ItemCount;
+                        slot.RemoveItem(slot.ItemCount);
+                    }
+                }
+            }
+        }
+        /*private void RefreshItems()
+        {
+            InventorySlot mainInventoryslot = null;
 
             //재료 아이템 정보를 확인하여 메인 인벤토리의 아이템을 제거
             foreach(CraftingItemInfo info in CurrentRecipe.reqItems)
             {
-                //InventoryMain.Instance.HasItemInInventory(info.item.ID, out mainInventoryslot, info.count);
-                //mainInventoryslot.UpdateItemCount(-info.count);
+                InventoryMain.Instance.HasItemInInventory(info.item.ID, out mainInventoryslot, info.count);
+                mainInventoryslot.UpdateItemCount(-info.count);
             }
 
             //제작 후 결과 아이템을 인벤토리에 획득
-            //InventoryMain.Instance.AcquireItem(CurrentRecipe.resultItem.item,CurrentRecipe.resultItem.count);
+            InventoryMain.Instance.AcquireItem(CurrentRecipe.resultItem.item,CurrentRecipe.resultItem.count);
 
             //아이템을 교환 후 슬롯들을 업데이트
-            //CraftingManager.Instance.RefreshAllslots();
-        }
+            CraftingManager.Instance.RefreshAllSlots();
+        }*/
 
         //아이템을 제작하는 소요시간만큼 UI요소를 갱신하고 시간이 경과했다면 아이템 교환을 하기위한 코루틴
         private IEnumerator CoCraftItem()
