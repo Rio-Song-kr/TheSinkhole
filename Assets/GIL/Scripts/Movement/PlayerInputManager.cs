@@ -9,6 +9,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private PlayerMotor motor;
     private PlayerLook look;
+    public bool isSprinting;
     private void Awake()
     {
         playerInput = new PlayerInput();
@@ -16,6 +17,8 @@ public class PlayerInputManager : MonoBehaviour
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
         onFoot.Jump.performed += ctx => motor.Jump();
+        onFoot.Sprint.started += ctx => motor.ActiveSprint();
+        onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
     }
 
     /// <summary>
@@ -23,7 +26,7 @@ public class PlayerInputManager : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
-        motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>());
+        motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
         look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
     }
 
