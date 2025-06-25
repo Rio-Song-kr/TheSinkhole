@@ -15,7 +15,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot = playerInput.OnFoot;
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
-        onFoot.Jump.started += ctx => motor.Jump();
+        onFoot.Jump.performed += ctx => motor.Jump();
     }
 
     /// <summary>
@@ -24,6 +24,7 @@ public class PlayerInputManager : MonoBehaviour
     void FixedUpdate()
     {
         motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>());
+        look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
     }
 
     /// <summary>
@@ -32,7 +33,7 @@ public class PlayerInputManager : MonoBehaviour
     /// </summary>
     void LateUpdate()
     {
-        look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
+        
     }
     private void OnEnable()
     {
