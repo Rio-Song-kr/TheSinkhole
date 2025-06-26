@@ -81,7 +81,7 @@ public class Tile : MonoBehaviour, IToolInteractable
         if (!TryGetComponent<FarmTile>(out var _))
         {
             var go = gameObject.AddComponent<FarmTile>();
-            go.FarmUIObj = FarmUIRef;
+            // go.FarmUIObj = FarmUIRef;
             go.InteractUiText = InteractUiTextRef;
         }
     }
