@@ -11,7 +11,6 @@ public class DynamicInventoryView : InventoryView
 {
     [Header("아이템 정보 UI")]
     [SerializeField] private Button m_closeButton;
-    [SerializeField] private Button m_trashButton;
     [SerializeField] private Image m_itemIcon;
     [SerializeField] private TextMeshProUGUI m_itemNameText;
     [SerializeField] private TextMeshProUGUI m_itemAmountText;

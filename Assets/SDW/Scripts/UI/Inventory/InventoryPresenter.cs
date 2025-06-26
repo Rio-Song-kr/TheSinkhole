@@ -130,7 +130,8 @@ public class InventoryPresenter : MonoBehaviour
         int targetSlotIndex,
         bool isValidDrop,
         bool isOutsideInventory,
-        InventorySystem targetInventorySystem = null
+        InventorySystem targetInventorySystem = null,
+        bool isTrashDrop = false
     )
     {
         InventoryItemController targetController = null;
@@ -138,7 +139,7 @@ public class InventoryPresenter : MonoBehaviour
         if (targetInventorySystem != null && targetInventorySystem != m_inventorySystem)
             m_inventoryControllers.TryGetValue(targetInventorySystem, out targetController);
 
-        m_dragHandler.OnEndDrag(targetSlotIndex, isValidDrop, isOutsideInventory, targetController);
+        m_dragHandler.OnEndDrag(targetSlotIndex, isValidDrop, isOutsideInventory, targetController, isTrashDrop);
     }
 
     /// <summary>

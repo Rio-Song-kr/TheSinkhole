@@ -51,10 +51,14 @@ public class InventoryDragHandler
         int targetSlotIndex,
         bool isValidDrop,
         bool isOutsideInventory,
-        InventoryItemController targetInventoryController = null
+        InventoryItemController targetInventoryController = null,
+        bool isTrashDrop = false
     )
     {
-        //# 수정됨
+        if (isTrashDrop)
+        {
+            HandleTrashDrop();
+        }
         //# 마우스가 인벤토리 영역 안에 있고, 슬롯 영역에 영역에 있으면서 아이템을 가지고 있는 경우
         if (m_mouseItemView.HasItem() && isValidDrop && !isOutsideInventory)
         {
@@ -117,5 +121,25 @@ public class InventoryDragHandler
 
         m_mouseItemView.ClearItem();
         ClearOriginalSlotState();
+    }
+
+    /// <summary>
+    /// 휴지통에 드롭했을 때의 처리
+    /// 드래그 중인 아이템을 완전히 삭제
+    /// </summary>
+    private void HandleTrashDrop()
+    {
+        if (m_mouseItemView.HasItem())
+        {
+            var mouseItem = m_mouseItemView.GetCurrentItem();
+
+            //todo Item 정보 팝업창 구현 후 팝업창으로 전달
+            Debug.Log($"아이템 '{mouseItem.ItemDataSO.name}' {mouseItem.ItemCount}개가 휴지통으로 이동되어 삭제되었습니다.");
+
+            m_mouseItemView.ClearItem();
+            ClearOriginalSlotState();
+
+            //todo 아이템 삭제 효과음이나 파티클 효과 추가
+        }
     }
 }
