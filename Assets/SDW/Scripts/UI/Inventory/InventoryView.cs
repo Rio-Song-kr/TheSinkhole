@@ -17,6 +17,17 @@ public abstract class InventoryView : MonoBehaviour, IInventoryView
     protected virtual void Awake()
     {
         m_slotViews = GetComponentsInChildren<InventorySlotView>();
+
+        if (m_slotViews[0].IsTrashSlot)
+        {
+            var tempSlotView = m_slotViews[0];
+
+            for (int i = 1; i < m_slotViews.Length; i++)
+            {
+                m_slotViews[i - 1] = m_slotViews[i];
+            }
+            m_slotViews[m_slotViews.Length - 1] = tempSlotView;
+        }
         m_presenter = GetComponent<InventoryPresenter>();
     }
 

@@ -18,6 +18,11 @@ public interface IMouseItemView
     void ClearItem();
 
     /// <summary>
+    /// 마우스의 아이템을 드롭 
+    /// </summary>
+    void DropItem();
+
+    /// <summary>
     /// 마우스 위치에 따라 아이템 표시 위치를 업데이트
     /// </summary>
     void UpdatePosition();
