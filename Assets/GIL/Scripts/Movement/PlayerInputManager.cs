@@ -9,6 +9,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private PlayerMotor motor;
     private PlayerLook look;
+    private InteractionTestfromKSTtoGIL interact;
     public bool isSprinting;
 
     private float lookDelaytimer = 0.5f;
@@ -20,9 +21,11 @@ public class PlayerInputManager : MonoBehaviour
         onFoot = playerInput.OnFoot;
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
+        interact = GetComponent<InteractionTestfromKSTtoGIL>();
         onFoot.Jump.performed += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
         onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
+        onFoot.Attack.performed += ctx => interact.MouseInteraction();
     }
 
     /// <summary>
@@ -33,6 +36,22 @@ public class PlayerInputManager : MonoBehaviour
         if (allowMove)
         {
             motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
+        }
+        else
+        {
+            lookDelaytimer -= Time.fixedDeltaTime;
+            if (lookDelaytimer <= 0f) allowMove = true;
+        }
+    }
+
+    /// <summary>
+    /// LateUpdate is called every frame, if the Behaviour is enabled.
+    /// It is called after all Update functions have been called.
+    /// </summary>
+    void LateUpdate()
+    {
+        if (allowMove)
+        {
             look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
         }
         else
