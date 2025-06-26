@@ -15,6 +15,7 @@ public class GridBuildingSystem : MonoBehaviour
 
     private Building temp;
     private Vector3 prevPos;
+    private BoundsInt prevArea;
 
     #region Unity Methods
 
@@ -107,6 +108,7 @@ public class GridBuildingSystem : MonoBehaviour
                     temp.transform.localPosition = gridLayout.CellToLocalInterpolated(cellPos + new Vector3(.5f, .5f, 0f));
                     // 현재 위치를 이전 위치로 저장
                     prevPos = cellPos;
+                    FollowBuilding();
                 }
             }
         }
@@ -121,9 +123,57 @@ public class GridBuildingSystem : MonoBehaviour
         /* 건물 프리팹을 (0, 0, 0) 위치에 회전 없이 생성하고
         생성된 오브젝트에서 Building 컴포넌트를 가져와 temp 변수에 저장 */
         temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
+        FollowBuilding();
     }
 
-#endregion
+    private void ClearArea()
+    {
+        // 이전 영역 크기만큼 타일 배열 생성
+        TileBase[] toClear = new TileBase[prevArea.size.x * prevArea.size.y * prevArea.size.z];
+        // 모든 타일을 빈 타일로 채움
+        FillTiles(toClear, TileType.Empty);
+        // 이전 영역에 빈 타일 설정
+        TempTilemap.SetTilesBlock(prevArea, toClear);
+    }
+
+    private void FollowBuilding()
+    {
+        // 이전 영역 초기화
+        ClearArea();
+
+        // 현재 오브젝트 위치를 셀 기준 좌표로 변환하여 영역 위치 설정
+        temp.area.position = gridLayout.WorldToCell(temp.gameObject.transform.position);
+        BoundsInt buildingArea = temp.area;
+
+        // 건물이 위치할 영역의 기존 메인 타일맵 데이터 가져오기
+        TileBase[] baseArray = GetTilesBlock(buildingArea, MainTilemap);
+
+        // 새 타일 배열 생성
+        int size = baseArray.Length;
+        TileBase[] tileArray = new TileBase[size];
+
+        // 건물이 놓일 수 있는 위치인지 확인
+        for (int i = 0; i < baseArray.Length; i++)
+        {
+            if (baseArray[i] == tileBases[TileType.White])
+            {
+                // 흰 타일 위면 초록색으로 표시 (건물 설치 가능)
+                tileArray[i] = tileBases[TileType.Green];
+            }
+            else
+            {
+                // 하나라도 조건 불충족 시 전체 영역을 빨간색으로 표시 (건물 설치 불가)
+                FillTiles(tileArray, TileType.Red);
+                break;
+            }
+        }
+        // 임시 타일맵에 상태 표시 타일 적용
+        TempTilemap.SetTilesBlock(buildingArea, tileArray);
+        // 현재 영역을 prevArea에 저장하여 다음에 초기화 가능하도록 함
+        prevArea = buildingArea;
+    }
+
+    #endregion
 
 }
 // 타일 타입 지정
