@@ -11,13 +11,13 @@ public class FarmUI : Singleton<FarmUI>
 
     [Header("UI")]
     public GameObject FarmUIGO;
+    public bool GetActiveself() => FarmUIGO.activeSelf;
 
     //작물 Detail
     public GameObject DetailGO;
     [SerializeField] private Image cropImg;
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
-    // [SerializeField] private TMP_Text cropTime;
     [SerializeField] private TMP_Text m_statusText;
     public Image PrograssBarImg;
     public Button[] cropButtons;
@@ -25,8 +25,13 @@ public class FarmUI : Singleton<FarmUI>
     private float pressTimer = 0f;
     private float pressDuration = 5f;
     private bool isPressingE = false;
+    //스크롤뷰
+    [SerializeField] private GameObject cropBtnPrefab;
+    [SerializeField] private Transform scrollViewContentPos; //스크롤뷰 컨텐츠 위치
+
     //오픈 관련 이벤트 처리
     public event Action<bool> OnIsUIOpen;
+
 
     [Header("Tile")]
     [SerializeField] private FarmTile currentTile;
@@ -34,6 +39,7 @@ public class FarmUI : Singleton<FarmUI>
 
     void Start()
     {
+        ScrollViewSetting();
         m_statusText.text = "";
         PrograssBarImg.fillAmount = 0f;
     }
@@ -127,7 +133,7 @@ public class FarmUI : Singleton<FarmUI>
         }
 
         DisplayCropDetail(selectedCrop);
-        
+
 
         if (currentTile != null && !currentTile.IsPlanted())
         {
@@ -177,8 +183,18 @@ public class FarmUI : Singleton<FarmUI>
         // cropDesc.text = $"Time Required : {data.growTime} \n {data.cropDesc} \n Hungry : {data.cropEffect} %";
         cropDesc.text = $"소요 시간 : {data.growTime}초 \n {data.cropDesc} \n 배고픔 : {data.cropEffect} %";
     }
-    public bool GetActiveself()
+    public void ScrollViewSetting()
     {
-        return FarmUIGO.activeSelf;
+        foreach (Transform child in scrollViewContentPos)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (var crop in CropList)
+        {
+            GameObject go = Instantiate(cropBtnPrefab, scrollViewContentPos);
+            CropBtn cropBtn = go.GetComponent<CropBtn>();
+            cropBtn.Init(crop);
+        }
     }
+    
 }
