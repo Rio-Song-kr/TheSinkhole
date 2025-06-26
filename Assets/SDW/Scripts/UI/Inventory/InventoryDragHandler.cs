@@ -77,7 +77,7 @@ public class InventoryDragHandler
         //# 마우스가 인벤토리 영역 밖에 있는 경우
         if (isOutsideInventory)
         {
-            m_mouseItemView.ClearItem();
+            m_mouseItemView.DropItem();
             ClearOriginalSlotState();
             return;
         }
