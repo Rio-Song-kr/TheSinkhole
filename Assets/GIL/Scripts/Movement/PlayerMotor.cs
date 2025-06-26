@@ -9,23 +9,29 @@ public class PlayerMotor : MonoBehaviour
     private PlayerInputManager playerInput;
     private Vector3 playerVelocity;
     private bool isGrounded;
+
     public float gravity = -9.8f;
     public float jumpHeight = 1.5f;
     public float sprintingSpeed = 2f;
     public float speed;
+
+    [Header("Slope Slide")]
+    private float slopeLimit; // 경사 제한 각도
+    public float slideSpeed = 3f;  // 미끄러짐 속도
+    public float slopeRayLength = 1.6f;
+
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
     [Header("Test")]
     public TextMeshProUGUI curMoveVelocityText;
     public GameObject panel;
     private void Awake()
     {
-        speed = PlayerStatus.Instance.CurPlayerMoveSpeed;
-        Cursor.lockState = CursorLockMode.Locked;
+        controller = GetComponent<CharacterController>();
+        playerInput = GetComponent<PlayerInputManager>();
     }
     private void Start()
     {
-        controller = GetComponent<CharacterController>();
-        playerInput = GetComponent<PlayerInputManager>();
+        slopeLimit = controller.slopeLimit;
     }
 
     /// <summary>
@@ -73,19 +79,19 @@ public class PlayerMotor : MonoBehaviour
         float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving ? speed * sprintingSpeed : speed;
         Vector3 moveVelocity = worldMoveDir * currentSpeed;
 
+        if (IsOnSlope(out Vector3 slopeDirection) && isGrounded) moveVelocity += slopeDirection * slideSpeed;
+
         // TODO : [Test] 추후에 개발이 완성되면 지울 것!
         #region [Test]
         float horizontalSpeed = new Vector3(moveVelocity.x, 0f, moveVelocity.z).magnitude;
         if (curMoveVelocityText != null) curMoveVelocityText.text = $"Speed: {horizontalSpeed:F2}";
         #endregion
-        
-        controller.Move(moveVelocity * Time.deltaTime);
-        playerVelocity.y += gravity * Time.deltaTime;
-        if (isGrounded && playerVelocity.y < 0f)
-        {
-            playerVelocity.y = -2f;
-        }
-        controller.Move(playerVelocity * Time.deltaTime);
+
+        if (isGrounded && playerVelocity.y < 0f) playerVelocity.y = -1f;
+        else playerVelocity.y += gravity * Time.deltaTime;
+
+        Vector3 totalVelocity = moveVelocity + playerVelocity;
+        controller.Move(totalVelocity * Time.deltaTime);
     }
 
     public void Jump()
@@ -94,5 +100,27 @@ public class PlayerMotor : MonoBehaviour
         {
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
+    }
+    
+    /// <summary>
+    /// 슬로프 위인지 감지하고, 슬로프 방향을 반환
+    /// </summary>
+    private bool IsOnSlope(out Vector3 slopeDirection)
+    {
+        slopeDirection = Vector3.zero;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeRayLength))
+        {
+            Vector3 normal = hit.normal;
+            float angle = Vector3.Angle(normal, Vector3.up);
+
+            if (angle > 0.1f && angle <= controller.slopeLimit)
+            {
+                slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, normal), normal).normalized;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

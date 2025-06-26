@@ -36,6 +36,22 @@ public class PlayerInputManager : MonoBehaviour
         if (allowMove)
         {
             motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>(), isSprinting);
+        }
+        else
+        {
+            lookDelaytimer -= Time.fixedDeltaTime;
+            if (lookDelaytimer <= 0f) allowMove = true;
+        }
+    }
+
+    /// <summary>
+    /// LateUpdate is called every frame, if the Behaviour is enabled.
+    /// It is called after all Update functions have been called.
+    /// </summary>
+    void LateUpdate()
+    {
+        if (allowMove)
+        {
             look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
         }
         else
