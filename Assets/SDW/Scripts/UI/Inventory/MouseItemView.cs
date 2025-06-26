@@ -16,6 +16,7 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     [SerializeField] private TextMeshProUGUI m_itemCount;
 
     private InventorySlot m_currentItem;
+    private GameObject m_player;
 
     /// <summary>
     /// 컴포넌트 초기화 및 기본 설정
@@ -32,6 +33,8 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         m_currentItem = new InventorySlot();
         ClearItem();
     }
+
+    private void Start() => m_player = GameObject.FindGameObjectWithTag("Player");
 
     /// <summary>
     /// 매 프레임마다 아이템을 들고 있을 때 마우스 위치를 업데이트
@@ -67,6 +70,18 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         m_itemSprite.sprite = null;
         m_itemSprite.color = Color.clear;
         m_itemCount.text = "";
+    }
+
+    public void DropItem()
+    {
+        Debug.Log($"{m_player.transform.position} - {m_player.transform.forward}");
+        //todo drop 시 object pool에서 아이템 꺼내오기
+        Instantiate(
+            m_currentItem.ItemDataSO.ModelPrefab,
+            m_player.transform.position + m_player.transform.forward * 2f + m_player.transform.up * 0.5f,
+            Quaternion.identity
+        );
+        ClearItem();
     }
 
     /// <summary>
