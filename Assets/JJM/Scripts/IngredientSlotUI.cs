@@ -14,6 +14,7 @@ namespace CraftingSystem
 
         public void Set(ItemDataSO item, int count)
         {
+            Debug.Log($"Set »£√‚: {item?.name}, {count}");
             iconImage.sprite = item.Icon;
             nameText.text = item.name;
             countText.text = $"x{count}";

@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c476cc70caa244ca0d5982b83b8828, type: 3}
   m_Name: Recipe1
   m_EditorClassIdentifier: 
-  ingredients: []
+  ingredients:
+  - item: {fileID: 11400000, guid: 62665f4a10f37db4f9b80124a198ffd1, type: 2}
+    count: 1
+  - item: {fileID: 11400000, guid: 65b851bfeab89fb499b73751928cb84e, type: 2}
+    count: 1
   result:
-    item: {fileID: 0}
-    count: 0
+    item: {fileID: 11400000, guid: 307df3be8966cea4ab1f10c092cd8549, type: 2}
+    count: 1
   craftingTime: 5
-  icon: {fileID: 0}
+  icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
