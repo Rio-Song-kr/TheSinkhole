@@ -5,13 +5,13 @@ public class CropBtn : MonoBehaviour
 {
     private CropDataSO m_cropDataSO;
     [SerializeField]private Image m_image;
-    private Button m_button;
+    public Button Btn;
 
     void Awake()
     {
-        if (m_button == null)
-            m_button = GetComponent<Button>();
-        m_button.onClick.AddListener(OnUIDetail);
+        if (Btn == null)
+            Btn = GetComponent<Button>();
+        Btn.onClick.AddListener(OnUIDetail);
 
     }
     public void Init(CropDataSO cropDataSO)

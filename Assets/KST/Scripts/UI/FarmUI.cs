@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,7 +61,11 @@ public class FarmUI : Singleton<FarmUI>
                 if (growTimer < 0f)
                 {
                     growTimer = 0f;
-                    m_statusText.text = $"재배 완료! 수확 하세요";
+                    m_statusText.text = $"재배 완료! 수확하려면 [E]키를 누르세요";
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Harvest();
+                    }
                 }
 
             }
@@ -185,6 +190,7 @@ public class FarmUI : Singleton<FarmUI>
     }
     public void ScrollViewSetting()
     {
+        List<Button> btnList = new();
         foreach (Transform child in scrollViewContentPos)
         {
             Destroy(child.gameObject);
@@ -194,7 +200,33 @@ public class FarmUI : Singleton<FarmUI>
             GameObject go = Instantiate(cropBtnPrefab, scrollViewContentPos);
             CropBtn cropBtn = go.GetComponent<CropBtn>();
             cropBtn.Init(crop);
+            btnList.Add(cropBtn.Btn);
+        }
+        cropButtons = btnList.ToArray();
+    }
+
+    //수확
+    private void Harvest()
+    {
+        Debug.Log("수확 시스템 ON");
+
+        //1. 인벤토리 공간 확인
+        //2. 인벤토리에 추가
+
+
+        currentTile.HarvestingCrop();
+
+        //초기화
+        growTimer = 0f;
+        selectedCrop = null;
+        PrograssBarImg.fillAmount = 0f;
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
+
+        foreach (var btn in cropButtons)
+        {
+            btn.interactable = true;
         }
     }
+
     
 }

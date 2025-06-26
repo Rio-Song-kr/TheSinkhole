@@ -628,6 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_image: {fileID: 0}
+  Btn: {fileID: 0}
 --- !u!114 &281150880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2067,6 +2068,7 @@ MonoBehaviour:
   CropList:
   - {fileID: 11400000, guid: 2f4e7c04db47242b38436a7e09b1287d, type: 2}
   - {fileID: 11400000, guid: 4c5ce3e053b6947b8be9ddb0a98a17da, type: 2}
+  - {fileID: 11400000, guid: 791cf5043f4bf4e8a84eada14ac40bd4, type: 2}
   FarmUIGO: {fileID: 1038237464}
   DetailGO: {fileID: 1856774271}
   cropImg: {fileID: 1158886230}
@@ -2074,9 +2076,7 @@ MonoBehaviour:
   cropDesc: {fileID: 803526991}
   m_statusText: {fileID: 1737204312}
   PrograssBarImg: {fileID: 535029973}
-  cropButtons:
-  - {fileID: 1550894330}
-  - {fileID: 1586473338}
+  cropButtons: []
   cropBtnPrefab: {fileID: 4052879230427865420, guid: 5b2db0dc974bd4e4196466ac681f31c1,
     type: 3}
   scrollViewContentPos: {fileID: 1027764695}
@@ -2827,18 +2827,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1978917846290973375}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1550894330 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7483355951907739049, guid: 5b2db0dc974bd4e4196466ac681f31c1,
-    type: 3}
-  m_PrefabInstance: {fileID: 1978917846290973375}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1584144495
 GameObject:
   m_ObjectHideFlags: 0
@@ -3012,6 +3000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_image: {fileID: 0}
+  Btn: {fileID: 0}
 --- !u!1 &1629744558
 GameObject:
   m_ObjectHideFlags: 0

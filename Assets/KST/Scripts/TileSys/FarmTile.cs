@@ -63,6 +63,18 @@ public class FarmTile : MonoBehaviour, IToolInteractable
         m_isPlanted = true;
         growingCrop = crop;
     }
+    //수확 메서드
+    public void HarvestingCrop()
+    {
+        m_isPlanted = false;
+        growingCrop = null;
+        
+    }
+
+    void setInteraction(bool _status)
+    {
+        InteractUiText.SetActive(_status);
+    }
 
     #region 충돌처리
 
@@ -86,10 +98,7 @@ public class FarmTile : MonoBehaviour, IToolInteractable
 
         }
     }
-    void setInteraction(bool _status)
-    {
-        InteractUiText.SetActive(_status);
-    }
+
 
     void OnTriggerExit(Collider other)
     {
