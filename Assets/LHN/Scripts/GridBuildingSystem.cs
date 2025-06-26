@@ -19,49 +19,6 @@ public class GridBuildingSystem : MonoBehaviour
 
     #region Unity Methods
 
-    // 지정된 영역의 타일 정보를 배열로 가져오는 함수
-    private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
-    {
-        // 영역 크기만큼의 배열 생성
-        TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];
-        int counter = 0;
-
-        // 영역 내 모든 좌표를 순회
-        foreach (var v in area.allPositionsWithin)
-        {
-            Vector3Int pos = new Vector3Int(v.x, v.y, v.z);
-            // 해당 위치의 타일을 배열에 저장
-            array[counter] = tilemap.GetTile(pos);
-            counter++;
-        }
-
-        return array;
-    }
-
-    // 타일 배열을 특정 타일 타입으로 채우는 함수
-    private static void FillTiles(TileBase[] arr, TileType type)
-    {
-        for (int i = 0; i < arr.Length; i++)
-        {
-            // 배열의 모든 요소를 지정된 타입의 타일로 설정
-            arr[i] = tileBases[type];
-        }
-    }
-
-    // 지정된 영역에 특정 타입의 타일을 일괄적으로 설정하는 함수
-    private static void SetTilesBlock(BoundsInt area, TileType type, Tilemap tilemap)
-    {
-        // 영역 크기만큼의 타일 배열 생성
-        int size = area.size.x * area.size.y * area.size.z;
-        TileBase[] tileArray = new TileBase[size];
-
-        // 배열을 원하는 타일로 채움
-        FillTiles(tileArray, type);
-
-        // 타일맵에 해당 영역을 한 번에 설정
-        tilemap.SetTilesBlock(area, tileArray);
-    }
-
     private void Awake()
     {
         current = this;
@@ -112,11 +69,74 @@ public class GridBuildingSystem : MonoBehaviour
                 }
             }
         }
+        // 스페이스바를 눌렀을 경우
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // 임시 오브젝트가 해당 위치에 배치 가능하면
+            if (temp.CanBePlaced())
+            {
+                // 오브젝트를 배치
+                temp.Place();
+            }
+        }
+        // ESC 키를 눌렀을 경우
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // 임시 배치 영역 초기화 (타일 리셋 등)
+            ClearArea();
+
+            // 임시 오브젝트 삭제
+            Destroy(temp.gameObject);
+        }
+
     }
 
     #endregion
 
     #region Tilemap Management
+
+    // 지정된 영역의 타일 정보를 배열로 가져오는 함수
+    private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
+    {
+        // 영역 크기만큼의 배열 생성
+        TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];
+        int counter = 0;
+
+        // 영역 내 모든 좌표를 순회
+        foreach (var v in area.allPositionsWithin)
+        {
+            Vector3Int pos = new Vector3Int(v.x, v.y, v.z);
+            // 해당 위치의 타일을 배열에 저장
+            array[counter] = tilemap.GetTile(pos);
+            counter++;
+        }
+
+        return array;
+    }
+
+    // 타일 배열을 특정 타일 타입으로 채우는 함수
+    private static void FillTiles(TileBase[] arr, TileType type)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            // 배열의 모든 요소를 지정된 타입의 타일로 설정
+            arr[i] = tileBases[type];
+        }
+    }
+
+    // 지정된 영역에 특정 타입의 타일을 일괄적으로 설정하는 함수
+    private static void SetTilesBlock(BoundsInt area, TileType type, Tilemap tilemap)
+    {
+        // 영역 크기만큼의 타일 배열 생성
+        int size = area.size.x * area.size.y * area.size.z;
+        TileBase[] tileArray = new TileBase[size];
+
+        // 배열을 원하는 타일로 채움
+        FillTiles(tileArray, type);
+
+        // 타일맵에 해당 영역을 한 번에 설정
+        tilemap.SetTilesBlock(area, tileArray);
+    }
 
     #endregion
 
