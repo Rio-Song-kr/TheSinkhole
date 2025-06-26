@@ -13,9 +13,11 @@ public class GridBuildingSystem : MonoBehaviour
 
     private static Dictionary<TileType, TileBase> tileBases = new Dictionary<TileType, TileBase>();
 
+    private Building temp;
+    private Vector3 prevPos;
 
     #region Unity Methods
-    
+
     // 지정된 영역의 타일 정보를 배열로 가져오는 함수
     private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
@@ -75,9 +77,20 @@ public class GridBuildingSystem : MonoBehaviour
 
     #endregion
 
+    #region Buildilng Placement
+
+    public void InitializeWithBuilding(GameObject building)
+    {
+        /* 건물 프리팹을 (0, 0, 0) 위치에 회전 없이 생성하고
+        생성된 오브젝트에서 Building 컴포넌트를 가져와 temp 변수에 저장 */
+        temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
+    }
+
+#endregion
+
 }
 // 타일 타입 지정
 public enum TileType
 {
-    Empty, White, Green, Red
+Empty, White, Green, Red
 }
