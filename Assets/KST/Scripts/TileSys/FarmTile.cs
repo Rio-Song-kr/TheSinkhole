@@ -11,10 +11,11 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
+    private bool m_isInteract;
     //농사창 UI
-    public GameObject FarmUIObj;
+    // public GameObject FarmUIObj;
 
-    [SerializeField]private CropDataSO growingCrop;
+    [SerializeField] private CropDataSO growingCrop;
     public CropDataSO GetGrownCrop() => growingCrop;
 
     // 개척지가 있고, 괭이를 통해 농사지을 수 있고, 시간이 지나면 수확 알아서 가능하도록. 씨뿌리기 x, 타일 설치하고 일정시간 지나면 알아서 수확만 가능하도록.
@@ -23,7 +24,15 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     //     m_isPlanted = true;
 
     // }
-
+    void OnEnable()
+    {
+        FarmUI.Instance.OnIsUIOpen +=setInteraction;
+    }
+    void OnDisable()
+    {
+        FarmUI.Instance.OnIsUIOpen -=setInteraction;
+    }
+    
     #region 상호작용 인터페이스 구현
     public interactType GetInteractType()
     {
@@ -32,13 +41,16 @@ public class FarmTile : MonoBehaviour, IToolInteractable
 
     public bool CanInteract(ToolType toolType)
     {
-        return m_isPlayerOnFarmTile && !m_isPlanted && toolType == ToolType.Shovel;
+        // return m_isPlayerOnFarmTile && !m_isPlanted && toolType == ToolType.Shovel;
+        return m_isPlayerOnFarmTile && toolType == ToolType.Shovel;
     }
     public void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None || m_isPlanted) return;
 
-        FarmUIObj.SetActive(true);
+        // FarmUIObj.SetActive(true);
+        FarmUI.Instance.OpenUI();
+        // m_isInteract = false;
         FarmUI.Instance.SetTile(this);
         InteractUiText.SetActive(false);
 
@@ -54,16 +66,29 @@ public class FarmTile : MonoBehaviour, IToolInteractable
 
     #region 충돌처리
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            //플레이어가 타일위에 있는지
             m_isPlayerOnFarmTile = true;
-            InteractUiText.SetActive(true);
+            // //플레이어가 상호작용을 통해 UI를 오픈했는지.
+            // if (!FarmUI.Instance.GetActiveself())
+            // {
+            //     InteractUiText.SetActive(true);
+            // }
+            if (!FarmUI.Instance.GetActiveself())
+            {
+                InteractUiText.SetActive(true);
+            }
             Interaction player = other.GetComponent<Interaction>();
             player?.RegisterTrigger(this);
 
         }
+    }
+    void setInteraction(bool _status)
+    {
+        InteractUiText.SetActive(_status);
     }
 
     void OnTriggerExit(Collider other)
