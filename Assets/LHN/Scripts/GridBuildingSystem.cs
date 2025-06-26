@@ -82,10 +82,8 @@ public class GridBuildingSystem : MonoBehaviour
         // ESC 키를 눌렀을 경우
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // 임시 배치 영역 초기화 (타일 리셋 등)
             ClearArea();
-
-            // 임시 오브젝트 삭제
+            // 가장 최근에 생성한 구조물 삭제 (실행 취소와 같은 느낌)
             Destroy(temp.gameObject);
         }
 
