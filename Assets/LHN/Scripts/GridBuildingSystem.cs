@@ -173,6 +173,35 @@ public class GridBuildingSystem : MonoBehaviour
         prevArea = buildingArea;
     }
 
+    // 주어진 영역이 건물 설치 가능한지 확인
+    public bool CanTakeArea(BoundsInt area)
+    {
+        // MainTilemap에서 지정한 영역(area)의 모든 타일을 가져옴
+        TileBase[] baseArray = GetTilesBlock(area, MainTilemap);
+
+        // 각 타일을 하나씩 검사
+        foreach (var b in baseArray)
+        {
+            // 흰색 타일(설치 가능한 타일)이 아닌 경우가 하나라도 있으면
+            if (b != tileBases[TileType.White])
+            {
+                // 설치 불가 출력 후 false 반환
+                Debug.Log("설치 불가");
+                return false;
+            }
+        }
+
+        // 모든 타일이 흰색이면 설치 가능하므로 true 반환
+        return true;
+    }
+
+    public void TakeArea(BoundsInt area)
+    {
+        SetTilesBlock(area, TileType.Empty, TempTilemap);
+        SetTilesBlock(area, TileType.Green, MainTilemap);
+    }
+}
+
     #endregion
 
 }
