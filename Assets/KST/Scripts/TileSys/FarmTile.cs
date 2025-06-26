@@ -46,7 +46,7 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     }
     public void OnInteract(ToolType toolType)
     {
-        if (toolType == ToolType.None || m_isPlanted) return;
+        if (toolType == ToolType.None) return;
 
         // FarmUIObj.SetActive(true);
         FarmUI.Instance.OpenUI();

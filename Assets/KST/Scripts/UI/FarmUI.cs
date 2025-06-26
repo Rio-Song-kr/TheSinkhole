@@ -32,10 +32,11 @@ public class FarmUI : Singleton<FarmUI>
     [SerializeField] private FarmTile currentTile;
     [SerializeField] private float growTimer = 0f;
 
-    // void Start()
-    // {
-    //     m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-    // }
+    void Start()
+    {
+        m_statusText.text = "";
+        PrograssBarImg.fillAmount = 0f;
+    }
 
     void Update()
     {
@@ -90,8 +91,8 @@ public class FarmUI : Singleton<FarmUI>
 
         pressTimer = 0f;
         PrograssBarImg.fillAmount = 0f;
-        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
         isPressingE = false;
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
     public void SetTile(FarmTile tile)
     {
@@ -100,7 +101,6 @@ public class FarmUI : Singleton<FarmUI>
         if (tile.IsPlanted())
         {
             DisplayCropDetail(tile.GetGrownCrop());
-            growTimer = tile.GetGrownCrop().growTime;
         }
         else
         {
@@ -117,19 +117,23 @@ public class FarmUI : Singleton<FarmUI>
     {
         Debug.Log("농사 UI open");
         FarmUIGO.SetActive(true);
-        // if (selectedCrop == null)
-        //     DetailGO.SetActive(false);
-        if (selectedCrop != null)
+        OnIsUIOpen?.Invoke(true);
+        if (selectedCrop == null)
         {
-            // DetailGO.SetActive(true);
-            DisplayCropDetail(selectedCrop);
+            m_statusText.text = "";
+            PrograssBarImg.fillAmount = 0f;
+            DetailGO.SetActive(false);
+            return;
         }
+
+        DisplayCropDetail(selectedCrop);
+        
+
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
             PrograssBarImg.fillAmount = 0f;
         }
-        OnIsUIOpen?.Invoke(true);
     }
     public void CloseUI()
     {
@@ -166,6 +170,8 @@ public class FarmUI : Singleton<FarmUI>
     }
     public void DisplayCropDetail(CropDataSO data)
     {
+        DetailGO.SetActive(true);
+
         cropImg.sprite = data.cropImg;
         cropName.text = data.cropName;
         // cropDesc.text = $"Time Required : {data.growTime} \n {data.cropDesc} \n Hungry : {data.cropEffect} %";
