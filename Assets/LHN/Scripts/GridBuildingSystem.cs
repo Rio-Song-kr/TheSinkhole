@@ -75,9 +75,46 @@ public class GridBuildingSystem : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        // temp가 없으면 실행하지 않음
+        if (!temp)
+        {
+            return;
+        }
+
+        // 마우스 왼쪽 버튼이 눌렸을 경우
+        if (Input.GetMouseButtonDown(0))
+        {
+            // 클릭한 위치가 UI 요소 위인지 확인 (UI 위면 조작 무시)
+            if (EventSystem.current.IsPointerOverGameObject(0))
+            {
+                return;
+            }
+
+            // temp 오브젝트가 아직 배치되지 않았을 경우에만 위치 조정
+            if (!temp.Placed)
+            {
+                // 마우스 클릭 위치를 월드 좌표계로 변환
+                Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                // 월드 좌표를 셀 좌표로 변환
+                Vector3Int cellPos = gridLayout.LocalToCell(touchPos);
+
+                // 이전 위치와 다를 경우에만 위치 업데이트
+                if (prevPos != cellPos)
+                {
+                    // 오브젝트가 셀의 중앙에 오도록 위치 조정
+                    temp.transform.localPosition = gridLayout.CellToLocalInterpolated(cellPos + new Vector3(.5f, .5f, 0f));
+                    // 현재 위치를 이전 위치로 저장
+                    prevPos = cellPos;
+                }
+            }
+        }
+    }
+
     #endregion
 
-    #region Buildilng Placement
+        #region Buildilng Placement
 
     public void InitializeWithBuilding(GameObject building)
     {
