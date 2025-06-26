@@ -20,6 +20,7 @@ public class PlayerMotor : MonoBehaviour
     private void Awake()
     {
         speed = PlayerStatus.Instance.CurPlayerMoveSpeed;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     private void Start()
     {
