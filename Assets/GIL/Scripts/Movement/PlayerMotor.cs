@@ -9,6 +9,7 @@ public class PlayerMotor : MonoBehaviour
     private PlayerInputManager playerInput;
     private Vector3 playerVelocity;
     private bool isGrounded;
+    private Vector3 moveVelocity;
 
     public float gravity = -9.8f;
     public float jumpHeight = 1.5f;
@@ -16,9 +17,17 @@ public class PlayerMotor : MonoBehaviour
     public float speed;
 
     [Header("Slope Slide")]
+    private float slopeMinAngle = 10f;
     private float slopeLimit; // 경사 제한 각도
     public float slideSpeed = 3f;  // 미끄러짐 속도
     public float slopeRayLength = 1.6f;
+
+    private enum SlopeType
+    {
+        Plane,
+        Walkable,
+        Steep,
+    }
 
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
     [Header("Test")]
@@ -77,21 +86,21 @@ public class PlayerMotor : MonoBehaviour
         Vector3 moveDir = new Vector3(input.x, 0, input.y);
         Vector3 worldMoveDir = transform.TransformDirection(moveDir);
         float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving ? speed * sprintingSpeed : speed;
-        Vector3 moveVelocity = worldMoveDir * currentSpeed;
+        moveVelocity = worldMoveDir * currentSpeed;
 
-        if (IsOnSlope(out Vector3 slopeDirection) && isGrounded) moveVelocity += slopeDirection * slideSpeed;
+        GetSlopeType(out Vector3 slopeType);
+        
+        if (isGrounded && playerVelocity.y < 0f) playerVelocity.y = -100f;
+        else playerVelocity.y += gravity * Time.deltaTime;
+
+        Vector3 totalVelocity = moveVelocity + playerVelocity;
+        controller.Move(totalVelocity * Time.deltaTime);
 
         // TODO : [Test] 추후에 개발이 완성되면 지울 것!
         #region [Test]
         float horizontalSpeed = new Vector3(moveVelocity.x, 0f, moveVelocity.z).magnitude;
         if (curMoveVelocityText != null) curMoveVelocityText.text = $"Speed: {horizontalSpeed:F2}";
         #endregion
-
-        if (isGrounded && playerVelocity.y < 0f) playerVelocity.y = -1f;
-        else playerVelocity.y += gravity * Time.deltaTime;
-
-        Vector3 totalVelocity = moveVelocity + playerVelocity;
-        controller.Move(totalVelocity * Time.deltaTime);
     }
 
     public void Jump()
@@ -101,11 +110,11 @@ public class PlayerMotor : MonoBehaviour
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
     }
-    
+
     /// <summary>
     /// 슬로프 위인지 감지하고, 슬로프 방향을 반환
     /// </summary>
-    private bool IsOnSlope(out Vector3 slopeDirection)
+    private SlopeType GetSlopeType(out Vector3 slopeDirection)
     {
         slopeDirection = Vector3.zero;
 
@@ -114,13 +123,41 @@ public class PlayerMotor : MonoBehaviour
             Vector3 normal = hit.normal;
             float angle = Vector3.Angle(normal, Vector3.up);
 
-            if (angle > 0.1f && angle <= controller.slopeLimit)
+            if (angle < slopeMinAngle)
             {
-                slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, normal), normal).normalized;
-                return true;
+                Debug.Log("평면입니다");
+                return SlopeType.Plane;
+            }
+
+            slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, normal), normal).normalized;
+
+            if (angle <= slopeLimit)
+            {
+                Debug.Log("걸을 수 있는 언덕입니다");
+                return SlopeType.Walkable;
+            }
+            else
+            {
+                Debug.Log("가파른 언덕입니다");
+                return SlopeType.Steep;
             }
         }
+        Debug.Log("평면입니다.");
+        return SlopeType.Plane;
+    }
 
-        return false;
+    private void GetSlopeMovement()
+    {
+        SlopeType slopeType = GetSlopeType(out Vector3 slopeDirection);
+
+        if (slopeType == SlopeType.Steep && isGrounded)
+        {
+            moveVelocity = slopeDirection * slideSpeed;
+        }
+        else if (slopeType == SlopeType.Walkable && isGrounded)
+        {
+            moveVelocity = Vector3.ProjectOnPlane(moveVelocity, Vector3.up);
+            moveVelocity = Vector3.Project(moveVelocity, slopeDirection.normalized);
+        }
     }
 }
