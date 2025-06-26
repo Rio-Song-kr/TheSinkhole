@@ -116,8 +116,13 @@ public class GridBuildingSystem : MonoBehaviour
 
     #endregion
 
-        #region Buildilng Placement
+    #region Tilemap Management
 
+    #endregion
+
+    #region Buildilng Placement
+
+    // 전달받은 건물 프리팹을 기반으로 임시 Building 객체를 생성하는 함수
     public void InitializeWithBuilding(GameObject building)
     {
         /* 건물 프리팹을 (0, 0, 0) 위치에 회전 없이 생성하고
@@ -126,6 +131,7 @@ public class GridBuildingSystem : MonoBehaviour
         FollowBuilding();
     }
 
+    // 이전에 표시된 임시 영역을 초기화 (빈 타일로 덮음)
     private void ClearArea()
     {
         // 이전 영역 크기만큼 타일 배열 생성
@@ -138,7 +144,7 @@ public class GridBuildingSystem : MonoBehaviour
 
     private void FollowBuilding()
     {
-        // 이전 영역 초기화
+        // 먼저 이전 영역 초기화
         ClearArea();
 
         // 현재 오브젝트 위치를 셀 기준 좌표로 변환하여 영역 위치 설정
@@ -201,12 +207,11 @@ public class GridBuildingSystem : MonoBehaviour
         SetTilesBlock(area, TileType.Green, MainTilemap);
     }
 }
+#endregion
 
-    #endregion
 
-}
 // 타일 타입 지정
 public enum TileType
 {
-Empty, White, Green, Red
+    Empty, White, Green, Red
 }
