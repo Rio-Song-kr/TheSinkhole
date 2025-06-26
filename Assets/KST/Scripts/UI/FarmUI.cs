@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,12 +12,13 @@ public class FarmUI : Singleton<FarmUI>
 
     [Header("UI")]
     public GameObject FarmUIGO;
+    public bool GetActiveself() => FarmUIGO.activeSelf;
 
     //작물 Detail
+    public GameObject DetailGO;
     [SerializeField] private Image cropImg;
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
-    // [SerializeField] private TMP_Text cropTime;
     [SerializeField] private TMP_Text m_statusText;
     public Image PrograssBarImg;
     public Button[] cropButtons;
@@ -24,29 +26,48 @@ public class FarmUI : Singleton<FarmUI>
     private float pressTimer = 0f;
     private float pressDuration = 5f;
     private bool isPressingE = false;
+    //스크롤뷰
+    [SerializeField] private GameObject cropBtnPrefab;
+    [SerializeField] private Transform scrollViewContentPos; //스크롤뷰 컨텐츠 위치
+
+    //오픈 관련 이벤트 처리
+    public event Action<bool> OnIsUIOpen;
+
 
     [Header("Tile")]
     [SerializeField] private FarmTile currentTile;
-    private float growTimer = 0f;
+    [SerializeField] private float growTimer = 0f;
 
-    // void Start()
-    // {
-    //     m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-    // }
+    void Start()
+    {
+        ScrollViewSetting();
+        m_statusText.text = "";
+        PrograssBarImg.fillAmount = 0f;
+    }
 
     void Update()
     {
-        if (!FarmUIGO.activeSelf || currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
+        // if (!FarmUIGO.activeSelf || currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
+        if (currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
 
-        if (currentTile.IsPlanted()) // 해당 타일에 작물이 심어져있는 상태가 아니라면,
+        if (currentTile.IsPlanted())
         {
             var growingCrop = currentTile.GetGrownCrop();
 
             if (growingCrop == selectedCrop)
             {
                 growTimer -= Time.deltaTime;
-                if (growTimer < 0f) growTimer = 0f;
                 m_statusText.text = $"재배중 {growTimer}";
+                if (growTimer < 0f)
+                {
+                    growTimer = 0f;
+                    m_statusText.text = $"재배 완료! 수확하려면 [E]키를 누르세요";
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Harvest();
+                    }
+                }
+
             }
             else
             {
@@ -54,6 +75,7 @@ public class FarmUI : Singleton<FarmUI>
             }
             return;
         }
+        if (selectedCrop == null) return;
 
         //재배 가능한 상태
         if (Input.GetKey(KeyCode.E))
@@ -80,8 +102,8 @@ public class FarmUI : Singleton<FarmUI>
 
         pressTimer = 0f;
         PrograssBarImg.fillAmount = 0f;
-        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
         isPressingE = false;
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
     public void SetTile(FarmTile tile)
     {
@@ -90,7 +112,6 @@ public class FarmUI : Singleton<FarmUI>
         if (tile.IsPlanted())
         {
             DisplayCropDetail(tile.GetGrownCrop());
-            growTimer = tile.GetGrownCrop().growTime;
         }
         else
         {
@@ -105,20 +126,30 @@ public class FarmUI : Singleton<FarmUI>
 
     public void OpenUI()
     {
+        Debug.Log("농사 UI open");
         FarmUIGO.SetActive(true);
-        if (selectedCrop != null)
+        OnIsUIOpen?.Invoke(true);
+        if (selectedCrop == null)
         {
-            DisplayCropDetail(selectedCrop);
+            m_statusText.text = "";
+            PrograssBarImg.fillAmount = 0f;
+            DetailGO.SetActive(false);
+            return;
         }
+
+        DisplayCropDetail(selectedCrop);
+
+
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount=0f;
+            PrograssBarImg.fillAmount = 0f;
         }
     }
     public void CloseUI()
     {
         FarmUIGO.SetActive(false);
+        OnIsUIOpen?.Invoke(false);
     }
     public void SelectCrop(CropDataSO crop)
     {
@@ -133,7 +164,7 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount=0f;
+            PrograssBarImg.fillAmount = 0f;
         }
     }
     private void StartGrowing(CropDataSO selectedCrop)
@@ -150,9 +181,52 @@ public class FarmUI : Singleton<FarmUI>
     }
     public void DisplayCropDetail(CropDataSO data)
     {
+        DetailGO.SetActive(true);
+
         cropImg.sprite = data.cropImg;
         cropName.text = data.cropName;
         // cropDesc.text = $"Time Required : {data.growTime} \n {data.cropDesc} \n Hungry : {data.cropEffect} %";
         cropDesc.text = $"소요 시간 : {data.growTime}초 \n {data.cropDesc} \n 배고픔 : {data.cropEffect} %";
     }
+    public void ScrollViewSetting()
+    {
+        List<Button> btnList = new();
+        foreach (Transform child in scrollViewContentPos)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (var crop in CropList)
+        {
+            GameObject go = Instantiate(cropBtnPrefab, scrollViewContentPos);
+            CropBtn cropBtn = go.GetComponent<CropBtn>();
+            cropBtn.Init(crop);
+            btnList.Add(cropBtn.Btn);
+        }
+        cropButtons = btnList.ToArray();
+    }
+
+    //수확
+    private void Harvest()
+    {
+        Debug.Log("수확 시스템 ON");
+
+        //1. 인벤토리 공간 확인
+        //2. 인벤토리에 추가
+
+
+        currentTile.HarvestingCrop();
+
+        //초기화
+        growTimer = 0f;
+        selectedCrop = null;
+        PrograssBarImg.fillAmount = 0f;
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
+
+        foreach (var btn in cropButtons)
+        {
+            btn.interactable = true;
+        }
+    }
+
+    
 }
