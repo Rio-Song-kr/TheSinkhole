@@ -134,7 +134,8 @@ public class InventoryDragHandler
             var mouseItem = m_mouseItemView.GetCurrentItem();
 
             //todo Item 정보 팝업창 구현 후 팝업창으로 전달
-            Debug.Log($"아이템 '{mouseItem.ItemDataSO.name}' {mouseItem.ItemCount}개가 휴지통으로 이동되어 삭제되었습니다.");
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Destroyed, mouseItem.ItemDataSO, mouseItem.ItemCount);
+
 
             m_mouseItemView.ClearItem();
             ClearOriginalSlotState();

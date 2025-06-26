@@ -11,6 +11,9 @@ using TMPro;
 /// </summary>
 public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
+    [SerializeField] private SlotType m_slotType = SlotType.Normal;
+    public bool IsTrashSlot => m_slotType == SlotType.Trash;
+
     private Image m_itemSprite;
     private TextMeshProUGUI m_itemCount;
 
@@ -27,7 +30,7 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
         var itemSprites = GetComponentsInChildren<Image>();
         m_itemSprite = itemSprites.Length > 1 ? itemSprites[1] : itemSprites[0];
 
-        if (m_itemCount == null)
+        if (m_slotType == SlotType.Normal && m_itemCount == null)
             m_itemCount = GetComponentInChildren<TextMeshProUGUI>();
     }
 
@@ -46,7 +49,7 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
             m_itemSprite = GetComponentInChildren<Image>();
         }
 
-        if (m_itemCount == null)
+        if (m_slotType == SlotType.Normal && m_itemCount == null)
         {
             m_itemCount = GetComponentInChildren<TextMeshProUGUI>();
         }
@@ -66,7 +69,8 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
         {
             m_itemSprite.sprite = slot.ItemDataSO.Icon;
             m_itemSprite.color = Color.white;
-            m_itemCount.text = slot.ItemCount > 1 ? slot.ItemCount.ToString() : "";
+            if (m_slotType == SlotType.Normal)
+                m_itemCount.text = slot.ItemCount > 1 ? slot.ItemCount.ToString() : "";
         }
         else
         {
@@ -81,7 +85,8 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     {
         m_itemSprite.sprite = null;
         m_itemSprite.color = Color.clear;
-        m_itemCount.text = "";
+        if (m_slotType == SlotType.Normal)
+            m_itemCount.text = "";
     }
 
     /// <summary>
@@ -90,7 +95,6 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// <param name="eventData">이벤트 데이터</param>
     public void OnPointerClick(PointerEventData eventData)
     {
-        //todo 추후 Slot을 클릭할 땐, 아이템 정보가 있을 때 해당 정보를 표시하도록 수정해야 함
         m_presenter?.OnSlotClicked(m_slotIndex);
     }
 
@@ -121,8 +125,10 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
         bool isValidDrop = targetSlot != null;
         bool isOutsideInventory = targetSlot != null ? false : !IsPointerOverInventory(eventData);
 
+        bool isTrashDrop = targetSlot != null && targetSlot.IsTrashSlot;
+
         int targetIndex = isValidDrop ? targetSlot.m_slotIndex : -1;
-        m_presenter?.OnEndDrag(targetIndex, isValidDrop, isOutsideInventory, targetSystem);
+        m_presenter?.OnEndDrag(targetIndex, isValidDrop, isOutsideInventory, targetSystem, isTrashDrop);
     }
 
     /// <summary>

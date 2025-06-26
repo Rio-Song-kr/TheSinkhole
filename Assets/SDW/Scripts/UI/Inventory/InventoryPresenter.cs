@@ -25,7 +25,7 @@ public class InventoryPresenter : MonoBehaviour
         new Dictionary<InventorySystem, InventoryItemController>();
 
     /// <summary>
-    /// Presenter를 초기화 (기본 버전 - 아이템 정보 표시 콜백 없음)
+    /// Presenter를 초기화
     /// </summary>
     /// <param name="inventorySystem">인벤토리 시스템</param>
     /// <param name="inventoryView">인벤토리 뷰 인터페이스</param>
@@ -75,6 +75,7 @@ public class InventoryPresenter : MonoBehaviour
 
         m_inventorySystem.OnSlotChanged += OnSlotChanged;
 
+        //# Dynamic Inventory의 첫 번째 슬롯은 Trash
         for (int i = 0; i < m_inventorySystem.InventorySize; i++)
         {
             m_slotMapping[i] = m_inventorySystem.InventorySlots[i];
@@ -104,8 +105,9 @@ public class InventoryPresenter : MonoBehaviour
     /// <param name="slotIndex">클릭된 슬롯의 인덱스</param>
     public void OnSlotClicked(int slotIndex)
     {
-        var clickedSlot = m_slotMapping[slotIndex];
+        if (slotIndex >= m_slotMapping.Count) return;
 
+        var clickedSlot = m_slotMapping[slotIndex];
         m_itemController.HandleSlotClick(slotIndex, clickedSlot);
     }
 
@@ -115,6 +117,8 @@ public class InventoryPresenter : MonoBehaviour
     /// <param name="slotIndex">드래그가 시작된 슬롯의 인덱스</param>
     public void OnBeginDrag(int slotIndex)
     {
+        if (slotIndex >= m_slotMapping.Count) return;
+
         var slot = m_slotMapping[slotIndex];
         m_dragHandler.OnBeginDrag(slotIndex, slot);
     }
