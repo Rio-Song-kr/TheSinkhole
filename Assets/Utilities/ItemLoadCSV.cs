@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class ItemLoadCSV : LoadCSV<ItemFileData>
 {
@@ -10,20 +8,22 @@ public class ItemLoadCSV : LoadCSV<ItemFileData>
     {
         var dataList = new List<ItemFileData>();
 
-        for (int i = 0; i < lines.Length; i++)
+        // for (int i = 0; i < lines.Length; i++)
+        foreach (string line in lines)
         {
-            string[] fields = lines[i].Split(',');
+            string[] fields = line.Split(',');
 
-            if (fields.Length >= 6)
+            if (fields.Length >= 7)
             {
                 var data = new ItemFileData
                 {
                     ItemId = int.Parse(fields[0]),
                     ItemName = fields[1],
-                    ItemType = fields[2],
-                    ItemMaxOwn = int.Parse(fields[3]),
-                    EffectId = int.Parse(fields[4]),
-                    ItemText = fields[5]
+                    ItemEnName = fields[2],
+                    ItemType = fields[3],
+                    ItemMaxOwn = int.Parse(fields[4]),
+                    EffectId = int.Parse(fields[5]),
+                    ItemText = fields[6]
                 };
 
                 dataList.Add(data);

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2671876232745118392}
   - component: {fileID: 3594251353629631806}
-  - component: {fileID: 6003761498246861446}
   - component: {fileID: -1984389531436343408}
   m_Layer: 9
   m_Name: SceneItem
@@ -48,34 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemDataSO: {fileID: 0}
   ItemAmount: 1
-  PickUpDistance: 1
---- !u!54 &6003761498246861446
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1434081812264498338}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  PickUpDistance: 0.5
 --- !u!135 &-1984389531436343408
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -91,9 +63,9 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}

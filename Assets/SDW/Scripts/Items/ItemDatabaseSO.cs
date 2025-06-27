@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -6,13 +7,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Item Database", menuName = "Inventory System/Items/Item Database")]
 public class ItemDatabaseSO : ScriptableObject
 {
-    public ItemDataSO[] ItemObjects;
+    public GameObject[] ModelPrefabObjects;
 
-    // public void OnValidate()
-    // {
-    //     for (int i = 0; i < ItemObjects.Length; i++)
-    //     {
-    //         ItemObjects[i].ItemData.ItemId = i;
-    //     }
-    // }
+    public void OnSetPrefab(ref ItemDataSO itemDataSO)
+    {
+        foreach (var model in ModelPrefabObjects)
+        {
+            if (!model.name.Equals(itemDataSO.ItemEnName.ToString())) continue;
+
+            itemDataSO.ModelPrefab = model;
+        }
+
+        if (itemDataSO.ModelPrefab == null)
+            Debug.LogWarning($"{itemDataSO.ItemEnName}과 일치하는 프리팹이 없습니다.");
+    }
 }
