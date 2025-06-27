@@ -8,6 +8,7 @@ public struct ItemFileData
 {
     public int ItemId;
     public string ItemName;
+    public string ItemEnName;
     public string ItemType;
     public int ItemMaxOwn;
     public int EffectId;

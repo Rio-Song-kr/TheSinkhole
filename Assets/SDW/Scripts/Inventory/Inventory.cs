@@ -23,6 +23,9 @@ public class Inventory : MonoBehaviour
     public InventorySystem DynamicInventorySystem => m_dynamicInventorySystem;
 
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
+    public static Action<int> OnSelectedItemChanged;
+
+    private static ItemEnName m_selectedItemEnName;
 
     /// <summary>
     /// 인벤토리 시스템들을 size 만큼 초기화
@@ -36,6 +39,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// 현재 B키 입력 시 Dynamic Inventory Open/Close
     /// Escape 키 입력 시 Dynamic Inventory Close
+    /// Numpad 1 ~ 0 입력 시 해당 입력에 해당하는 Quick Slot의 index를 선택
     /// </summary>
     private void Update()
     {
@@ -44,7 +48,49 @@ public class Inventory : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
             OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
+
+        CheckInputNumpad();
     }
+
+    /// <summary>
+    /// 넘패드 1~0 키 입력을 확인하여 퀵슬롯 선택 처리
+    /// 0키는 인덱스 9로, 1~9키는 인덱스 0~8로 매핑
+    /// </summary>
+    private void CheckInputNumpad()
+    {
+        int m_selectedIndex = -1;
+
+        for (int i = 0; i < 10; i++)
+        {
+            var key = i == 9 ? KeyCode.Alpha0 : KeyCode.Alpha1 + i;
+
+            if (Input.GetKeyDown(key))
+            {
+                m_selectedIndex = i == 9 ? 9 : i;
+                SelectQuickSlot(m_selectedIndex);
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 지정된 인덱스의 퀵슬롯을 선택
+    /// </summary>
+    /// <param name="slotIndex">선택할 슬롯 인덱스</param>
+    private void SelectQuickSlot(int m_selectedIndex)
+    {
+        OnSelectedItemChanged?.Invoke(m_selectedIndex);
+
+        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO == null) return;
+
+        m_selectedItemEnName = m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemEnName;
+    }
+
+    /// <summary>
+    /// 현재 선택된 아이템의 영문명을 반환
+    /// </summary>
+    /// <returns>선택된 아이템의 영문명</returns>
+    public static ItemEnName GetItemName() => m_selectedItemEnName;
 
     /// <summary>
     /// 마인크래프트 스타일의 아이템 추가 방식

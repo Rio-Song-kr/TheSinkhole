@@ -34,7 +34,16 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         ClearItem();
     }
 
-    private void Start() => m_player = GameObject.FindGameObjectWithTag("Player");
+    /// <summary>
+    /// 플레이어 오브젝트 참조를 초기화
+    /// Player 태그를 가진 게임 오브젝트를 찾아 저장
+    /// </summary>
+    private void Start()
+    {
+        m_player = GameObject.FindGameObjectWithTag("Player");
+
+        if (m_player == null) Debug.LogWarning("Player 태그가 추가된 오브젝트가 없습니다.");
+    }
 
     /// <summary>
     /// 매 프레임마다 아이템을 들고 있을 때 마우스 위치를 업데이트
@@ -72,6 +81,10 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         m_itemCount.text = "";
     }
 
+    /// <summary>
+    /// 현재 들고 있는 아이템을 월드에 드롭
+    /// 플레이어 앞쪽 2미터 위치에 아이템을 생성하고 마우스 아이템을 초기화
+    /// </summary>
     public void DropItem()
     {
         string itemName = m_currentItem.ItemDataSO.ItemData.ItemName;

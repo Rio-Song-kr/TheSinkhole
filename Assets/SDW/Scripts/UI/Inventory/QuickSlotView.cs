@@ -1,4 +1,6 @@
+using UnityEditor.ShaderGraph;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 퀵슬롯 UI를 담당하는 클래스
@@ -12,6 +14,13 @@ public class QuickSlotView : InventoryView
     /// Inspector에서 할당하며, 이 인벤토리의 QuickSlotInventorySystem을 사용
     /// </summary>
     [SerializeField] private Inventory m_quickSlotInventory;
+    [SerializeField] private Color m_selectedColor;
+    [SerializeField] private Color m_originalColor;
+
+    private int m_prevIndex = 0;
+
+    private void OnEnable() => Inventory.OnSelectedItemChanged += OnSelectedItemChanged;
+    private void OnDisable() => Inventory.OnSelectedItemChanged += OnSelectedItemChanged;
 
     /// <summary>
     /// 퀵슬롯 뷰를 초기화
@@ -23,5 +32,16 @@ public class QuickSlotView : InventoryView
 
         if (m_quickSlotInventory != null) Initialize(m_quickSlotInventory.QuickSlotInventorySystem);
         else Debug.LogWarning($"{gameObject.name}: 인벤토리가 정의되지 않았습니다.");
+    }
+
+    private void OnSelectedItemChanged(int index)
+    {
+        var prevSlotColor = m_slotViews[m_prevIndex].GetComponent<Image>();
+        prevSlotColor.color = m_originalColor;
+
+        var currentSlotColor = m_slotViews[index].GetComponent<Image>();
+        currentSlotColor.color = m_selectedColor;
+
+        m_prevIndex = index;
     }
 }
