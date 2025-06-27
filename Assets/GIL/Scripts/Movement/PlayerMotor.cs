@@ -16,14 +16,18 @@ public class PlayerMotor : MonoBehaviour
     public float jumpHeight = 1.5f;
     public float sprintingSpeed = 2f;
     [Header("Slope Sliding")]
-    public float slopeRayRange = 1.6f;
+    public float slopeRayRange = 0.6f;
     public float slideSpeed = 3f;
     public float movementSpeed;
 
     // 빗면
-    private bool isSliding;
+    public float slopeDownwardForce = -10f;
+    public bool isSliding = false;
     private Vector3 worldMoveDir;
     private Vector3 adjustedMove;
+
+    // 점프
+    private bool isJumping = false;
 
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
     [Header("Test")]
@@ -45,7 +49,7 @@ public class PlayerMotor : MonoBehaviour
         isGrounded = controller.isGrounded;
         movementSpeed = PlayerStatus.Instance.CurPlayerMoveSpeed;
     }
-    
+
     /// <summary>
     /// 플레이어 움직임을 제어
     /// 스탯창의 이동속도를 바탕으로 움직이는 속도 구현
@@ -57,11 +61,14 @@ public class PlayerMotor : MonoBehaviour
     {
         Vector3 moveDir = new Vector3(input.x, 0, input.y);
         worldMoveDir = transform.TransformDirection(moveDir);
+        Debug.DrawLine(transform.position, worldMoveDir * 2f, Color.red);
 
-        // 경사 체크
-        CheckSlope();
+        GetSlopeMovement();
 
-        float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving ? movementSpeed * sprintingSpeed : movementSpeed;
+        float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving
+            ? movementSpeed * sprintingSpeed
+            : movementSpeed;
+
         moveVelocity = adjustedMove * currentSpeed;
 
         if (isGrounded && playerVelocity.y < 0f)
@@ -84,12 +91,12 @@ public class PlayerMotor : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (isGrounded)
+        if (isGrounded && isSliding == false)
         {
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
     }
-    
+
     /// <summary>
     /// 플레이어가 달릴 경우 발동되는 기능들
     /// </summary>
@@ -114,33 +121,69 @@ public class PlayerMotor : MonoBehaviour
         panel.SetActive(false);
     }
 
-    private void CheckSlope()
+    private enum SlopeType
     {
+        Plane,
+        Walkable,
+        Steep,
+    }
+
+    private SlopeType GetSlopeType()
+    {
+        // 아랫방향으로 레이를 발사해서 각도가 0이 아닐 경우
+        // 0 < 각도 < 캐릭터 각도한계 : Walkable
+        // 각도 > 캐릭터 각도한계 : Steep
+        // 둘다 아닐경우 Plane을 반환
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit slopeHit, controller.height * 0.5f + slopeRayRange))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            if (angle > controller.slopeLimit) return SlopeType.Steep;
+            else if (angle < controller.slopeLimit && angle != 0f) return SlopeType.Walkable;
+        }
+        return SlopeType.Plane;
+    }
+
+    private void GetSlopeMovement()
+    {
+
         isSliding = false;
         adjustedMove = worldMoveDir;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeRayRange))
+        SlopeType slope = GetSlopeType();
+        // Plane일 경우 : 아무것도 하지 않기
+        // Walkable일 경우 : 똑같은 길이로 평면에 투영한 벡터 움직임 구현
+        // 추가로 점프가 가능해야 하며 점프는 각도와 상관없이 위로 점프해야 함.
+        // Steep일 경우 : slideVelocity의 크기로 아래로 이동, 아래로 슬라이딩 할 경우 점프 불가능.
+        switch (slope)
         {
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-
-            if (slopeAngle > controller.slopeLimit)
-            {
+            case SlopeType.Plane:
+                break;
+            case SlopeType.Walkable:
+                adjustedMove = Vector3.ProjectOnPlane(worldMoveDir, Vector3.up).normalized;
+                Debug.DrawRay(transform.position, adjustedMove * 2f, Color.red);
+                break;
+            case SlopeType.Steep:
                 isSliding = true;
+                if (playerVelocity.y > 0f) return;
+                // 빗면 움직임 실행.
+                Slide();
+                break;
+        }
+    }
 
-                Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal).normalized;
+    private void Slide()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit steepHit, slopeRayRange))
+        {
+            Vector3 slideDir = Vector3.ProjectOnPlane(Vector3.down, steepHit.normal).normalized;
 
-                playerVelocity.y += gravity * Time.deltaTime;
-                Vector3 slideVelocity = slideDirection * slideSpeed;
-                slideVelocity.y = playerVelocity.y;
+            playerVelocity.y += gravity * Time.deltaTime;
 
-                controller.Move(slideVelocity * Time.deltaTime);
-                Debug.DrawRay(transform.position, slideDirection * 2f, Color.red);
-                return;
-            }
-            else if (slopeAngle > 0.1f)
-            {
-                playerVelocity.y = -100f;
-            }
+            Vector3 slideVelocity = slideDir * slideSpeed;
+            slideVelocity.y = playerVelocity.y;
+
+            controller.Move(slideVelocity * Time.deltaTime);
+
+            Debug.DrawRay(transform.position, slideDir * 2f, Color.red);
         }
     }
 }

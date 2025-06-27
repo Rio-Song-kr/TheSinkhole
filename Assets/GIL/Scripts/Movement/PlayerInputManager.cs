@@ -22,7 +22,7 @@ public class PlayerInputManager : MonoBehaviour
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
         interact = GetComponent<InteractionTestfromKSTtoGIL>();
-        onFoot.Jump.performed += ctx => motor.Jump();
+        onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
         onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
         onFoot.Attack.performed += ctx => interact.MouseInteraction();
