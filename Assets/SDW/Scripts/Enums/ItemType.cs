@@ -3,8 +3,9 @@
 /// </summary>
 public enum ItemType
 {
+    None,
     MaterialItem = 1,
     ConsumableItem = 2,
-    WeaponItem = 3,
-    ToolItem = 4
+    ToolItem = 3,
+    EndingItem = 4
 }

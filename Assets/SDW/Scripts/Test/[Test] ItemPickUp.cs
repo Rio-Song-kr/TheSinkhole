@@ -8,7 +8,8 @@ public class TestItemPickUp : MonoBehaviour
     /// 마인크래프트 스타일로 기존 스택을 우선 채우고 최적 분배
     /// </summary>
     /// <param name="other">충돌한 콜라이더</param>
-    private void OnTriggerEnter(Collider other)
+    // private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
         if (!other.gameObject.CompareTag("Item")) return;
 
@@ -17,13 +18,13 @@ public class TestItemPickUp : MonoBehaviour
         var inventory = GetComponent<Inventory>();
         if (!inventory) return;
 
-        int remainingAmount = inventory.AddItemSmart(sceneItem.ItemData, sceneItem.ItemAmount);
+        int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
 
         //todo Destroy 대신 Object Pool 반환으로 수정
         //# 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0)
         {
-            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemData, sceneItem.ItemAmount);
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
             Destroy(other.gameObject);
         }
         else if (remainingAmount < sceneItem.ItemAmount)
