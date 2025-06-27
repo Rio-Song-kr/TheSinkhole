@@ -7,11 +7,12 @@ public class PlayerStatus : MonoBehaviour
 {
     public static PlayerStatus Instance { get; set; }
     [Tooltip("값을 변화하고 싶을 땐 PlayerStatus.Instance.Set스텟명(변화량 퍼센트) 사용")]
-    [Header("Attributes")]
     public const int StatId = 10000;
     public const int RealtimeOneMinute = 60;
     // UI를 고려하여 최대체력과 현재 체력을 두개 보유
     // Slider.value 혹은 Image.FillAmount 방식을 사용해야 할 때를 고려
+    // Max스탯 : 최대 스탯들
+    // Cur스탯 : 현재 스탯들 <- Set스탯을 사용할 경우 이것들이 변화함.
     // 체력
     public float MaxHealth;
     public float CurHealth { get; private set; }
@@ -80,7 +81,7 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// 배고픔 스텟의 변화 퍼센트, 배고픔이 0이 될 경우 허기 디버프(이동속도 -50% , 행동속도 -50%)발동
     /// </summary>
-    /// <param name="value">변화할 체력의 퍼센트 float값</param>
+    /// <param name="value">변화할 배고픔 스텟의 퍼센트 float값</param>
     // 배고픔이 0 이하가 될 경우 허기 디버프 발동
     // 배고픔이 다시 0 이상이 될 경우 허기 디버프 해체.
     public void SetHunger(float value)
@@ -106,7 +107,9 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// 갈증 스텟의 변화 퍼센트, 갈증이 0이 될 경우 탈수 디버프(이동속도 -50% , 행동속도 -50%)발동
     /// </summary>
-    /// <param name="value">변화할 체력의 퍼센트 float값</param>
+    /// <param name="value">변화할 갈증의 퍼센트 float값</param>
+    // 갈증 스텟이 0이 될 경우 탈수 디버프 시작
+    // 갈증 스텟이 0이상이 될 경우 탈수 디버프 즉시 해체
     public void SetThirst(float value)
     {
         float deltaValue = MaxThirst * value;
@@ -130,7 +133,7 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// 정신력 수치의 변화, 정신력이 0이 될 경우 체력이 0으로 설정, 사망
     /// </summary>
-    /// <param name="value">변화할 체력의 퍼센트 float값</param>
+    /// <param name="value">변화할 정신력의 퍼센트 float값</param>
     public void SetMentality(float value)
     {
         float deltaValue = MaxHealth * value;

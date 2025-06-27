@@ -11,36 +11,30 @@ public class PlayerMotor : MonoBehaviour
     private bool isGrounded;
     private Vector3 moveVelocity;
 
+    [Header("Movement")]
     public float gravity = -9.8f;
     public float jumpHeight = 1.5f;
     public float sprintingSpeed = 2f;
-    public float speed;
+    [Header("Slope Sliding")]
+    public float slopeRayRange = 1.6f;
+    public float slideSpeed = 3f;
+    public float movementSpeed;
 
-    [Header("Slope Slide")]
-    private float slopeMinAngle = 10f;
-    private float slopeLimit; // 경사 제한 각도
-    public float slideSpeed = 3f;  // 미끄러짐 속도
-    public float slopeRayLength = 1.6f;
-
-    private enum SlopeType
-    {
-        Plane,
-        Walkable,
-        Steep,
-    }
+    // 빗면
+    private bool isSliding;
+    private Vector3 worldMoveDir;
+    private Vector3 adjustedMove;
 
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
     [Header("Test")]
+    #region [Test]
     public TextMeshProUGUI curMoveVelocityText;
     public GameObject panel;
+    #endregion
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInputManager>();
-    }
-    private void Start()
-    {
-        slopeLimit = controller.slopeLimit;
     }
 
     /// <summary>
@@ -49,31 +43,9 @@ public class PlayerMotor : MonoBehaviour
     void Update()
     {
         isGrounded = controller.isGrounded;
-        speed = PlayerStatus.Instance.CurPlayerMoveSpeed;
+        movementSpeed = PlayerStatus.Instance.CurPlayerMoveSpeed;
     }
-    /// <summary>
-    /// 플레이어가 달릴 경우 발동되는 기능들
-    /// </summary>
-    // 추후에 이펙트 or UI 반응을 추가할 경우 여기다가 추가하기
-    // 우선 달리기가 허기 디버프가 있을 경우 발동하지 못하게 함
-    // 기획자분에게 추가로 물어보면 될듯
-    public void ActiveSprint()
-    {
-        if (PlayerStatus.Instance.isStarving) return;
-        speed *= sprintingSpeed;
-        playerInput.isSprinting = true;
-        panel.SetActive(true);
-    }
-    /// <summary>
-    /// 플레이어가 달리기를 멈출 경우 발동되는 기능들
-    /// </summary>
-    // 달릴 때 실행 한것들의 역순으로 적용하기
-    public void DeactiveSprint()
-    {
-        speed *= 1f;
-        playerInput.isSprinting = false;
-        panel.SetActive(false);
-    }
+    
     /// <summary>
     /// 플레이어 움직임을 제어
     /// 스탯창의 이동속도를 바탕으로 움직이는 속도 구현
@@ -84,14 +56,18 @@ public class PlayerMotor : MonoBehaviour
     public void ProcessMove(Vector2 input, bool isSprinting)
     {
         Vector3 moveDir = new Vector3(input.x, 0, input.y);
-        Vector3 worldMoveDir = transform.TransformDirection(moveDir);
-        float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving ? speed * sprintingSpeed : speed;
-        moveVelocity = worldMoveDir * currentSpeed;
+        worldMoveDir = transform.TransformDirection(moveDir);
 
-        GetSlopeType(out Vector3 slopeType);
-        
-        if (isGrounded && playerVelocity.y < 0f) playerVelocity.y = -100f;
-        else playerVelocity.y += gravity * Time.deltaTime;
+        // 경사 체크
+        CheckSlope();
+
+        float currentSpeed = isSprinting && !PlayerStatus.Instance.isStarving ? movementSpeed * sprintingSpeed : movementSpeed;
+        moveVelocity = adjustedMove * currentSpeed;
+
+        if (isGrounded && playerVelocity.y < 0f)
+            playerVelocity.y = -3.0f;
+        else
+            playerVelocity.y += gravity * Time.deltaTime;
 
         Vector3 totalVelocity = moveVelocity + playerVelocity;
         controller.Move(totalVelocity * Time.deltaTime);
@@ -103,6 +79,9 @@ public class PlayerMotor : MonoBehaviour
         #endregion
     }
 
+    /// <summary>
+    /// 플레이어가 점프를 하는 기능
+    /// </summary>
     public void Jump()
     {
         if (isGrounded)
@@ -110,54 +89,58 @@ public class PlayerMotor : MonoBehaviour
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
     }
-
+    
     /// <summary>
-    /// 슬로프 위인지 감지하고, 슬로프 방향을 반환
+    /// 플레이어가 달릴 경우 발동되는 기능들
     /// </summary>
-    private SlopeType GetSlopeType(out Vector3 slopeDirection)
+    // 추후에 이펙트 or UI 반응을 추가할 경우 여기다가 추가하기
+    // 우선 달리기가 허기 디버프가 있을 경우 발동하지 못하게 함
+    // 기획자분에게 추가로 물어보면 될듯
+    public void ActiveSprint()
     {
-        slopeDirection = Vector3.zero;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeRayLength))
-        {
-            Vector3 normal = hit.normal;
-            float angle = Vector3.Angle(normal, Vector3.up);
-
-            if (angle < slopeMinAngle)
-            {
-                Debug.Log("평면입니다");
-                return SlopeType.Plane;
-            }
-
-            slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, normal), normal).normalized;
-
-            if (angle <= slopeLimit)
-            {
-                Debug.Log("걸을 수 있는 언덕입니다");
-                return SlopeType.Walkable;
-            }
-            else
-            {
-                Debug.Log("가파른 언덕입니다");
-                return SlopeType.Steep;
-            }
-        }
-        Debug.Log("평면입니다.");
-        return SlopeType.Plane;
+        if (PlayerStatus.Instance.isStarving) return;
+        movementSpeed *= sprintingSpeed;
+        playerInput.isSprinting = true;
+        panel.SetActive(true);
+    }
+    /// <summary>
+    /// 플레이어가 달리기를 멈출 경우 발동되는 기능들
+    /// </summary>
+    // 달릴 때 실행 한것들의 역순으로 적용하기
+    public void DeactiveSprint()
+    {
+        movementSpeed *= 1f;
+        playerInput.isSprinting = false;
+        panel.SetActive(false);
     }
 
-    private void GetSlopeMovement()
+    private void CheckSlope()
     {
-        SlopeType slopeType = GetSlopeType(out Vector3 slopeDirection);
+        isSliding = false;
+        adjustedMove = worldMoveDir;
 
-        if (slopeType == SlopeType.Steep && isGrounded)
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeRayRange))
         {
-            moveVelocity = slopeDirection * slideSpeed;
-        }
-        else if (slopeType == SlopeType.Walkable && isGrounded)
-        {
-            moveVelocity = Vector3.ProjectOnPlane(moveVelocity, Vector3.up);
-            moveVelocity = Vector3.Project(moveVelocity, slopeDirection.normalized);
+            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+
+            if (slopeAngle > controller.slopeLimit)
+            {
+                isSliding = true;
+
+                Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal).normalized;
+
+                playerVelocity.y += gravity * Time.deltaTime;
+                Vector3 slideVelocity = slideDirection * slideSpeed;
+                slideVelocity.y = playerVelocity.y;
+
+                controller.Move(slideVelocity * Time.deltaTime);
+                Debug.DrawRay(transform.position, slideDirection * 2f, Color.red);
+                return;
+            }
+            else if (slopeAngle > 0.1f)
+            {
+                playerVelocity.y = -100f;
+            }
         }
     }
 }
