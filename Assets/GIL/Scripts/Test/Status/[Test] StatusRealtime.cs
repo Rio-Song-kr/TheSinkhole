@@ -5,6 +5,7 @@ using UnityEngine;
 public class StatRealtimeTest : MonoBehaviour
 {
     // Start is called before the first frame update
+    public float RealTimeTickSeconds = 2f;
     private float mentalityDelta;
     private float hungerDelta;
     private bool isDay = true;
@@ -17,7 +18,7 @@ public class StatRealtimeTest : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return new WaitForSecondsRealtime(RealTimeTickSeconds);
             PlayerStatus.Instance.RealtimeStatusCycle(isDay);
         }
     }
