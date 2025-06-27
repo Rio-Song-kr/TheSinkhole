@@ -12,17 +12,17 @@ namespace Test
 
         [Header("스탯")]
         //인스펙터에서 초기화 하기 위해.
-        [SerializeField] private int level;
-        [SerializeField] private int maxLevel;
-        [SerializeField] private int initMaxHP;
-        [SerializeField] private int initHP;
+        // [SerializeField] private int level;
+        // [SerializeField] private int maxLevel;
+        // [SerializeField] private int initMaxHP;
+        // [SerializeField] private int initHP;
         [SerializeField] private int dmg;
 
-        public Stat<int> HP { get; private set; }
-        public Stat<int> MaxHP { get; private set; }
+        // public Stat<int> HP { get; private set; }
+        // public Stat<int> MaxHP { get; private set; }
         public Stat<int> Damge { get; private set; }
-        public Stat<int> Level { get; private set; }
-        public Stat<int> MaxLevel { get; private set; }
+        // public Stat<int> Level { get; private set; }
+        // public Stat<int> MaxLevel { get; private set; }
 
 
 
@@ -132,13 +132,13 @@ namespace Test
             Destroy(gameObject);
         }
 
-        public void LevelUp()
-        {
-            if (Level.Value == MaxLevel.Value) return;
-            Level.Value += 1;
-            Damge.Value += 1;
-            MaxHP.Value += 5;
-            HP.Value = MaxHP.Value;
-        }
+        // public void LevelUp()
+        // {
+        //     if (Level.Value == MaxLevel.Value) return;
+        //     Level.Value += 1;
+        //     Damge.Value += 1;
+        //     MaxHP.Value += 5;
+        //     HP.Value = MaxHP.Value;
+        // }
     }
 }

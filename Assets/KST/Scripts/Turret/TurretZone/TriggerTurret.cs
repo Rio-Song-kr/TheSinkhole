@@ -115,18 +115,18 @@ namespace Test
             triggerRenderer.material = visibleMaterial;
         }
         
-        public void UpgradeTower()
-        {
-            if (builtTower != null)
-            {
-                if (tower.Level.Value == tower.MaxLevel.Value)
-                {
-                    Debug.Log("타워가 최대 레벨입니다.");
-                    return;
-                }
-                tower.LevelUp();
-            }
-        }
+        // public void UpgradeTower()
+        // {
+        //     if (builtTower != null)
+        //     {
+        //         if (tower.Level.Value == tower.MaxLevel.Value)
+        //         {
+        //             Debug.Log("타워가 최대 레벨입니다.");
+        //             return;
+        //         }
+        //         tower.LevelUp();
+        //     }
+        // }
 
 
 
