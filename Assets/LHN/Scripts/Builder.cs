@@ -15,13 +15,11 @@ public class Builder : MonoBehaviour
             {
                 // 충돌된 지점의 컴포넌트를 tile 에 저장
                 GridBuildingSystem tile = hitInfo.collider.GetComponent<GridBuildingSystem>();
-                // 타일 타입 확인용 출력
-                Debug.Log(tile.type);
 
                 // 타일의 타입이 White라면 빌드 실행
                 if (tile.type == TileType.White)
                 {
-                    tile.Build();
+                    tile.Build(buildingPrefab);
                 }
             }
         }
