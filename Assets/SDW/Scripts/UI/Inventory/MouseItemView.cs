@@ -74,13 +74,12 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
 
     public void DropItem()
     {
-        Debug.Log($"{m_player.transform.position} - {m_player.transform.forward}");
-        //todo drop 시 object pool에서 아이템 꺼내오기
-        Instantiate(
-            m_currentItem.ItemDataSO.ModelPrefab,
-            m_player.transform.position + m_player.transform.forward * 2f + m_player.transform.up * 0.5f,
-            Quaternion.identity
-        );
+        string itemName = m_currentItem.ItemDataSO.ItemData.ItemName;
+        var item = GameManager.Instance.Item.ItemPools[itemName].Pool.Get();
+        item.transform.position = m_player.transform.position + m_player.transform.forward * 2f;
+        item.ItemAmount = m_currentItem.ItemCount;
+        item.transform.rotation = Quaternion.identity;
+
         ClearItem();
     }
 

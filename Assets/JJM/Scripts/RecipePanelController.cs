@@ -32,6 +32,9 @@ namespace CraftingSystem
         // 레시피 정보로 UI 갱신
         public void SetRecipe(CraftingRecipe recipe)
         {
+            // 1. UI 표시
+            gameObject.SetActive(true);
+
             currentRecipe = recipe;
 
             // 결과 아이템 정보 표시
@@ -49,11 +52,27 @@ namespace CraftingSystem
             // 재료 슬롯 생성
             foreach (var ing in recipe.ingredients)
             {
+                Debug.Log($"Instantiate IngredientPanel: {ing.item?.name}, {ing.count}");
+
+                int owned = 0;
+                // 인벤토리에서 해당 아이템의 소지량 계산
+                if (craftingManager.playerInventory != null &&
+                    craftingManager.playerInventory.DynamicInventorySystem != null)
+                {
+                    if (craftingManager.playerInventory.DynamicInventorySystem.FindItemSlots(ing.item, out var slots))
+                    {
+                        foreach (var slot in slots)
+                            owned += slot.ItemCount;
+                    }
+                }
+
                 var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
-                var slot = go.GetComponent<IngredientSlotUI>();
-                if (slot != null)
-                    slot.Set(ing.item, ing.count);
+                var slotUI = go.GetComponent<IngredientSlotUI>();
+                if (slotUI != null)
+                    slotUI.Set(ing.item, ing.count, owned);
+
             }
+
 
             // 버튼 텍스트
             craftingButtonText.text = "Crafting";
@@ -64,6 +83,14 @@ namespace CraftingSystem
             {
                 craftingManager.TryCraftWithDelay(recipe);
             });
+        }
+        public CraftingRecipe GetCurrentRecipe()
+        {
+            return currentRecipe;
+        }
+        public void HidePanel()
+        {
+            gameObject.SetActive(false);
         }
     }
 }

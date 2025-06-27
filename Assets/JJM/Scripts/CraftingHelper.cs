@@ -69,7 +69,8 @@ namespace CraftingSystem
             }
 
             // 결과 지급
-            inventorySystem.AddItem(recipe.result.item, recipe.result.count);
+            playerInventory.AddItemSmart(recipe.result.item, recipe.result.count);
+            //inventorySystem.AddItem(recipe.result.item, recipe.result.count);
             Debug.Log("제작 완료!");
             return true;
         }
