@@ -7,6 +7,7 @@ public class GridBuildingSystem : MonoBehaviour
 {
     public TileType type;
     public Building building;
+
     public void Build(Building buildingPrefab)
     {
         // 타일이 White라면 설치 가능
@@ -28,7 +29,25 @@ public class GridBuildingSystem : MonoBehaviour
         }
     }
 
-    
+    public void UnBuild(Building buildingPrefab)
+    {
+        // 타일이 White라면 제거 불가능
+        if (type == TileType.White)
+        {
+            //no
+        }
+        // 타일이 green이라면 제거 가능
+        else if (type == TileType.Green)
+        {
+            Destroy(building.gameObject);
+            type = TileType.White;
+        }
+        // 타일이 Red라면 제거 불가능
+        else if (type == TileType.Red)
+        {
+            //no
+        }
+    }
 }
 
 // 타일 타입 지정
