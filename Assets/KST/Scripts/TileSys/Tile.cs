@@ -59,7 +59,9 @@ public class Tile : MonoBehaviour, IToolInteractable
                 }
                 else if (toolType == ToolType.Hammer)
                 {
-                    tileState = TileState.Installable;
+                    tileState = TileState.DeffenceArea;
+                    SetDeffenceArea();
+                    Debug.Log("터렛건설 지역으로 변경됐습니다.");
                     
                 }
                 break;
@@ -79,23 +81,42 @@ public class Tile : MonoBehaviour, IToolInteractable
 
     //테스트를 위해 잠시 public 메소드로 변경
 
+    //FarmTile로 변경시 부착
     public void SetFarmable()
     {
         tileState = TileState.Farmable;
 
-        if (!TryGetComponent<FarmTile>(out var _))
+        if (!TryGetComponent<TurretTile>(out var _))
         {
-            var go = gameObject.AddComponent<FarmTile>();
+            var go = gameObject.AddComponent<TurretTile>();
             // go.FarmUIObj = FarmUIRef;
             go.InteractUiText = InteractUiTextRef;
         }
     }
+
+    //TurretTile로 변경시 부착
+    public void SetDeffenceArea()
+    {
+        tileState = TileState.DeffenceArea;
+
+        if (!TryGetComponent<TurretTile>(out var _))
+        {
+            var go = gameObject.AddComponent<TurretTile>();
+            go.InteractUiText = InteractUiTextRef;
+        }
+    }
+
+
     public void SetNoneGround()
     {
         tileState = TileState.None;
         if (TryGetComponent<FarmTile>(out var farmTile))
         {
             Destroy(farmTile);
+        }
+        if (TryGetComponent<TurretTile>(out var turretTile))
+        {
+            Destroy(turretTile);
         }
     }
 }

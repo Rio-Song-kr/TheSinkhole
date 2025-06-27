@@ -1,6 +1,5 @@
 using UnityEngine;
 using DesignPattern;
-using Test;
 
 public class Bullet : PooledObject
 {
