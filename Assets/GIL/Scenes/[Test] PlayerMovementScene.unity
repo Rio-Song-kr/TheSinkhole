@@ -1342,7 +1342,7 @@ GameObject:
   - component: {fileID: 1827594631}
   - component: {fileID: 1827594630}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: '[Test] MoveSpeedTextCanvas'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1721,9 +1721,9 @@ MonoBehaviour:
   gravity: -9.8
   jumpHeight: 1.5
   sprintingSpeed: 2
+  slopeRayRange: 2
+  slideSpeed: 3
   speed: 0
-  slideSpeed: 5
-  slopeRayLength: 1.6
   curMoveVelocityText: {fileID: 289289411}
   panel: {fileID: 253599163}
 --- !u!114 &2113636754
