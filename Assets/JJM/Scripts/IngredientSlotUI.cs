@@ -12,12 +12,12 @@ namespace CraftingSystem
         public TMP_Text nameText;
         public TMP_Text countText;
 
-        public void Set(ItemDataSO item, int count)
+        public void Set(ItemDataSO item, int needCount, int ownedCount)
         {
-            Debug.Log($"Set 호출: {item?.name}, {count}");
+            Debug.Log($"Set 호출: {item?.name}, {ownedCount}/{needCount}");
             iconImage.sprite = item.Icon;
             nameText.text = item.name;
-            countText.text = $"x{count}";
+            countText.text = $"{ownedCount}/{needCount}";
         }
     }
 }

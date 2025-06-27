@@ -10,14 +10,28 @@ namespace CraftingSystem
     {
         public Inventory playerInventory;// 플레이어 인벤토리 연결
 
-        private void Awake()
+        private void Start()
         {
             // 자동 연결: "Player" 태그가 붙은 오브젝트에서 Inventory 컴포넌트 찾기
             if (playerInventory == null)
             {
                 var playerObj = GameObject.FindWithTag("Player");
                 if (playerObj != null)
+                { 
                     playerInventory = playerObj.GetComponent<Inventory>();
+                if (playerInventory != null)
+                    Debug.Log("Player Inventory 자동 연결 성공");
+                else
+                    Debug.LogWarning("Player 오브젝트에 Inventory 컴포넌트가 없습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("Player 태그 오브젝트를 찾을 수 없습니다.");
+            }
+        }
+            else
+            {
+                Debug.Log("Player Inventory가 이미 Inspector에서 연결되어 있습니다.");
             }
         }
 
