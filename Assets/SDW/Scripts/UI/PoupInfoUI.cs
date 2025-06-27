@@ -29,13 +29,13 @@ public class PopupInfoUI : MonoBehaviour
         switch (popupType)
         {
             case PopupType.Acquired:
-                m_popupText.text = $"Acquired {itemDataSO.ItemData.ItemName}({itemAmount})";
+                m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 획득하였습니다.";
                 break;
             case PopupType.Destroyed:
-                m_popupText.text = $"Destroyed {itemDataSO.ItemData.ItemName}({itemAmount})";
+                m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 파괴하였습니다.";
                 break;
             case PopupType.Full:
-                m_popupText.text = $"Inventory is Full";
+                m_popupText.text = "인벤토리가 가득 찼습니다.";
                 break;
         }
 

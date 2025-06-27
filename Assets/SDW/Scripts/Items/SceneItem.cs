@@ -2,28 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class SceneItem : MonoBehaviour
 {
     [Header("Item Settings")]
-    public ItemDataSO ItemData;
+    public ItemDataSO ItemDataSO;
     public int ItemAmount = 1;
 
     [Header("Pickup Settings")]
     public float PickUpDistance = 1f;
 
-    private Collider m_collider;
+    private Collider m_itemCollider;
+    public Collider ItemCollider => m_itemCollider;
 
-    private void Awake()
+    public void SetupColliderSize()
     {
-        m_collider = GetComponent<Collider>();
-
-        SetupColliderSize();
-    }
-
-    private void SetupColliderSize()
-    {
-        switch (m_collider)
+        m_itemCollider = transform.parent.GetComponent<Collider>();
+        switch (m_itemCollider)
         {
             case SphereCollider sphere:
                 sphere.radius = PickUpDistance;
