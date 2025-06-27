@@ -22,11 +22,6 @@ public class GridBuildingSystem : MonoBehaviour
         {
             //no
         }
-        // 타일이 Red라면 설치 불가능
-        else if (type == TileType.Red)
-        {
-            //no
-        }
     }
 
     public void UnBuild(Building buildingPrefab)
@@ -42,16 +37,11 @@ public class GridBuildingSystem : MonoBehaviour
             Destroy(building.gameObject);
             type = TileType.White;
         }
-        // 타일이 Red라면 제거 불가능
-        else if (type == TileType.Red)
-        {
-            //no
-        }
     }
 }
 
 // 타일 타입 지정
 public enum TileType
 {
-    White, Green, Red
+    White, Green
 }
