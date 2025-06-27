@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Test;
 using UnityEngine;
 
 public class TurretDectTrigger : MonoBehaviour

@@ -1,35 +1,27 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 
-public class TriggerTurret : MonoBehaviour
+public class TurretTile : MonoBehaviour
 {
 
     //타워 프리펩
-    [SerializeField] private GameObject towerPrefab;
+    [SerializeField] private GameObject turretPrefab;
 
     // 생성된 타워
     private GameObject builtTower;
-    [SerializeField] private Turret tower;
+    [SerializeField] private Turret turret;
 
 
 
     //플레이어가 콜라이더 내부에 있을 때
     [SerializeField] private bool isPlayerInside;
-    [SerializeField] private bool CanBuildTower = true;
+    [SerializeField] private bool CanBuildTurret = true;
 
     //머터리얼
 
-    [SerializeField] private Renderer triggerRenderer;
-    [SerializeField] private Material visibleMaterial;
-    [SerializeField] private Material invisibleMaterial;
-
     // PlayerTest player;
 
-    public bool CanBuild() => CanBuildTower;
+    public bool CanBuild() => CanBuildTurret;
 
     void Update()
     {
@@ -37,7 +29,7 @@ public class TriggerTurret : MonoBehaviour
         {
             Debug.Log("F키 눌림");
             // TowerBuildUI.InvokeClose();
-            TurretZoneEvent.InvokeInteract(this);
+            // TurretZoneEvent.InvokeInteract(this);
         }
     }
 
@@ -74,16 +66,13 @@ public class TriggerTurret : MonoBehaviour
 
     public void BuildTower()
     {
-        if (!CanBuildTower) return;
+        if (!CanBuildTurret) return;
 
-        builtTower = Instantiate(towerPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-        tower = builtTower.GetComponent<Turret>();
-        tower.towerZone = this;
+        builtTower = Instantiate(turretPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+        turret = builtTower.GetComponent<Turret>();
+        // tower.towerZone = this;
 
-        CanBuildTower = false;
-        //투명색 머터리얼로 변경.
-        triggerRenderer.material = invisibleMaterial;
-
+        CanBuildTurret = false;
         // TowerZoneEvent.OnTowerExit?.Invoke();
         TurretZoneEvent.InvokeExit();
 
@@ -95,36 +84,17 @@ public class TriggerTurret : MonoBehaviour
         {
             Destroy(builtTower);
             builtTower = null;
-            tower = null;
-            CanBuildTower = true;
+            turret = null;
+            CanBuildTurret = true;
 
-            //미설치 머터리얼로 변경.
-            triggerRenderer.material = visibleMaterial;
         }
     }
     public void TowerDestoried()
     {
         builtTower = null;
-        tower = null;
-        CanBuildTower = true;
+        turret = null;
+        CanBuildTurret = true;
 
-        //미설치 머터리얼로 변경.
-        triggerRenderer.material = visibleMaterial;
     }
     
-    // public void UpgradeTower()
-    // {
-    //     if (builtTower != null)
-    //     {
-    //         if (tower.Level.Value == tower.MaxLevel.Value)
-    //         {
-    //             Debug.Log("타워가 최대 레벨입니다.");
-    //             return;
-    //         }
-    //         tower.LevelUp();
-    //     }
-    // }
-
-
-
 }

@@ -57,6 +57,11 @@ public class Tile : MonoBehaviour, IToolInteractable
                     SetFarmable();
                     Debug.Log("경작지로 변경됐습니다.");
                 }
+                else if (toolType == ToolType.Hammer)
+                {
+                    tileState = TileState.Installable;
+                    
+                }
                 break;
 
             // case TileState.Farmable: //경작지
