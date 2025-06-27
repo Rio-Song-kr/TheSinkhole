@@ -21,6 +21,10 @@ public class Builder : MonoBehaviour
                 {
                     tile.Build(buildingPrefab);
                 }
+                else
+                {
+                    Debug.Log("이미 설치 되어있음");
+                }
             }
         }
     }
