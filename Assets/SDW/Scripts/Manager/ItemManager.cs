@@ -15,28 +15,29 @@ public class ItemManager : MonoBehaviour
     // [SerializeField] private GameObject _redPrefab;
     // [SerializeField] private GameObject _greenPrefab;
 
-    private Dictionary<string, ItemPool<SceneItem>> m_itemPools;
+    private Dictionary<int, ItemPool<SceneItem>> m_itemPools;
 
     /// <summary>
     /// 아이템별 오브젝트 풀 딕셔너리를 반환
     /// </summary>
-    public Dictionary<string, ItemPool<SceneItem>> ItemPools => m_itemPools;
+    public Dictionary<int, ItemPool<SceneItem>> ItemPools => m_itemPools;
 
     /// <summary>
     /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화합니다
     /// </summary>
     private void OnEnable()
     {
-        if (m_itemDatabaseSO == null)
+        if (m_itemDatabaseSO.Equals(null))
         {
             Debug.Log("Item Database SO가 연결되지 않았습니다.");
             return;
         }
 
-        var itemLoader = new ItemLoadCSV();
-        var itemList = itemLoader.ReadData("SDW/CsvData/Item.csv");
+        //# 확장자 없이 파일 이름 문자열만 사용
+        string[] itemLines = LoadCSV.LoadFromCsv("Item");
+        var itemList = ReadDataFromLines(itemLines);
 
-        m_itemPools = new Dictionary<string, ItemPool<SceneItem>>();
+        m_itemPools = new Dictionary<int, ItemPool<SceneItem>>();
 
         var parentObject = new GameObject();
         parentObject.name = "Items";
@@ -47,7 +48,7 @@ public class ItemManager : MonoBehaviour
             var newItemDataSO = ScriptableObject.CreateInstance<ItemDataSO>();
             newItemDataSO.name = itemList[i].ItemId.ToString();
 
-            m_itemPools.Add(itemList[i].ItemName, new ItemPool<SceneItem>());
+            m_itemPools.Add(itemList[i].ItemId, new ItemPool<SceneItem>());
 
             //# string을 이용하여 enum을 읽어옴
             if (!Enum.TryParse<ItemType>(itemList[i].ItemType, true, out var itemType))
@@ -85,7 +86,27 @@ public class ItemManager : MonoBehaviour
 
             itemObject.SetActive(false);
 
-            m_itemPools[itemList[i].ItemName].SetPool(itemObject);
+            m_itemPools[itemList[i].ItemId].SetPool(itemObject);
         }
+    }
+
+    private List<ItemFileData> ReadDataFromLines(string[] lines)
+    {
+        var dataList = new List<ItemFileData>();
+
+        // for (int i = 0; i < lines.Length; i++)
+        foreach (string line in lines)
+        {
+            string[] fields = line.Split(',');
+
+            if (fields.Length >= 7)
+            {
+                var data = new ItemFileData(fields);
+
+                dataList.Add(data);
+            }
+        }
+
+        return dataList;
     }
 }

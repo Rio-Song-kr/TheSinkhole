@@ -42,7 +42,7 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
 
-        if (m_player == null) Debug.LogWarning("Player 태그가 추가된 오브젝트가 없습니다.");
+        if (m_player.Equals(null)) Debug.LogWarning("Player 태그가 추가된 오브젝트가 없습니다.");
     }
 
     /// <summary>
@@ -50,8 +50,7 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     /// </summary>
     private void Update()
     {
-        if (HasItem())
-            UpdatePosition();
+        if (HasItem()) UpdatePosition();
     }
 
     /// <summary>
@@ -87,8 +86,8 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     /// </summary>
     public void DropItem()
     {
-        string itemName = m_currentItem.ItemDataSO.ItemData.ItemName;
-        var item = GameManager.Instance.Item.ItemPools[itemName].Pool.Get();
+        int itemId = m_currentItem.ItemDataSO.ItemData.ItemId;
+        var item = GameManager.Instance.Item.ItemPools[itemId].Pool.Get();
         item.transform.position = m_player.transform.position + m_player.transform.forward * 2f;
         item.ItemAmount = m_currentItem.ItemCount;
         item.transform.rotation = Quaternion.identity;

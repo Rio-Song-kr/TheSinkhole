@@ -8,7 +8,7 @@ public class TestItemSpawn : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            var herb = GameManager.Instance.Item.ItemPools["허브 알약"].Pool.Get();
+            var herb = GameManager.Instance.Item.ItemPools[20111].Pool.Get();
             herb.transform.parent = transform.parent;
             herb.ItemAmount = 500;
             m_position += Vector3.forward * 2f;
@@ -19,7 +19,7 @@ public class TestItemSpawn : MonoBehaviour
 
         for (int i = 0; i < 10; i++)
         {
-            var shovel = GameManager.Instance.Item.ItemPools["삽"].Pool.Get();
+            var shovel = GameManager.Instance.Item.ItemPools[20303].Pool.Get();
             shovel.transform.parent = transform.parent;
             shovel.ItemAmount = 500;
             m_position -= Vector3.forward * 2f;

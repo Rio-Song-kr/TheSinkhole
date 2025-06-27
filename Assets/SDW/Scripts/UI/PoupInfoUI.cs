@@ -48,6 +48,7 @@ public class PopupInfoUI : MonoBehaviour
     private IEnumerator HideCoroutine()
     {
         yield return m_waitTime;
+
         m_popupText.text = "";
         m_popupUIContainer.gameObject.SetActive(false);
     }
