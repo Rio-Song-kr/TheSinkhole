@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => m_instance;
 
     public GlobalUIManager UI { get; private set; }
+    public ItemManager Item { get; private set; }
 
     //todo 추후 통합시 아용
     // public static void CreateInstance()
@@ -34,5 +35,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         UI = GetComponent<GlobalUIManager>();
+        Item = GetComponent<ItemManager>();
     }
 }

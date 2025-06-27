@@ -23,7 +23,6 @@ public class Inventory : MonoBehaviour
     public InventorySystem DynamicInventorySystem => m_dynamicInventorySystem;
 
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
-    private bool _isDynamicInventoryOpen = false;
 
     /// <summary>
     /// 인벤토리 시스템들을 size 만큼 초기화
@@ -41,20 +40,14 @@ public class Inventory : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
-        {
-            _isDynamicInventoryOpen = !_isDynamicInventoryOpen;
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, _isDynamicInventoryOpen);
-        }
+            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
 
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            _isDynamicInventoryOpen = false;
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, _isDynamicInventoryOpen);
-        }
+            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
     }
 
     /// <summary>
-    /// 마인크래프트 스타일 스마트 아이템 추가
+    /// 마인크래프트 스타일의 아이템 추가 방식
     /// 인벤토리 타입에 관계없이 기존 스택을 우선으로 채우고, 이후 빈 슬롯에 추가
     /// </summary>
     /// <param name="itemData">추가할 아이템</param>
