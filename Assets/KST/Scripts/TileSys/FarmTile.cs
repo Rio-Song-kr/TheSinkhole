@@ -26,11 +26,11 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     // }
     void OnEnable()
     {
-        FarmUI.Instance.OnIsUIOpen +=setInteraction;
+        FarmUI.Instance.OnIsUIOpen +=SetInteraction;
     }
     void OnDisable()
     {
-        FarmUI.Instance.OnIsUIOpen -=setInteraction;
+        FarmUI.Instance.OnIsUIOpen -=SetInteraction;
     }
     
     #region 상호작용 인터페이스 구현
@@ -71,7 +71,7 @@ public class FarmTile : MonoBehaviour, IToolInteractable
         
     }
 
-    void setInteraction(bool _status)
+    void SetInteraction(bool _status)
     {
         InteractUiText.SetActive(_status);
     }
