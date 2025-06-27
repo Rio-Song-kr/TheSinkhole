@@ -8,11 +8,11 @@ public class ItemDatabaseSO : ScriptableObject
 {
     public ItemDataSO[] ItemObjects;
 
-    public void OnValidate()
-    {
-        for (int i = 0; i < ItemObjects.Length; i++)
-        {
-            ItemObjects[i].ItemData.ItemId = i;
-        }
-    }
+    // public void OnValidate()
+    // {
+    //     for (int i = 0; i < ItemObjects.Length; i++)
+    //     {
+    //         ItemObjects[i].ItemData.ItemId = i;
+    //     }
+    // }
 }
