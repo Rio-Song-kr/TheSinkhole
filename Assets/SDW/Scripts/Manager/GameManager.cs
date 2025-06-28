@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
 
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
+    private bool m_isDay = true;
+    public bool IsDay => m_isDay;
+
+    [SerializeField] private GameObject m_crosshairUI;
+
     //todo 추후 통합시 이용
     // public static void CreateInstance()
     // {
@@ -64,10 +69,18 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// UI가 Close 되거나 게임 시작이 CursorLockMode = Locked;
     /// </summary>
-    public void SetCursorLock() => Cursor.lockState = CursorLockMode.Locked;
+    public void SetCursorLock()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        m_crosshairUI.SetActive(true);
+    }
 
     /// <summary>
     /// UI가 Open될 때 CursorLockMode = Locked;
     /// </summary>
-    public void SetCursorUnlock() => Cursor.lockState = CursorLockMode.None;
+    public void SetCursorUnlock()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        m_crosshairUI.SetActive(false);
+    }
 }

@@ -164,9 +164,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""LMBClick"",
                     ""type"": ""Button"",
-                    ""id"": ""78da6679-3d1c-4cad-b968-29bc2ffd7267"",
+                    ""id"": ""35956005-cab5-48cd-9356-a9077a166f99"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -416,12 +416,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""74b22cd8-8ccc-4130-89e8-b8936a3763fc"",
+                    ""id"": ""5496a430-cc72-4780-89c4-b5261906a1b5"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""LMBClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -463,7 +463,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_OnFoot_InventoryOpenClose = m_OnFoot.FindAction("InventoryOpenClose", throwIfNotFound: true);
         m_OnFoot_UIOpenClose = m_OnFoot.FindAction("UIOpenClose", throwIfNotFound: true);
         m_OnFoot_InventoryNumpad = m_OnFoot.FindAction("InventoryNumpad", throwIfNotFound: true);
-        m_OnFoot_Attack = m_OnFoot.FindAction("Attack", throwIfNotFound: true);
+        m_OnFoot_LMBClick = m_OnFoot.FindAction("LMBClick", throwIfNotFound: true);
         m_OnFoot_Interaction = m_OnFoot.FindAction("Interaction", throwIfNotFound: true);
     }
 
@@ -553,7 +553,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_InventoryOpenClose;
     private readonly InputAction m_OnFoot_UIOpenClose;
     private readonly InputAction m_OnFoot_InventoryNumpad;
-    private readonly InputAction m_OnFoot_Attack;
+    private readonly InputAction m_OnFoot_LMBClick;
     private readonly InputAction m_OnFoot_Interaction;
     /// <summary>
     /// Provides access to input actions defined in input action map "OnFoot".
@@ -599,9 +599,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @InventoryNumpad => m_Wrapper.m_OnFoot_InventoryNumpad;
         /// <summary>
-        /// Provides access to the underlying input action "OnFoot/Attack".
+        /// Provides access to the underlying input action "OnFoot/LMBClick".
         /// </summary>
-        public InputAction @Attack => m_Wrapper.m_OnFoot_Attack;
+        public InputAction @LMBClick => m_Wrapper.m_OnFoot_LMBClick;
         /// <summary>
         /// Provides access to the underlying input action "OnFoot/Interaction".
         /// </summary>
@@ -656,9 +656,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InventoryNumpad.started += instance.OnInventoryNumpad;
             @InventoryNumpad.performed += instance.OnInventoryNumpad;
             @InventoryNumpad.canceled += instance.OnInventoryNumpad;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
+            @LMBClick.started += instance.OnLMBClick;
+            @LMBClick.performed += instance.OnLMBClick;
+            @LMBClick.canceled += instance.OnLMBClick;
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
@@ -697,9 +697,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InventoryNumpad.started -= instance.OnInventoryNumpad;
             @InventoryNumpad.performed -= instance.OnInventoryNumpad;
             @InventoryNumpad.canceled -= instance.OnInventoryNumpad;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
+            @LMBClick.started -= instance.OnLMBClick;
+            @LMBClick.performed -= instance.OnLMBClick;
+            @LMBClick.canceled -= instance.OnLMBClick;
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
@@ -813,12 +813,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInventoryNumpad(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "LMBClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttack(InputAction.CallbackContext context);
+        void OnLMBClick(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Interaction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,7 +27,9 @@ public class Inventory : MonoBehaviour
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
     public static Action<int> OnSelectedItemChanged;
 
-    private static ItemEnName m_selectedItemEnName;
+    private ItemEnName m_selectedItemEnName;
+    private ToolType m_toolType = ToolType.None;
+    private int m_itemAmounts = 0;
 
     /// <summary>
     /// 인벤토리 시스템들을 size 만큼 초기화
@@ -71,6 +74,7 @@ public class Inventory : MonoBehaviour
 
     /// <summary>
     /// 지정된 인덱스의 퀵슬롯을 선택
+    /// 영문 이름과 Tool type관련 처리
     /// </summary>
     /// <param name="slotIndex">선택할 슬롯 인덱스</param>
     private void SelectQuickSlot(int m_selectedIndex)
@@ -80,13 +84,47 @@ public class Inventory : MonoBehaviour
         if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO == null) return;
 
         m_selectedItemEnName = m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemEnName;
+        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemType != ItemType.ToolItem)
+        {
+            m_toolType = ToolType.None;
+            return;
+        }
+
+        switch (m_selectedItemEnName)
+        {
+            case ItemEnName.Hammer:
+                m_toolType = ToolType.Hammer;
+                break;
+            case ItemEnName.Shovel:
+                m_toolType = ToolType.Shovel;
+                break;
+            case ItemEnName.Pick:
+                m_toolType = ToolType.Pick;
+                break;
+            case ItemEnName.Water:
+                m_toolType = ToolType.Water;
+                break;
+            default:
+                m_toolType = ToolType.None;
+                break;
+        }
     }
 
     /// <summary>
     /// 현재 선택된 아이템의 영문명을 반환
     /// </summary>
     /// <returns>선택된 아이템의 영문명</returns>
-    public static ItemEnName GetItemName() => m_selectedItemEnName;
+    public ItemEnName GetItemName() => m_selectedItemEnName;
+
+    /// <summary>
+    /// 현재 선택된 아이템의 ToolType을 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ToolType을 반환</returns>
+    public ToolType GetItemToolType() => m_toolType;
+
+    public int GetItemAmounts(ItemEnName itemEnName) =>
+        //todo 아이템의 영문이름과 같은 이름을 가진 아이템의 총 수량을 반환)
+        m_itemAmounts;
 
     /// <summary>
     /// 마인크래프트 스타일의 아이템 추가 방식

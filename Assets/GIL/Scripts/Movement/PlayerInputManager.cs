@@ -10,7 +10,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private PlayerMotor motor;
     private PlayerLook look;
-    private InteractionTestfromKSTtoGIL interact;
+    private Interaction interact;
     private Inventory m_inventory;
     public bool isSprinting;
 
@@ -23,20 +23,28 @@ public class PlayerInputManager : MonoBehaviour
         onFoot = playerInput.OnFoot;
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
-        interact = GetComponent<InteractionTestfromKSTtoGIL>();
+        interact = GetComponent<Interaction>();
         onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
         onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
-        onFoot.Attack.performed += ctx => interact.MouseInteraction();
+        // onFoot.Attack.performed += ctx => interact.();
 
         m_inventory = GetComponent<Inventory>();
         onFoot.InventoryOpenClose.started += ctx => m_inventory.OnInventoryKeyPressed();
         onFoot.UIOpenClose.started += ctx => m_inventory.OnCloseKeyPressed();
+        onFoot.UIOpenClose.started += ctx => FarmUI.OnCloseKeyPressed();
         onFoot.InventoryNumpad.started += m_inventory.OnNumpadKeyPressed;
         onFoot.InventoryPartial.started += ctx => InventoryDragHandler.OnPartialKeyPressed();
         onFoot.InventoryPartial.canceled += ctx => InventoryDragHandler.OnPartialKeyReleased();
         onFoot.Interaction.started += ctx => ItemPickUpInteraction.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => ItemPickUpInteraction.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => FarmUI.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => FarmUI.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
+
+        onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();
+        onFoot.LMBClick.canceled += ctx => interact.OnMouseButtonReleased();
     }
 
     /// <summary>

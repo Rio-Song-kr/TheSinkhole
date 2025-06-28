@@ -86,8 +86,8 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     /// </summary>
     public void DropItem()
     {
-        int itemId = m_currentItem.ItemDataSO.ItemData.ItemId;
-        var item = GameManager.Instance.Item.ItemPools[itemId].Pool.Get();
+        var itemEnName = m_currentItem.ItemDataSO.ItemEnName;
+        var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
 
         item.transform.position = m_player.transform.position + m_player.transform.forward * 2f - new Vector3(0, 1.08f, 0);
         item.ItemAmount = m_currentItem.ItemCount;

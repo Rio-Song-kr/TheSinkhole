@@ -24,7 +24,7 @@ public class TestItemPickUp : MonoBehaviour
         if (remainingAmount == 0)
         {
             GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
-            GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemData.ItemId].Pool.Release(sceneItem);
+            GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
         }
         else if (remainingAmount < sceneItem.ItemAmount)
         {

@@ -25,5 +25,7 @@ public enum ItemEnName
     Hammer,
     Tobacco,
     Crossword,
-    LumpOfIron
+    LumpOfIron,
+    Pick,
+    Pail
 }

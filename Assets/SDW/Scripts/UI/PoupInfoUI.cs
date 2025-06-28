@@ -40,6 +40,21 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.Full:
                 m_popupText.text = "인벤토리가 가득 찼습니다.";
                 break;
+            case PopupType.NoneTile:
+                m_popupText.text = "미개척지입니다. 곡괭이가 필요합니다.";
+                break;
+            case PopupType.Frontier:
+                m_popupText.text = "타일이 개척지로 변경됐습니다.";
+                break;
+            case PopupType.Farmable:
+                m_popupText.text = "타일이 경작지로 변경됐습니다.";
+                break;
+            case PopupType.DefenceArea:
+                m_popupText.text = "타일이 방어시설로 변경됐습니다.";
+                break;
+            case PopupType.Water:
+                m_popupText.text = "타일이 급수시설로 변경됐습니다.";
+                break;
         }
 
         m_popupUIContainer.gameObject.SetActive(true);
