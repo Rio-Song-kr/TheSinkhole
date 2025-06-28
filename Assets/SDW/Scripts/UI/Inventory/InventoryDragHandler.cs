@@ -10,6 +10,7 @@ public class InventoryDragHandler
     private InventorySlot m_slotBackup;
     private IMouseItemView m_mouseItemView;
     private InventoryItemController m_itemController;
+    private static bool m_isPartialKeyPressed = false;
 
     /// <summary>
     /// InventoryDragHandler 생성자
@@ -34,8 +35,7 @@ public class InventoryDragHandler
         if (slot.ItemDataSO != null && !m_mouseItemView.HasItem())
         {
             SaveOriginalSlotState(slotIndex, slot);
-            bool shiftPressed = Input.GetKey(KeyCode.LeftShift);
-            m_itemController.PickupItem(slot, slotIndex, shiftPressed);
+            m_itemController.PickupItem(slot, slotIndex, m_isPartialKeyPressed);
         }
     }
 
@@ -133,14 +133,31 @@ public class InventoryDragHandler
         {
             var mouseItem = m_mouseItemView.GetCurrentItem();
 
-            //todo Item 정보 팝업창 구현 후 팝업창으로 전달
-            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Destroyed, mouseItem.ItemDataSO, mouseItem.ItemCount);
-
+            //# 아이템 파괴 불가 - 도구
+            if (mouseItem.ItemDataSO.ItemType == ItemType.ToolItem)
+            {
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NotDestroyed, mouseItem.ItemDataSO, mouseItem.ItemCount);
+                RestoreToOriginalSlot();
+            }
+            else
+            {
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Destroyed, mouseItem.ItemDataSO, mouseItem.ItemCount);
+                ClearOriginalSlotState();
+            }
 
             m_mouseItemView.ClearItem();
-            ClearOriginalSlotState();
 
             //todo 아이템 삭제 효과음이나 파티클 효과 추가
         }
     }
+
+    /// <summary>
+    /// Partial을 위한 키가 눌려진 경우
+    /// </summary>
+    public static void OnPartialKeyPressed() => m_isPartialKeyPressed = true;
+
+    /// <summary>
+    /// Partial을 위한 키가 해제된 경우
+    /// </summary>
+    public static void OnPartialKeyReleased() => m_isPartialKeyPressed = false;
 }

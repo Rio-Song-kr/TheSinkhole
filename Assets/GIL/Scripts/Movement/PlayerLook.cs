@@ -9,9 +9,9 @@ public class PlayerLook : MonoBehaviour
     public float xSens = 30f;
     public float ySens = 30f;
 
-    private void Awake()
+    private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        GameManager.Instance.SetCursorLock();
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class PlayerLook : MonoBehaviour
     {
         float mouseX = input.x;
         float mouseY = input.y;
-        xRotation -= (mouseY * Time.deltaTime) * ySens;
+        xRotation -= mouseY * Time.deltaTime * ySens;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
         Cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * xSens);

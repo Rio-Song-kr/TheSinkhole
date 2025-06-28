@@ -42,10 +42,10 @@ public class InventoryItemController
     /// </summary>
     /// <param name="slot">픽업할 슬롯</param>
     /// <param name="slotIndex">슬롯 인덱스</param>
-    /// <param name="shiftPressed">Shift 키 눌림 여부</param>
-    public void PickupItem(InventorySlot slot, int slotIndex, bool shiftPressed)
+    /// <param name="partialKeyPressed">Shift 키 눌림 여부</param>
+    public void PickupItem(InventorySlot slot, int slotIndex, bool partialKeyPressed)
     {
-        if (shiftPressed && slot.SplitItemAmount(out var halfAmountSlot))
+        if (partialKeyPressed && slot.SplitItemAmount(out var halfAmountSlot))
             m_mouseItemView.ShowItem(halfAmountSlot);
         else
         {
@@ -69,13 +69,9 @@ public class InventoryItemController
         var mouseItem = m_mouseItemView.GetCurrentItem();
         bool mouseEmpty = !m_mouseItemView.HasItem();
 
-        // Dynamic 인벤토리에서 아이템이 있는 슬롯을 클릭했을 때 아이템 정보 표시
+        //# Dynamic 인벤토리에서 아이템이 있는 슬롯을 클릭했을 때 아이템 정보 표시
         if (IsDynamicInventory() && clickedSlot.ItemDataSO != null && mouseEmpty)
             RequestItemInfo(clickedSlot.ItemDataSO, clickedSlot.ItemCount);
-
-        // //# 슬롯에 아이템이 있고, 마우스에 없는 경우
-        // if (clickedSlot.ItemDataSO != null && mouseEmpty)
-        //     PickupItem(clickedSlot, slotIndex, shiftPressed);
         //# 슬롯에 아이템이 없고, 마우스에 있는 경우
         else if (clickedSlot.ItemDataSO == null && !mouseEmpty) PlaceItem(clickedSlot, slotIndex, mouseItem);
         //# 슬롯에 아이템이 있고, 마우스에 있는 경우
@@ -89,7 +85,7 @@ public class InventoryItemController
     /// <returns>Dynamic 인벤토리면 true, 아니면 false</returns>
     private bool IsDynamicInventory()
     {
-        // Inventory 컴포넌트를 찾아서 DynamicInventorySystem과 비교
+        //# Inventory 컴포넌트를 찾아서 DynamicInventorySystem과 비교
         var inventory = Object.FindObjectOfType<Inventory>();
         return inventory != null && inventory.DynamicInventorySystem == m_inventorySystem;
     }

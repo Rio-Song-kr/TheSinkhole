@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 인벤토리 컨테이너 역할
@@ -38,39 +39,34 @@ public class Inventory : MonoBehaviour
 
     /// <summary>
     /// 현재 B키 입력 시 Dynamic Inventory Open/Close
-    /// Escape 키 입력 시 Dynamic Inventory Close
-    /// Numpad 1 ~ 0 입력 시 해당 입력에 해당하는 Quick Slot의 index를 선택
     /// </summary>
-    private void Update()
+    public void OnInventoryKeyPressed()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
+        OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
+        if (DynamicUIController.IsOpened) GameManager.Instance.SetCursorUnlock();
+        else GameManager.Instance.SetCursorLock();
+    }
 
-        CheckInputNumpad();
+    /// <summary>
+    /// Escape 키 입력 시 Dynamic Inventory Close
+    /// </summary>
+    public void OnCloseKeyPressed()
+    {
+        OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
+        GameManager.Instance.SetCursorLock();
     }
 
     /// <summary>
     /// 넘패드 1~0 키 입력을 확인하여 퀵슬롯 선택 처리
     /// 0키는 인덱스 9로, 1~9키는 인덱스 0~8로 매핑
     /// </summary>
-    private void CheckInputNumpad()
+    public void OnNumpadKeyPressed(InputAction.CallbackContext ctx)
     {
-        int m_selectedIndex = -1;
+        int m_selectedIndex = int.Parse(ctx.control.name);
 
-        for (int i = 0; i < 10; i++)
-        {
-            var key = i == 9 ? KeyCode.Alpha0 : KeyCode.Alpha1 + i;
-
-            if (Input.GetKeyDown(key))
-            {
-                m_selectedIndex = i == 9 ? 9 : i;
-                SelectQuickSlot(m_selectedIndex);
-                return;
-            }
-        }
+        m_selectedIndex = m_selectedIndex == 0 ? 9 : m_selectedIndex - 1;
+        SelectQuickSlot(m_selectedIndex);
     }
 
     /// <summary>
@@ -205,15 +201,5 @@ public class Inventory : MonoBehaviour
         }
 
         return remainingAmount;
-    }
-
-    /// <summary>
-    /// 스택 정보를 담는 헬퍼 클래스
-    /// </summary>
-    private class StackInfo
-    {
-        public InventorySlot slot;
-        public InventorySystem inventorySystem;
-        public int currentAmount;
     }
 }

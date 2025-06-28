@@ -34,6 +34,9 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.Destroyed:
                 m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 파괴하였습니다.";
                 break;
+            case PopupType.NotDestroyed:
+                m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 파괴할 수 없습니다.";
+                break;
             case PopupType.Full:
                 m_popupText.text = "인벤토리가 가득 찼습니다.";
                 break;

@@ -22,7 +22,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public ItemManager Item { get; private set; }
 
-    //todo 추후 통합시 아용
+    public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
+
+    //todo 추후 통합시 이용
     // public static void CreateInstance()
     // {
     //     if (_instance == null)
@@ -50,4 +52,22 @@ public class GameManager : MonoBehaviour
         UI = GetComponent<GlobalUIManager>();
         Item = GetComponent<ItemManager>();
     }
+
+    private void Start()
+    {
+        int targetWidth = 1920;
+        int targetHeight = 1080;
+
+        Screen.SetResolution(targetWidth, targetHeight, true);
+    }
+
+    /// <summary>
+    /// UI가 Close 되거나 게임 시작이 CursorLockMode = Locked;
+    /// </summary>
+    public void SetCursorLock() => Cursor.lockState = CursorLockMode.Locked;
+
+    /// <summary>
+    /// UI가 Open될 때 CursorLockMode = Locked;
+    /// </summary>
+    public void SetCursorUnlock() => Cursor.lockState = CursorLockMode.None;
 }

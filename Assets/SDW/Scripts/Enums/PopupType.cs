@@ -5,5 +5,6 @@ public enum PopupType
 {
     Acquired,
     Destroyed,
+    NotDestroyed,
     Full
 }

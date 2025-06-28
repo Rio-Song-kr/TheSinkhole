@@ -88,7 +88,8 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     {
         int itemId = m_currentItem.ItemDataSO.ItemData.ItemId;
         var item = GameManager.Instance.Item.ItemPools[itemId].Pool.Get();
-        item.transform.position = m_player.transform.position + m_player.transform.forward * 2f;
+
+        item.transform.position = m_player.transform.position + m_player.transform.forward * 2f - new Vector3(0, 1.08f, 0);
         item.ItemAmount = m_currentItem.ItemCount;
         item.transform.rotation = Quaternion.identity;
 
