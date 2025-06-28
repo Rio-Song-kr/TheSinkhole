@@ -57,13 +57,13 @@ public class Tile : MonoBehaviour, IToolInteractable
                     SetFarmable();
                     Debug.Log("경작지로 변경됐습니다.");
                 }
-                else if (toolType == ToolType.Hammer)
-                {
-                    tileState = TileState.DeffenceArea;
-                    SetDeffenceArea();
-                    Debug.Log("터렛건설 지역으로 변경됐습니다.");
+                // else if (toolType == ToolType.Hammer)
+                // {
+                //     tileState = TileState.DeffenceArea;
+                //     SetDeffenceArea();
+                //     Debug.Log("터렛건설 지역으로 변경됐습니다.");
                     
-                }
+                // }
                 break;
 
             // case TileState.Farmable: //경작지
@@ -86,9 +86,9 @@ public class Tile : MonoBehaviour, IToolInteractable
     {
         tileState = TileState.Farmable;
 
-        if (!TryGetComponent<TurretTile>(out var _))
+        if (!TryGetComponent<FarmTile>(out var _))
         {
-            var go = gameObject.AddComponent<TurretTile>();
+            var go = gameObject.AddComponent<FarmTile>();
             // go.FarmUIObj = FarmUIRef;
             go.InteractUiText = InteractUiTextRef;
         }
