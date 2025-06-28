@@ -18,7 +18,7 @@ public class ItemDatabaseSO : ScriptableObject
             itemDataSO.ModelPrefab = model;
         }
 
-        if (itemDataSO.ModelPrefab == null)
+        if (itemDataSO.ModelPrefab.Equals(null))
             Debug.LogWarning($"{itemDataSO.ItemEnName}과 일치하는 프리팹이 없습니다.");
     }
 }

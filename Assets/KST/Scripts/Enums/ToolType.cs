@@ -4,5 +4,6 @@ public enum ToolType
     Shovel, //삽
     Hammer, //해머. 터렛 설치용
     Pick, // 곡괭이
-    Book, // 책
+    Water, // 양동이
+    Book // 책
 }

@@ -5,5 +5,11 @@ public enum PopupType
 {
     Acquired,
     Destroyed,
+    NotDestroyed,
+    NoneTile,
+    Frontier,
+    Farmable,
+    DefenceArea,
+    Water,
     Full
 }
