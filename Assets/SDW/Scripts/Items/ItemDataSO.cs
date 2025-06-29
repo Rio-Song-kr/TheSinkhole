@@ -10,6 +10,7 @@ public class ItemDataSO : ScriptableObject
     public ItemType ItemType;
     [TextArea(4, 4)] public string ItemText;
     public int ItemMaxOwn;
+    public ItemEnName ItemEnName;
 
     [Header("2D Icon")]
     public Sprite Icon;

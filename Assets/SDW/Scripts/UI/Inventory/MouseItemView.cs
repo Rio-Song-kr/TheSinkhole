@@ -34,15 +34,23 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         ClearItem();
     }
 
-    private void Start() => m_player = GameObject.FindGameObjectWithTag("Player");
+    /// <summary>
+    /// 플레이어 오브젝트 참조를 초기화
+    /// Player 태그를 가진 게임 오브젝트를 찾아 저장
+    /// </summary>
+    private void Start()
+    {
+        m_player = GameObject.FindGameObjectWithTag("Player");
+
+        if (m_player.Equals(null)) Debug.LogWarning("Player 태그가 추가된 오브젝트가 없습니다.");
+    }
 
     /// <summary>
     /// 매 프레임마다 아이템을 들고 있을 때 마우스 위치를 업데이트
     /// </summary>
     private void Update()
     {
-        if (HasItem())
-            UpdatePosition();
+        if (HasItem()) UpdatePosition();
     }
 
     /// <summary>
@@ -72,11 +80,17 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
         m_itemCount.text = "";
     }
 
+    /// <summary>
+    /// 현재 들고 있는 아이템을 월드에 드롭
+    /// 플레이어 앞쪽 2미터 위치에 아이템을 생성하고 마우스 아이템을 초기화
+    /// </summary>
     public void DropItem()
     {
-        string itemName = m_currentItem.ItemDataSO.ItemData.ItemName;
-        var item = GameManager.Instance.Item.ItemPools[itemName].Pool.Get();
-        item.transform.position = m_player.transform.position + m_player.transform.forward * 2f;
+        if (m_currentItem.ItemDataSO == null) return;
+        var itemEnName = m_currentItem.ItemDataSO.ItemEnName;
+        var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
+
+        item.transform.position = m_player.transform.position + m_player.transform.forward * 2f - new Vector3(0, 1.08f, 0);
         item.ItemAmount = m_currentItem.ItemCount;
         item.transform.rotation = Quaternion.identity;
 

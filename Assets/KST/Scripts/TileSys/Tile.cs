@@ -1,20 +1,24 @@
+using EPOOutline;
 using TMPro;
 using UnityEngine;
-
 
 public class Tile : MonoBehaviour, IToolInteractable
 {
     public TileState tileState = TileState.None;
 
-    public GameObject InteractUiTextRef;
+    public static GameObject InteractUiTextRef;
     //농사창 UI
-    public GameObject FarmUIRef;
+    public static GameObject FarmUIRef;
 
+    private Outlinable m_outlinable;
 
-    public interactType GetInteractType()
+    private void Awake()
     {
-        return interactType.MouseClick;
+        m_outlinable = GetComponent<Outlinable>();
+        m_outlinable.enabled = false;
     }
+
+    public interactType GetInteractType() => interactType.MouseClick;
     public bool CanInteract(ToolType toolType)
     {
         switch (tileState)
@@ -22,7 +26,13 @@ public class Tile : MonoBehaviour, IToolInteractable
             case TileState.None:
                 return toolType == ToolType.Pick;
             case TileState.Frontier:
+                return toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water;
+            case TileState.Farmable:
                 return toolType == ToolType.Shovel;
+            case TileState.DefenceArea:
+                return toolType == ToolType.Hammer;
+            case TileState.Water:
+                return toolType == ToolType.Water;
             default:
                 return false;
         }
@@ -42,11 +52,11 @@ public class Tile : MonoBehaviour, IToolInteractable
                 if (toolType == ToolType.Pick)
                 {
                     tileState = TileState.Frontier;
-                    Debug.Log("타일이 개척지로 변경됐습니다.");
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
                 }
                 else
                 {
-                    Debug.LogWarning("현재 타일은 미 개척지입니다. 곡괭이를 사용해서 개척하세요");
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NoneTile);
                 }
                 break;
 
@@ -55,8 +65,15 @@ public class Tile : MonoBehaviour, IToolInteractable
                 {
                     tileState = TileState.Farmable;
                     SetFarmable();
-                    Debug.Log("경작지로 변경됐습니다.");
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
                 }
+                // else if (toolType == ToolType.Hammer)
+                // {
+                //     tileState = TileState.DeffenceArea;
+                //     SetDeffenceArea();
+                //     Debug.Log("터렛건설 지역으로 변경됐습니다.");
+
+                // }
                 break;
 
             // case TileState.Farmable: //경작지
@@ -67,30 +84,46 @@ public class Tile : MonoBehaviour, IToolInteractable
             //         //농사창 팝업.
             //     }
             //     break;
-
         }
     }
 
-
     //테스트를 위해 잠시 public 메소드로 변경
 
+    //FarmTile로 변경시 부착
     public void SetFarmable()
     {
         tileState = TileState.Farmable;
 
-        if (!TryGetComponent<FarmTile>(out var _))
+        if (!TryGetComponent<FarmTile>(out _))
         {
             var go = gameObject.AddComponent<FarmTile>();
             // go.FarmUIObj = FarmUIRef;
             go.InteractUiText = InteractUiTextRef;
         }
     }
+
+    //TurretTile로 변경시 부착
+    public void SetDefenceArea()
+    {
+        tileState = TileState.DefenceArea;
+
+        if (!TryGetComponent<TurretTile>(out _))
+        {
+            var go = gameObject.AddComponent<TurretTile>();
+            go.InteractUiText = InteractUiTextRef;
+        }
+    }
+
     public void SetNoneGround()
     {
         tileState = TileState.None;
         if (TryGetComponent<FarmTile>(out var farmTile))
         {
             Destroy(farmTile);
+        }
+        if (TryGetComponent<TurretTile>(out var turretTile))
+        {
+            Destroy(turretTile);
         }
     }
 }

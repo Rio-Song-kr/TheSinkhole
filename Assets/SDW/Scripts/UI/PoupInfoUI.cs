@@ -34,8 +34,26 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.Destroyed:
                 m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 파괴하였습니다.";
                 break;
+            case PopupType.NotDestroyed:
+                m_popupText.text = $"{itemDataSO.ItemData.ItemName}({itemAmount})을 파괴할 수 없습니다.";
+                break;
             case PopupType.Full:
                 m_popupText.text = "인벤토리가 가득 찼습니다.";
+                break;
+            case PopupType.NoneTile:
+                m_popupText.text = "미개척지입니다. 곡괭이가 필요합니다.";
+                break;
+            case PopupType.Frontier:
+                m_popupText.text = "타일이 개척지로 변경됐습니다.";
+                break;
+            case PopupType.Farmable:
+                m_popupText.text = "타일이 경작지로 변경됐습니다.";
+                break;
+            case PopupType.DefenceArea:
+                m_popupText.text = "타일이 방어시설로 변경됐습니다.";
+                break;
+            case PopupType.Water:
+                m_popupText.text = "타일이 급수시설로 변경됐습니다.";
                 break;
         }
 
@@ -48,6 +66,7 @@ public class PopupInfoUI : MonoBehaviour
     private IEnumerator HideCoroutine()
     {
         yield return m_waitTime;
+
         m_popupText.text = "";
         m_popupUIContainer.gameObject.SetActive(false);
     }
