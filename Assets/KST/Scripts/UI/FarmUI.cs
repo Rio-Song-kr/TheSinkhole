@@ -20,7 +20,7 @@ public class FarmUI : Singleton<FarmUI>
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
     [SerializeField] private TMP_Text m_statusText;
-    public Image PrograssBarImg;
+    public Image ProgressBarImg;
     public Button[] cropButtons;
 
     private float pressTimer = 0f;
@@ -44,7 +44,7 @@ public class FarmUI : Singleton<FarmUI>
     {
         ScrollViewSetting();
         m_statusText.text = "";
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
     }
 
     private void Update()
@@ -83,9 +83,8 @@ public class FarmUI : Singleton<FarmUI>
         {
             isPressingE = true;
             pressTimer += Time.deltaTime;
-            PrograssBarImg.fillAmount = pressTimer / pressDuration;
+            ProgressBarImg.fillAmount = pressTimer / pressDuration;
             m_statusText.text = $"작물 재배 중. . .";
-
 
             if (pressTimer >= pressDuration)
             {
@@ -104,7 +103,7 @@ public class FarmUI : Singleton<FarmUI>
         //상태 전부 초기화
 
         pressTimer = 0f;
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         isPressingE = false;
         m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
@@ -122,7 +121,7 @@ public class FarmUI : Singleton<FarmUI>
             {
                 DisplayCropDetail(selectedCrop);
                 m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-                PrograssBarImg.fillAmount = 0f;
+                ProgressBarImg.fillAmount = 0f;
             }
         }
     }
@@ -136,7 +135,7 @@ public class FarmUI : Singleton<FarmUI>
         if (selectedCrop == null)
         {
             m_statusText.text = "";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
             DetailGO.SetActive(false);
             return;
         }
@@ -147,7 +146,7 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     public void CloseUI()
@@ -170,7 +169,7 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     private void StartGrowing(CropDataSO selectedCrop)
@@ -179,7 +178,7 @@ public class FarmUI : Singleton<FarmUI>
         growTimer = selectedCrop.growTime;
 
         m_statusText.text = $"재배중 {growTimer}";
-        PrograssBarImg.fillAmount = 1f;
+        ProgressBarImg.fillAmount = 1f;
         foreach (var btn in cropButtons)
         {
             btn.interactable = false;
@@ -225,8 +224,13 @@ public class FarmUI : Singleton<FarmUI>
         //초기화
         growTimer = 0f;
         selectedCrop = null;
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
+
+
+        cropImg.sprite = null;
+        cropName.text = "";
+        cropDesc.text = "";
 
         foreach (var btn in cropButtons)
         {

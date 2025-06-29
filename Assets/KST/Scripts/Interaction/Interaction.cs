@@ -45,14 +45,23 @@ public class Interaction : MonoBehaviour
 
         if (CurrentTool == ToolType.None) return;
 
+
         if (IsDetected)
         {
             if (Hit.collider.TryGetComponent(out IToolInteractable toolInteractable))
             {
                 var tileState = Hit.collider.GetComponent<Tile>().tileState;
-                if (CurrentTool == ToolType.Pick && tileState == TileState.None) SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
 
-                else if (tileState != TileState.None)
+
+                if (tileState != TileState.None && tileState != TileState.Frontier)
+                {
+                    SetTextObject(false);
+                    return;
+                }
+
+                if (CurrentTool == ToolType.Pick && tileState == TileState.None)
+                    SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+                else if (tileState == TileState.Frontier)
                 {
                     switch (CurrentTool)
                     {
@@ -65,10 +74,11 @@ public class Interaction : MonoBehaviour
                         case ToolType.Water:
                             SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
                             break;
+                        default:
+                            SetTextObject(false);
+                            break;
                     }
                 }
-                else
-                    SetTextObject(false);
 
                 SetCrosshairObject(false);
 
