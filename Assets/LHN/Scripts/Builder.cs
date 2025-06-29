@@ -21,9 +21,9 @@ public class Builder : MonoBehaviour
                 {
                     tile.Build(buildingPrefab);
                 }
-                else
+                else if (tile.type == TileType.Green)
                 {
-                    Debug.Log("이미 설치 되어있음");
+                    tile.UnBuild(buildingPrefab);
                 }
             }
         }
