@@ -31,10 +31,14 @@ public class PlayerMotor : MonoBehaviour
 
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
     [Header("Test")]
+
     #region [Test]
+
     public TextMeshProUGUI curMoveVelocityText;
     public GameObject panel;
+
     #endregion
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -44,7 +48,7 @@ public class PlayerMotor : MonoBehaviour
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
-    void Update()
+    private void Update()
     {
         isGrounded = controller.isGrounded;
         movementSpeed = PlayerStatus.Instance.CurPlayerMoveSpeed;
@@ -59,7 +63,7 @@ public class PlayerMotor : MonoBehaviour
     /// <param name="isSprinting"></param>
     public void ProcessMove(Vector2 input, bool isSprinting)
     {
-        Vector3 moveDir = new Vector3(input.x, 0, input.y);
+        var moveDir = new Vector3(input.x, 0, input.y);
         worldMoveDir = transform.TransformDirection(moveDir);
         Debug.DrawLine(transform.position, worldMoveDir * 2f, Color.red);
 
@@ -76,13 +80,16 @@ public class PlayerMotor : MonoBehaviour
         else
             playerVelocity.y += gravity * Time.deltaTime;
 
-        Vector3 totalVelocity = moveVelocity + playerVelocity;
+        var totalVelocity = moveVelocity + playerVelocity;
         controller.Move(totalVelocity * Time.deltaTime);
 
         // TODO : [Test] 추후에 개발이 완성되면 지울 것!
+
         #region [Test]
+
         float horizontalSpeed = new Vector3(moveVelocity.x, 0f, moveVelocity.z).magnitude;
         if (curMoveVelocityText != null) curMoveVelocityText.text = $"Speed: {horizontalSpeed:F2}";
+
         #endregion
     }
 
@@ -105,7 +112,7 @@ public class PlayerMotor : MonoBehaviour
     // 기획자분에게 추가로 물어보면 될듯
     public void ActiveSprint()
     {
-        if (PlayerStatus.Instance.isStarving) return;
+        if (PlayerStatus.Instance.isStarving || !GameManager.Instance.IsCursorLocked) return;
         movementSpeed *= sprintingSpeed;
         playerInput.isSprinting = true;
         panel.SetActive(true);
@@ -116,6 +123,7 @@ public class PlayerMotor : MonoBehaviour
     // 달릴 때 실행 한것들의 역순으로 적용하기
     public void DeactiveSprint()
     {
+        if (!GameManager.Instance.IsCursorLocked) return;
         movementSpeed *= 1f;
         playerInput.isSprinting = false;
         panel.SetActive(false);
@@ -125,7 +133,7 @@ public class PlayerMotor : MonoBehaviour
     {
         Plane,
         Walkable,
-        Steep,
+        Steep
     }
 
     private SlopeType GetSlopeType()
@@ -134,7 +142,7 @@ public class PlayerMotor : MonoBehaviour
         // 0 < 각도 < 캐릭터 각도한계 : Walkable
         // 각도 > 캐릭터 각도한계 : Steep
         // 둘다 아닐경우 Plane을 반환
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit slopeHit, controller.height * 0.5f + slopeRayRange))
+        if (Physics.Raycast(transform.position, Vector3.down, out var slopeHit, controller.height * 0.5f + slopeRayRange))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             if (angle > controller.slopeLimit) return SlopeType.Steep;
@@ -145,10 +153,9 @@ public class PlayerMotor : MonoBehaviour
 
     private void GetSlopeMovement()
     {
-
         isSliding = false;
         adjustedMove = worldMoveDir;
-        SlopeType slope = GetSlopeType();
+        var slope = GetSlopeType();
         // Plane일 경우 : 아무것도 하지 않기
         // Walkable일 경우 : 똑같은 길이로 평면에 투영한 벡터 움직임 구현
         // 추가로 점프가 가능해야 하며 점프는 각도와 상관없이 위로 점프해야 함.
@@ -172,13 +179,13 @@ public class PlayerMotor : MonoBehaviour
 
     private void Slide()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit steepHit, slopeRayRange))
+        if (Physics.Raycast(transform.position, Vector3.down, out var steepHit, slopeRayRange))
         {
-            Vector3 slideDir = Vector3.ProjectOnPlane(Vector3.down, steepHit.normal).normalized;
+            var slideDir = Vector3.ProjectOnPlane(Vector3.down, steepHit.normal).normalized;
 
             playerVelocity.y += gravity * Time.deltaTime;
 
-            Vector3 slideVelocity = slideDir * slideSpeed;
+            var slideVelocity = slideDir * slideSpeed;
             slideVelocity.y = playerVelocity.y;
 
             controller.Move(slideVelocity * Time.deltaTime);

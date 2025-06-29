@@ -171,7 +171,7 @@ public class InventorySystem
         //# 빈 슬롯들의 공간 계산
         foreach (var slot in m_inventorySlots)
         {
-            if (slot.ItemDataSO == null) totalSpace += item.ItemMaxOwn;
+            if (slot.ItemDataSO.Equals(null)) totalSpace += item.ItemMaxOwn;
         }
 
         return totalSpace;

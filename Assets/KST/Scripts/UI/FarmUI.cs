@@ -20,7 +20,7 @@ public class FarmUI : Singleton<FarmUI>
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
     [SerializeField] private TMP_Text m_statusText;
-    public Image PrograssBarImg;
+    public Image ProgressBarImg;
     public Button[] cropButtons;
 
     private float pressTimer = 0f;
@@ -33,22 +33,24 @@ public class FarmUI : Singleton<FarmUI>
     //오픈 관련 이벤트 처리
     public event Action<bool> OnIsUIOpen;
 
-
     [Header("Tile")]
     [SerializeField] private FarmTile currentTile;
     [SerializeField] private float growTimer = 0f;
 
-    void Start()
+    private static bool m_isIneractionKeyPressed;
+    private static bool m_isEscapeKeyPressed;
+
+    private void Start()
     {
         ScrollViewSetting();
         m_statusText.text = "";
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
     }
 
-    void Update()
+    private void Update()
     {
         // if (!FarmUIGO.activeSelf || currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
-        if (currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
+        if (currentTile == null) return; //FarmUI가 비활성화 돼 있다면 무시.
 
         if (currentTile.IsPlanted())
         {
@@ -62,12 +64,11 @@ public class FarmUI : Singleton<FarmUI>
                 {
                     growTimer = 0f;
                     m_statusText.text = $"재배 완료! 수확하려면 [E]키를 누르세요";
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (m_isIneractionKeyPressed)
                     {
                         Harvest();
                     }
                 }
-
             }
             else
             {
@@ -78,13 +79,12 @@ public class FarmUI : Singleton<FarmUI>
         if (selectedCrop == null) return;
 
         //재배 가능한 상태
-        if (Input.GetKey(KeyCode.E))
+        if (m_isIneractionKeyPressed)
         {
             isPressingE = true;
             pressTimer += Time.deltaTime;
-            PrograssBarImg.fillAmount = pressTimer / pressDuration;
+            ProgressBarImg.fillAmount = pressTimer / pressDuration;
             m_statusText.text = $"작물 재배 중. . .";
-
 
             if (pressTimer >= pressDuration)
             {
@@ -95,13 +95,15 @@ public class FarmUI : Singleton<FarmUI>
         {
             CancelPlanting();
         }
+
+        if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed) CloseUI();
     }
-    void CancelPlanting()
+    private void CancelPlanting()
     {
         //상태 전부 초기화
 
         pressTimer = 0f;
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         isPressingE = false;
         m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
@@ -119,20 +121,21 @@ public class FarmUI : Singleton<FarmUI>
             {
                 DisplayCropDetail(selectedCrop);
                 m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-                PrograssBarImg.fillAmount = 0f;
+                ProgressBarImg.fillAmount = 0f;
             }
         }
     }
 
     public void OpenUI()
     {
+        GameManager.Instance.SetCursorUnlock();
         Debug.Log("농사 UI open");
         FarmUIGO.SetActive(true);
         OnIsUIOpen?.Invoke(true);
         if (selectedCrop == null)
         {
             m_statusText.text = "";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
             DetailGO.SetActive(false);
             return;
         }
@@ -143,13 +146,15 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     public void CloseUI()
     {
+        GameManager.Instance.SetCursorLock();
         FarmUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
+        m_isEscapeKeyPressed = false;
     }
     public void SelectCrop(CropDataSO crop)
     {
@@ -164,7 +169,7 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile != null && !currentTile.IsPlanted())
         {
             m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     private void StartGrowing(CropDataSO selectedCrop)
@@ -173,7 +178,7 @@ public class FarmUI : Singleton<FarmUI>
         growTimer = selectedCrop.growTime;
 
         m_statusText.text = $"재배중 {growTimer}";
-        PrograssBarImg.fillAmount = 1f;
+        ProgressBarImg.fillAmount = 1f;
         foreach (var btn in cropButtons)
         {
             btn.interactable = false;
@@ -190,15 +195,15 @@ public class FarmUI : Singleton<FarmUI>
     }
     public void ScrollViewSetting()
     {
-        List<Button> btnList = new();
+        var btnList = new List<Button>();
         foreach (Transform child in scrollViewContentPos)
         {
             Destroy(child.gameObject);
         }
         foreach (var crop in CropList)
         {
-            GameObject go = Instantiate(cropBtnPrefab, scrollViewContentPos);
-            CropBtn cropBtn = go.GetComponent<CropBtn>();
+            var go = Instantiate(cropBtnPrefab, scrollViewContentPos);
+            var cropBtn = go.GetComponent<CropBtn>();
             cropBtn.Init(crop);
             btnList.Add(cropBtn.Btn);
         }
@@ -219,8 +224,13 @@ public class FarmUI : Singleton<FarmUI>
         //초기화
         growTimer = 0f;
         selectedCrop = null;
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
+
+
+        cropImg.sprite = null;
+        cropName.text = "";
+        cropDesc.text = "";
 
         foreach (var btn in cropButtons)
         {
@@ -228,5 +238,7 @@ public class FarmUI : Singleton<FarmUI>
         }
     }
 
-    
+    public static void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;
+    public static void OnInteractionKeyReleased() => m_isIneractionKeyPressed = false;
+    public static void OnCloseKeyPressed() => m_isEscapeKeyPressed = true;
 }

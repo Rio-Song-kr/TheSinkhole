@@ -3,14 +3,16 @@ using UnityEngine;
 public class FarmTile : MonoBehaviour, IToolInteractable
 {
     [Header("Status")]
-    [SerializeField]private bool m_isPlanted; //심어져 있으면 true, 아니면 false
-    [SerializeField]private bool m_isPlayerOnFarmTile; //팜타일에 플레이어가 있으면 true, 없으면 false
+    [SerializeField] private bool m_isPlanted; //심어져 있으면 true, 아니면 false
+    [SerializeField] private bool m_isPlayerOnFarmTile; //팜타일에 플레이어가 있으면 true, 없으면 false
     public bool IsPlanted() => m_isPlanted;
-    public bool IsPlayerOnTile() => m_isPlayerOnFarmTile; 
+    public bool IsPlayerOnTile() => m_isPlayerOnFarmTile;
 
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
+    public float m_interactDelay = 0.5f;
+    public float m_awakeTime;
     private bool m_isInteract;
     //농사창 UI
     // public GameObject FarmUIObj;
@@ -24,37 +26,38 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     //     m_isPlanted = true;
 
     // }
-    void OnEnable()
+    private void Awake() => m_awakeTime = Time.time;
+
+    private void OnEnable()
     {
-        FarmUI.Instance.OnIsUIOpen +=SetInteraction;
+        FarmUI.Instance.OnIsUIOpen += SetInteraction;
     }
-    void OnDisable()
+    private void OnDisable()
     {
-        FarmUI.Instance.OnIsUIOpen -=SetInteraction;
-    }
-    
-    #region 상호작용 인터페이스 구현
-    public interactType GetInteractType()
-    {
-        return interactType.PressE;
+        FarmUI.Instance.OnIsUIOpen -= SetInteraction;
     }
 
-    public bool CanInteract(ToolType toolType)
-    {
+    #region 상호작용 인터페이스 구현
+
+    public interactType GetInteractType() => interactType.PressE;
+
+    public bool CanInteract(ToolType toolType) =>
         // return m_isPlayerOnFarmTile && !m_isPlanted && toolType == ToolType.Shovel;
-        return m_isPlayerOnFarmTile && toolType == ToolType.Shovel;
-    }
+        m_isPlayerOnFarmTile && toolType == ToolType.Shovel;
     public void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None) return;
 
         // FarmUIObj.SetActive(true);
-        FarmUI.Instance.OpenUI();
-        // m_isInteract = false;
-        FarmUI.Instance.SetTile(this);
-        InteractUiText.SetActive(false);
-
+        if (GameManager.Instance.IsCursorLocked)
+        {
+            FarmUI.Instance.OpenUI();
+            // m_isInteract = false;
+            FarmUI.Instance.SetTile(this);
+            InteractUiText.SetActive(false);
+        }
     }
+
     #endregion
 
     //심기 메서드
@@ -68,20 +71,20 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     {
         m_isPlanted = false;
         growingCrop = null;
-        
     }
 
-    void SetInteraction(bool _status)
+    private void SetInteraction(bool _status)
     {
         InteractUiText.SetActive(_status);
     }
 
     #region 충돌처리
 
-    void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            if (Time.time - m_awakeTime < m_interactDelay) return;
             //플레이어가 타일위에 있는지
             m_isPlayerOnFarmTile = true;
             // //플레이어가 상호작용을 통해 UI를 오픈했는지.
@@ -93,24 +96,21 @@ public class FarmTile : MonoBehaviour, IToolInteractable
             {
                 InteractUiText.SetActive(true);
             }
-            Interaction player = other.GetComponent<Interaction>();
+            var player = other.GetComponent<Interaction>();
             player?.RegisterTrigger(this);
-
         }
     }
 
-
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             m_isPlayerOnFarmTile = false;
             InteractUiText.SetActive(false);
-            Interaction player = other.GetComponent<Interaction>();
+            var player = other.GetComponent<Interaction>();
             player?.ClearTrigger(this);
         }
-
     }
-    #endregion
 
+    #endregion
 }

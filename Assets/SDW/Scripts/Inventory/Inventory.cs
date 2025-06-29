@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 인벤토리 컨테이너 역할
@@ -23,6 +25,11 @@ public class Inventory : MonoBehaviour
     public InventorySystem DynamicInventorySystem => m_dynamicInventorySystem;
 
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
+    public static Action<int> OnSelectedItemChanged;
+
+    private ItemEnName m_selectedItemEnName;
+    private ToolType m_toolType = ToolType.None;
+    private int m_itemAmounts = 0;
 
     /// <summary>
     /// 인벤토리 시스템들을 size 만큼 초기화
@@ -35,16 +42,89 @@ public class Inventory : MonoBehaviour
 
     /// <summary>
     /// 현재 B키 입력 시 Dynamic Inventory Open/Close
+    /// </summary>
+    public void OnInventoryKeyPressed()
+    {
+        OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
+
+        if (DynamicUIController.IsOpened) GameManager.Instance.SetCursorUnlock();
+        else GameManager.Instance.SetCursorLock();
+    }
+
+    /// <summary>
     /// Escape 키 입력 시 Dynamic Inventory Close
     /// </summary>
-    private void Update()
+    public void OnCloseKeyPressed()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-            OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
+        OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
+        GameManager.Instance.SetCursorLock();
     }
+
+    /// <summary>
+    /// 넘패드 1~0 키 입력을 확인하여 퀵슬롯 선택 처리
+    /// 0키는 인덱스 9로, 1~9키는 인덱스 0~8로 매핑
+    /// </summary>
+    public void OnNumpadKeyPressed(InputAction.CallbackContext ctx)
+    {
+        int m_selectedIndex = int.Parse(ctx.control.name);
+
+        m_selectedIndex = m_selectedIndex == 0 ? 9 : m_selectedIndex - 1;
+        SelectQuickSlot(m_selectedIndex);
+    }
+
+    /// <summary>
+    /// 지정된 인덱스의 퀵슬롯을 선택
+    /// 영문 이름과 Tool type관련 처리
+    /// </summary>
+    /// <param name="slotIndex">선택할 슬롯 인덱스</param>
+    private void SelectQuickSlot(int m_selectedIndex)
+    {
+        OnSelectedItemChanged?.Invoke(m_selectedIndex);
+
+        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO == null) return;
+
+        m_selectedItemEnName = m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemEnName;
+        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemType != ItemType.ToolItem)
+        {
+            m_toolType = ToolType.None;
+            return;
+        }
+
+        switch (m_selectedItemEnName)
+        {
+            case ItemEnName.Hammer:
+                m_toolType = ToolType.Hammer;
+                break;
+            case ItemEnName.Shovel:
+                m_toolType = ToolType.Shovel;
+                break;
+            case ItemEnName.Pick:
+                m_toolType = ToolType.Pick;
+                break;
+            case ItemEnName.Water:
+                m_toolType = ToolType.Water;
+                break;
+            default:
+                m_toolType = ToolType.None;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 현재 선택된 아이템의 영문명을 반환
+    /// </summary>
+    /// <returns>선택된 아이템의 영문명</returns>
+    public ItemEnName GetItemName() => m_selectedItemEnName;
+
+    /// <summary>
+    /// 현재 선택된 아이템의 ToolType을 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ToolType을 반환</returns>
+    public ToolType GetItemToolType() => m_toolType;
+
+    public int GetItemAmounts(ItemEnName itemEnName) =>
+        //todo 아이템의 영문이름과 같은 이름을 가진 아이템의 총 수량을 반환)
+        m_itemAmounts;
 
     /// <summary>
     /// 마인크래프트 스타일의 아이템 추가 방식
@@ -159,15 +239,5 @@ public class Inventory : MonoBehaviour
         }
 
         return remainingAmount;
-    }
-
-    /// <summary>
-    /// 스택 정보를 담는 헬퍼 클래스
-    /// </summary>
-    private class StackInfo
-    {
-        public InventorySlot slot;
-        public InventorySystem inventorySystem;
-        public int currentAmount;
     }
 }

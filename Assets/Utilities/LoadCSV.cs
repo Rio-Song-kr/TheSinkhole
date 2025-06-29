@@ -1,24 +1,19 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
-public abstract class LoadCSV<T>
+public static class LoadCSV
 {
-    protected string[] LoadFromCsv(string fileName)
+    public static string[] LoadFromCsv(string fileName)
     {
-        string filePath = Path.Combine(Application.dataPath, fileName);
+        var csvFile = Resources.Load<TextAsset>($"CSVData/{fileName}");
 
-        if (!File.Exists(filePath))
+        if (csvFile != null)
         {
-            Debug.LogWarning($"CSV file not found: {filePath}");
-            return null;
+            string[] lines = csvFile.text.Split('\n').Skip(3).ToArray();
+            return lines;
         }
 
-        string[] lines = File.ReadAllLines(filePath, Encoding.UTF8).Skip(3).ToArray();
-        return lines;
+        Debug.LogWarning($"CSV File not Found: Resources/CSVData/{fileName}");
+        return null;
     }
-
-    protected abstract List<T> ReadDataFromLines(string[] lines);
 }

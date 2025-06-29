@@ -140,7 +140,7 @@ public class InventoryPresenter : MonoBehaviour
     {
         InventoryItemController targetController = null;
 
-        if (targetInventorySystem != null && targetInventorySystem != m_inventorySystem)
+        if (!targetInventorySystem.Equals(null) && targetInventorySystem != m_inventorySystem)
             m_inventoryControllers.TryGetValue(targetInventorySystem, out targetController);
 
         m_dragHandler.OnEndDrag(targetSlotIndex, isValidDrop, isOutsideInventory, targetController, isTrashDrop);
@@ -190,7 +190,7 @@ public class InventoryPresenter : MonoBehaviour
     /// </summary>
     public void Cleanup()
     {
-        if (m_inventorySystem != null) m_inventorySystem.OnSlotChanged -= OnSlotChanged;
+        if (!m_inventorySystem.Equals(null)) m_inventorySystem.OnSlotChanged -= OnSlotChanged;
 
         m_inventorySystem = null;
         m_inventoryView = null;

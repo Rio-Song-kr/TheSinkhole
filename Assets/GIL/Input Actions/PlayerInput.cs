@@ -128,9 +128,54 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""InventoryPartial"",
                     ""type"": ""Button"",
-                    ""id"": ""78da6679-3d1c-4cad-b968-29bc2ffd7267"",
+                    ""id"": ""b96b163c-90e7-4cb6-81a3-70aa5702e792"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InventoryOpenClose"",
+                    ""type"": ""Button"",
+                    ""id"": ""395821aa-691c-49c5-a149-47cc98503f6e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UIOpenClose"",
+                    ""type"": ""Button"",
+                    ""id"": ""5937da77-b32b-4ed7-8587-1dc363b618ff"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InventoryNumpad"",
+                    ""type"": ""Button"",
+                    ""id"": ""33002360-6f22-48ef-a94a-cf34da166a08"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LMBClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""35956005-cab5-48cd-9356-a9077a166f99"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interaction"",
+                    ""type"": ""Button"",
+                    ""id"": ""0353618f-ca8c-4190-88b7-dd2722a8c37a"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -228,12 +273,166 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""74b22cd8-8ccc-4130-89e8-b8936a3763fc"",
+                    ""id"": ""123a9bd2-aca0-4e5a-87ff-48b8547cdae3"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryPartial"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6932ac69-6a0a-4131-a6cc-cda8cbfc2a5b"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryOpenClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9b5ca4e9-05a0-47dd-bcf4-df4b29b50360"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIOpenClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e402501-a221-491d-ac03-7ac1ceeb6dfe"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""89755c33-1ff7-42c7-801a-f28ee1490bc9"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65d06d98-c99d-4615-8a7e-fe3768e767f4"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7da05de9-4655-4f80-85a7-6195ebbe4f8f"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d586c917-9b5b-4a52-93f1-c51ab8f01c43"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6018d759-93c1-4d6a-a662-8ebf00ec3c2a"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a365a1f-e113-41e4-b686-44891ce5c1e5"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a911e973-b00f-460e-ba9a-f7fe9869d2d7"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4051dc3-15b7-4e9c-b4ae-49001f30968e"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b2c199c-2c05-486d-9e64-37c5c4e2aaab"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryNumpad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5496a430-cc72-4780-89c4-b5261906a1b5"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""LMBClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33f20936-6d2d-4be2-b896-09c77036f999"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interaction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -260,7 +459,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_OnFoot_Jump = m_OnFoot.FindAction("Jump", throwIfNotFound: true);
         m_OnFoot_Look = m_OnFoot.FindAction("Look", throwIfNotFound: true);
         m_OnFoot_Sprint = m_OnFoot.FindAction("Sprint", throwIfNotFound: true);
-        m_OnFoot_Attack = m_OnFoot.FindAction("Attack", throwIfNotFound: true);
+        m_OnFoot_InventoryPartial = m_OnFoot.FindAction("InventoryPartial", throwIfNotFound: true);
+        m_OnFoot_InventoryOpenClose = m_OnFoot.FindAction("InventoryOpenClose", throwIfNotFound: true);
+        m_OnFoot_UIOpenClose = m_OnFoot.FindAction("UIOpenClose", throwIfNotFound: true);
+        m_OnFoot_InventoryNumpad = m_OnFoot.FindAction("InventoryNumpad", throwIfNotFound: true);
+        m_OnFoot_LMBClick = m_OnFoot.FindAction("LMBClick", throwIfNotFound: true);
+        m_OnFoot_Interaction = m_OnFoot.FindAction("Interaction", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -345,7 +549,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_Jump;
     private readonly InputAction m_OnFoot_Look;
     private readonly InputAction m_OnFoot_Sprint;
-    private readonly InputAction m_OnFoot_Attack;
+    private readonly InputAction m_OnFoot_InventoryPartial;
+    private readonly InputAction m_OnFoot_InventoryOpenClose;
+    private readonly InputAction m_OnFoot_UIOpenClose;
+    private readonly InputAction m_OnFoot_InventoryNumpad;
+    private readonly InputAction m_OnFoot_LMBClick;
+    private readonly InputAction m_OnFoot_Interaction;
     /// <summary>
     /// Provides access to input actions defined in input action map "OnFoot".
     /// </summary>
@@ -374,9 +583,29 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Sprint => m_Wrapper.m_OnFoot_Sprint;
         /// <summary>
-        /// Provides access to the underlying input action "OnFoot/Attack".
+        /// Provides access to the underlying input action "OnFoot/InventoryPartial".
         /// </summary>
-        public InputAction @Attack => m_Wrapper.m_OnFoot_Attack;
+        public InputAction @InventoryPartial => m_Wrapper.m_OnFoot_InventoryPartial;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/InventoryOpenClose".
+        /// </summary>
+        public InputAction @InventoryOpenClose => m_Wrapper.m_OnFoot_InventoryOpenClose;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/UIOpenClose".
+        /// </summary>
+        public InputAction @UIOpenClose => m_Wrapper.m_OnFoot_UIOpenClose;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/InventoryNumpad".
+        /// </summary>
+        public InputAction @InventoryNumpad => m_Wrapper.m_OnFoot_InventoryNumpad;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/LMBClick".
+        /// </summary>
+        public InputAction @LMBClick => m_Wrapper.m_OnFoot_LMBClick;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Interaction".
+        /// </summary>
+        public InputAction @Interaction => m_Wrapper.m_OnFoot_Interaction;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -415,9 +644,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
+            @InventoryPartial.started += instance.OnInventoryPartial;
+            @InventoryPartial.performed += instance.OnInventoryPartial;
+            @InventoryPartial.canceled += instance.OnInventoryPartial;
+            @InventoryOpenClose.started += instance.OnInventoryOpenClose;
+            @InventoryOpenClose.performed += instance.OnInventoryOpenClose;
+            @InventoryOpenClose.canceled += instance.OnInventoryOpenClose;
+            @UIOpenClose.started += instance.OnUIOpenClose;
+            @UIOpenClose.performed += instance.OnUIOpenClose;
+            @UIOpenClose.canceled += instance.OnUIOpenClose;
+            @InventoryNumpad.started += instance.OnInventoryNumpad;
+            @InventoryNumpad.performed += instance.OnInventoryNumpad;
+            @InventoryNumpad.canceled += instance.OnInventoryNumpad;
+            @LMBClick.started += instance.OnLMBClick;
+            @LMBClick.performed += instance.OnLMBClick;
+            @LMBClick.canceled += instance.OnLMBClick;
+            @Interaction.started += instance.OnInteraction;
+            @Interaction.performed += instance.OnInteraction;
+            @Interaction.canceled += instance.OnInteraction;
         }
 
         /// <summary>
@@ -441,9 +685,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
+            @InventoryPartial.started -= instance.OnInventoryPartial;
+            @InventoryPartial.performed -= instance.OnInventoryPartial;
+            @InventoryPartial.canceled -= instance.OnInventoryPartial;
+            @InventoryOpenClose.started -= instance.OnInventoryOpenClose;
+            @InventoryOpenClose.performed -= instance.OnInventoryOpenClose;
+            @InventoryOpenClose.canceled -= instance.OnInventoryOpenClose;
+            @UIOpenClose.started -= instance.OnUIOpenClose;
+            @UIOpenClose.performed -= instance.OnUIOpenClose;
+            @UIOpenClose.canceled -= instance.OnUIOpenClose;
+            @InventoryNumpad.started -= instance.OnInventoryNumpad;
+            @InventoryNumpad.performed -= instance.OnInventoryNumpad;
+            @InventoryNumpad.canceled -= instance.OnInventoryNumpad;
+            @LMBClick.started -= instance.OnLMBClick;
+            @LMBClick.performed -= instance.OnLMBClick;
+            @LMBClick.canceled -= instance.OnLMBClick;
+            @Interaction.started -= instance.OnInteraction;
+            @Interaction.performed -= instance.OnInteraction;
+            @Interaction.canceled -= instance.OnInteraction;
         }
 
         /// <summary>
@@ -526,11 +785,46 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "InventoryPartial" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttack(InputAction.CallbackContext context);
+        void OnInventoryPartial(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "InventoryOpenClose" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInventoryOpenClose(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UIOpenClose" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUIOpenClose(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "InventoryNumpad" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInventoryNumpad(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LMBClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLMBClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interaction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteraction(InputAction.CallbackContext context);
     }
 }
