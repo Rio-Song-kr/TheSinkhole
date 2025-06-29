@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using EPOOutline;
 using UnityEngine;
 
 public class Interaction : MonoBehaviour
@@ -21,6 +22,7 @@ public class Interaction : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_itemPickUpText;
     [NonSerialized] public RaycastHit Hit;
     [NonSerialized] public bool IsDetected;
+    private Outlinable m_outlinable;
 
     private void Awake() => m_inventory = GetComponent<Inventory>();
 
@@ -45,63 +47,77 @@ public class Interaction : MonoBehaviour
 
         if (CurrentTool == ToolType.None) return;
 
-
-        if (IsDetected)
+        if (IsDetected && Hit.collider.TryGetComponent(out IToolInteractable toolInteractable))
         {
-            if (Hit.collider.TryGetComponent(out IToolInteractable toolInteractable))
+            if (m_outlinable != null && Hit.collider.gameObject.GetInstanceID() != m_outlinable.gameObject.GetInstanceID())
             {
-                var tileState = Hit.collider.GetComponent<Tile>().tileState;
+                ClearOutline();
+            }
 
+            var tileState = Hit.collider.GetComponent<Tile>().tileState;
 
-                if (tileState != TileState.None && tileState != TileState.Frontier)
+            if (tileState != TileState.None && tileState != TileState.Frontier)
+                SetTextObject(false);
+
+            if (CurrentTool == ToolType.Pick && tileState == TileState.None)
+            {
+                SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+
+                if (m_outlinable == null)
                 {
-                    SetTextObject(false);
-                    return;
-                }
-
-                if (CurrentTool == ToolType.Pick && tileState == TileState.None)
-                    SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
-                else if (tileState == TileState.Frontier)
-                {
-                    switch (CurrentTool)
-                    {
-                        case ToolType.Hammer:
-                            SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                            break;
-                        case ToolType.Shovel:
-                            SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
-                            break;
-                        case ToolType.Water:
-                            SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                            break;
-                        default:
-                            SetTextObject(false);
-                            break;
-                    }
-                }
-
-                SetCrosshairObject(false);
-
-                if (toolInteractable.GetInteractType() == interactType.MouseClick &&
-                    toolInteractable.CanInteract(CurrentTool) && m_isIneractionKeyPressed)
-                {
-                    toolInteractable.OnInteract(CurrentTool);
-                    return;
+                    m_outlinable = Hit.collider.GetComponent<Outlinable>();
+                    m_outlinable.enabled = true;
                 }
             }
-            //도구 필요 없는 대상일 경우
-            if (Hit.collider.TryGetComponent(out Iinteractable interactable))
+
+            if (tileState == TileState.Frontier)
             {
-                if (interactable.GetInteractType() == interactType.MouseClick && interactable.CanInteract())
-                    interactable.OnInteract();
+                switch (CurrentTool)
+                {
+                    case ToolType.Hammer:
+                        SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
+                        break;
+                    case ToolType.Shovel:
+                        SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
+                        break;
+                    case ToolType.Water:
+                        SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
+                        break;
+                    default:
+                        SetTextObject(false);
+                        break;
+                }
             }
+
+            SetCrosshairObject(false);
+
+            if (toolInteractable.GetInteractType() == interactType.MouseClick &&
+                toolInteractable.CanInteract(CurrentTool) && m_isIneractionKeyPressed)
+            {
+                toolInteractable.OnInteract(CurrentTool);
+            }
+        }
+        //도구 필요 없는 대상일 경우
+        else if (IsDetected && Hit.collider.TryGetComponent(out Iinteractable interactable))
+        {
+            if (interactable.GetInteractType() == interactType.MouseClick && interactable.CanInteract())
+                interactable.OnInteract();
         }
         else
         {
             SetTextObject(false);
+            ClearOutline();
 
             if (GameManager.Instance.IsCursorLocked)
                 SetCrosshairObject(true);
+        }
+    }
+    private void ClearOutline()
+    {
+        if (m_outlinable != null)
+        {
+            m_outlinable.enabled = false;
+            m_outlinable = null;
         }
     }
 

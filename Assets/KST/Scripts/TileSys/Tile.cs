@@ -1,3 +1,4 @@
+using EPOOutline;
 using TMPro;
 using UnityEngine;
 
@@ -5,9 +6,17 @@ public class Tile : MonoBehaviour, IToolInteractable
 {
     public TileState tileState = TileState.None;
 
-    public GameObject InteractUiTextRef;
+    public static GameObject InteractUiTextRef;
     //농사창 UI
-    public GameObject FarmUIRef;
+    public static GameObject FarmUIRef;
+
+    private Outlinable m_outlinable;
+
+    private void Awake()
+    {
+        m_outlinable = GetComponent<Outlinable>();
+        m_outlinable.enabled = false;
+    }
 
     public interactType GetInteractType() => interactType.MouseClick;
     public bool CanInteract(ToolType toolType)
@@ -17,6 +26,8 @@ public class Tile : MonoBehaviour, IToolInteractable
             case TileState.None:
                 return toolType == ToolType.Pick;
             case TileState.Frontier:
+                return toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water;
+            case TileState.Farmable:
                 return toolType == ToolType.Shovel;
             case TileState.DefenceArea:
                 return toolType == ToolType.Hammer;
@@ -92,7 +103,7 @@ public class Tile : MonoBehaviour, IToolInteractable
     }
 
     //TurretTile로 변경시 부착
-    public void SetDeffenceArea()
+    public void SetDefenceArea()
     {
         tileState = TileState.DefenceArea;
 

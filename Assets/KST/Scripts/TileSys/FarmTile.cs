@@ -92,10 +92,14 @@ public class FarmTile : MonoBehaviour, IToolInteractable
             // {
             //     InteractUiText.SetActive(true);
             // }
-            if (!FarmUI.Instance.GetActiveself())
+            var currentTool = other.gameObject.GetComponent<Interaction>().CurrentTool;
+
+            if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
             {
                 InteractUiText.SetActive(true);
             }
+            else
+                InteractUiText.SetActive(false);
             var player = other.GetComponent<Interaction>();
             player?.RegisterTrigger(this);
         }
