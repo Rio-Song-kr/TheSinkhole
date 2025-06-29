@@ -11,6 +11,8 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
+    public float m_interactDelay = 0.5f;
+    public float m_awakeTime;
     private bool m_isInteract;
     //농사창 UI
     // public GameObject FarmUIObj;
@@ -24,6 +26,8 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     //     m_isPlanted = true;
 
     // }
+    void Awake() => m_awakeTime = Time.time;
+        
     void OnEnable()
     {
         FarmUI.Instance.OnIsUIOpen +=SetInteraction;
@@ -82,6 +86,7 @@ public class FarmTile : MonoBehaviour, IToolInteractable
     {
         if (other.CompareTag("Player"))
         {
+            if (Time.time - m_awakeTime < m_interactDelay) return;
             //플레이어가 타일위에 있는지
             m_isPlayerOnFarmTile = true;
             // //플레이어가 상호작용을 통해 UI를 오픈했는지.
