@@ -86,6 +86,7 @@ public class MouseItemView : MonoBehaviour, IMouseItemView
     /// </summary>
     public void DropItem()
     {
+        if (m_currentItem.ItemDataSO == null) return;
         var itemEnName = m_currentItem.ItemDataSO.ItemEnName;
         var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
 
