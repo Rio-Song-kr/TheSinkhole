@@ -76,6 +76,13 @@ public class FarmUI : Singleton<FarmUI>
             }
             return;
         }
+
+        if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed)
+        {
+            CloseUI();
+            return;
+        }
+
         if (selectedCrop == null) return;
 
         //재배 가능한 상태
@@ -95,8 +102,6 @@ public class FarmUI : Singleton<FarmUI>
         {
             CancelPlanting();
         }
-
-        if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed) CloseUI();
     }
     private void CancelPlanting()
     {
@@ -151,10 +156,10 @@ public class FarmUI : Singleton<FarmUI>
     }
     public void CloseUI()
     {
-        GameManager.Instance.SetCursorLock();
         FarmUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
         m_isEscapeKeyPressed = false;
+        GameManager.Instance.SetCursorLock();
     }
     public void SelectCrop(CropDataSO crop)
     {

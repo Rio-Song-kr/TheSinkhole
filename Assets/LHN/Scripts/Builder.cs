@@ -9,14 +9,16 @@ public class Builder : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            // ¸¶¿ì½º Æ÷ÀÎÅÍ À§Ä¡¸¦ °¨Áö
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo))
+            // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out var hitInfo))
             {
-                // Ãæµ¹µÈ ÁöÁ¡ÀÇ ÄÄÆ÷³ÍÆ®¸¦ tile ¿¡ ÀúÀå
-                GridBuildingSystem tile = hitInfo.collider.GetComponent<GridBuildingSystem>();
+                // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ tile ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+                var tile = hitInfo.collider.GetComponent<GridBuildingSystem>();
 
-                // Å¸ÀÏÀÇ Å¸ÀÔÀÌ White¶ó¸é ºôµå ½ÇÇà
+                if (tile == null) return;
+
+                // Å¸ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ Whiteï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (tile.type == TileType.White)
                 {
                     tile.Build(buildingPrefab);
