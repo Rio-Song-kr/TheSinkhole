@@ -14,5 +14,6 @@ public enum PopupType
     Farmable,
     DefenceArea,
     Water,
-    Full
+    Full,
+    ChangingState
 }

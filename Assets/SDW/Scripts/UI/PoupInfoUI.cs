@@ -64,6 +64,9 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.Water:
                 m_popupText.text = "타일이 급수시설로 변경됐습니다.";
                 break;
+            case PopupType.ChangingState:
+                m_popupText.text = "타일 상태를 변환 중입니다.";
+                break;
         }
 
         m_popupUIContainer.gameObject.SetActive(true);
