@@ -6469,7 +6469,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e78975c8efb024ca73e930f92919e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_intectionDistance: 2
 --- !u!114 &966719158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6485,7 +6484,7 @@ MonoBehaviour:
   CurrentTool: 0
   m_rayTransform: {fileID: 0}
   m_crosshairObject: {fileID: 1219213580}
-  InteractionDistance: 2.3
+  InteractionDistance: 5
   m_inventory: {fileID: 0}
   m_itemPickUpTextObject: {fileID: 1834845615}
   m_itemPickUpText: {fileID: 1834845617}
@@ -9154,8 +9153,9 @@ MonoBehaviour:
     type: 3}
   m_buildableTile: {fileID: 1298757290643596563, guid: e3608b423ac6eb547b3c3028cab9a58b,
     type: 3}
-  m_groundTileSize: {x: 3, y: 3}
-  m_buildableTileSize: {x: 21, y: 21}
+  m_groundTileSize: {x: 7, y: 7}
+  m_buildableTileSize: {x: 43, y: 43}
+  m_tileSize: 5
 --- !u!4 &1262666223
 Transform:
   m_ObjectHideFlags: 0
@@ -13805,8 +13805,8 @@ SceneRoots:
   - {fileID: 1079400581}
   - {fileID: 1497866928}
   - {fileID: 1617361749}
+  - {fileID: 1262666223}
   - {fileID: 281879694}
   - {fileID: 625445358}
   - {fileID: 808531264}
   - {fileID: 966719153}
-  - {fileID: 1262666223}

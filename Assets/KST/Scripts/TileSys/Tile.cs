@@ -1,3 +1,4 @@
+using System.Collections;
 using EPOOutline;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     [SerializeField] private GameObject m_waterModelPrefab;
 
     private Outlinable m_outlinable;
+    private Coroutine m_coroutine;
 
     private void Awake()
     {
@@ -62,10 +64,13 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             case TileState.Frontier: // 개척지. 삽을 통해 경작지로 변경 가능하며, 추후 다른 건물을 짓는 것도 가능.
                 if (toolType == ToolType.Shovel)
                 {
-                    Instantiate(m_farmModelPrefab, transform);
-                    tileState = TileState.Farmable;
-                    SetFarmable();
-                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
+                    if (m_coroutine != null) return;
+
+                    tileState = TileState.ChangingState;
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.ChangingState);
+
+                    var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
+                    m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
                 }
                 // else if (toolType == ToolType.Hammer)
                 // {
@@ -84,6 +89,27 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             //         //농사창 팝업.
             //     }
             //     break;
+        }
+    }
+
+    private IEnumerator ChangeTileState(ToolType toolType, DissolveEffect effect)
+    {
+        while (!effect.IsDone)
+        {
+            yield return null;
+        }
+
+        switch (toolType)
+        {
+            case ToolType.Shovel:
+                tileState = TileState.Farmable;
+                SetFarmable();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
+                break;
+            case ToolType.Hammer:
+                break;
+            case ToolType.Water:
+                break;
         }
     }
 
