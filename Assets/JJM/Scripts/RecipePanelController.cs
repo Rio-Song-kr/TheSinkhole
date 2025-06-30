@@ -18,6 +18,9 @@ namespace CraftingSystem
         public Button craftingButton;
         public TMP_Text craftingButtonText;
 
+        [Header("RecipeSelectButton 연결")]
+        public GameObject recipeButtonPrefab;// 레시피 버튼 프리팹
+
         [Header("재료 스크롤뷰 Content")]
         public Transform ingredientContentParent; // Content 오브젝트
 
@@ -84,6 +87,7 @@ namespace CraftingSystem
                 craftingManager.TryCraftWithDelay(recipe);
             });
         }
+        
         public CraftingRecipe GetCurrentRecipe()
         {
             return currentRecipe;

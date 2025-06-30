@@ -19,9 +19,9 @@ namespace CraftingSystem
             if (resultButtonPrefab == null) Debug.LogError("resultButtonPrefab이 null입니다!");
             if (contentParent == null) Debug.LogError("contentParent가 null입니다!");
             if (recipePanelController == null) Debug.LogError("recipePanelController가 null입니다!");
-            if (recipes == null || recipes.Length == 0) Debug.LogError("recipes 배열이 비어있거나 null입니다!");
+            //if (recipes == null || recipes.Length == 0) Debug.LogError("recipes 배열이 비어있거나 null입니다!");
 
-            foreach (var recipe in recipes)
+            /*foreach (var recipe in recipes)
             {
                 //테스트
                 if (recipe == null)
@@ -61,6 +61,21 @@ namespace CraftingSystem
                     icon.sprite = recipe.result.item.Icon;
 
                 btn.onClick.AddListener(() => recipePanelController.SetRecipe(recipe));
+            }*/
+        }
+        public void SetRecipeList(List<CraftingRecipe> recipes)
+        {
+            // 기존 버튼 삭제
+            foreach (Transform child in contentParent)
+                Destroy(child.gameObject);
+
+            // 레시피 버튼 생성
+            foreach (var recipe in recipes)
+            {
+                var go = Instantiate(resultButtonPrefab, contentParent);
+                var btn = go.GetComponent<RecipeSelectButton>();
+                if (btn != null)
+                    btn.Init(recipe, recipePanelController);
             }
         }
     }
