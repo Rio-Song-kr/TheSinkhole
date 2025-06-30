@@ -19,6 +19,10 @@ namespace CraftingSystem {
 
         [Header("아이콘(버튼 등)")]
         public Sprite icon; //제작결과물 아이콘
+
+        [Header("레시피가 들어갈 제작소")]
+        public CraftingStationType stationType; // 이 레시피가 사용 가능한 제작대 타입
+
         [System.Serializable]
         public struct CraftingItemInfo
         {
