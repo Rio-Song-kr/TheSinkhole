@@ -52,6 +52,12 @@ public class FarmUI : Singleton<FarmUI>
         // if (!FarmUIGO.activeSelf || currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
         if (currentTile == null) return; //FarmUI가 비활성화 돼 있다면 무시.
 
+        if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed)
+        {
+            CloseUI();
+            return;
+        }
+
         if (currentTile.IsPlanted())
         {
             var growingCrop = currentTile.GetGrownCrop();
@@ -74,12 +80,6 @@ public class FarmUI : Singleton<FarmUI>
             {
                 m_statusText.text = "해당 작물은 현재 재배할 수 없습니다.";
             }
-            return;
-        }
-
-        if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed)
-        {
-            CloseUI();
             return;
         }
 

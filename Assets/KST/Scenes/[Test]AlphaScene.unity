@@ -3010,6 +3010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd6deae27e584ee4d8cc9c21486e18fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_dissolveTime: 1
 --- !u!1 &459571558
 GameObject:
   m_ObjectHideFlags: 0
@@ -6152,17 +6153,17 @@ PrefabInstance:
     - target: {fileID: 8660756266449995390, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.52
+      value: -1.9074634
       objectReference: {fileID: 0}
     - target: {fileID: 8660756266449995390, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.28
+      value: 1.0799999
       objectReference: {fileID: 0}
     - target: {fileID: 8660756266449995390, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.02
+      value: 12.390089
       objectReference: {fileID: 0}
     - target: {fileID: 8660756266449995390, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
@@ -6245,6 +6246,7 @@ MonoBehaviour:
     m_inventorySlots: []
   m_dynamicInventorySystem:
     m_inventorySlots: []
+  RemainingSlots: 0
 --- !u!114 &966719157
 MonoBehaviour:
   m_ObjectHideFlags: 0
