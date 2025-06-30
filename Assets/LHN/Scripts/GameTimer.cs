@@ -35,7 +35,7 @@ public class GameTimer : MonoBehaviour
         {
             count += 1;
         }
-        gameTimeText.text = $"DAY : {count}, {gameTimeFormatted}";
+        gameTimeText.text = $"DAY : {count}              {gameTimeFormatted}";
         // 조건문 시간 비교를 위한 이전 시간 저장
         beforeTime = gameTime;
 
