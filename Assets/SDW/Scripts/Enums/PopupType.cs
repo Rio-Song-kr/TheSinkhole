@@ -7,9 +7,13 @@ public enum PopupType
     Destroyed,
     NotDestroyed,
     NoneTile,
+    NeedFarmable,
+    NeedHammer,
+    NeedWater,
     Frontier,
     Farmable,
     DefenceArea,
     Water,
-    Full
+    Full,
+    ChangingState
 }

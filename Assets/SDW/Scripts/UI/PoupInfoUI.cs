@@ -41,7 +41,16 @@ public class PopupInfoUI : MonoBehaviour
                 m_popupText.text = "인벤토리가 가득 찼습니다.";
                 break;
             case PopupType.NoneTile:
-                m_popupText.text = "미개척지입니다. 곡괭이가 필요합니다.";
+                m_popupText.text = "미개척지입니다.\n곡괭이가 필요합니다.";
+                break;
+            case PopupType.NeedFarmable:
+                m_popupText.text = "경작지입니다.\n삽이 필요합니다.";
+                break;
+            case PopupType.NeedHammer:
+                m_popupText.text = "방어시설입니다.\n망치가 필요합니다.";
+                break;
+            case PopupType.NeedWater:
+                m_popupText.text = "급수시설입니다.\n양동이가 필요합니다.";
                 break;
             case PopupType.Frontier:
                 m_popupText.text = "타일이 개척지로 변경됐습니다.";
@@ -54,6 +63,9 @@ public class PopupInfoUI : MonoBehaviour
                 break;
             case PopupType.Water:
                 m_popupText.text = "타일이 급수시설로 변경됐습니다.";
+                break;
+            case PopupType.ChangingState:
+                m_popupText.text = "타일 상태를 변환 중입니다.";
                 break;
         }
 

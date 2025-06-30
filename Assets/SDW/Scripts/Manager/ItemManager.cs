@@ -22,6 +22,8 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     public Dictionary<ItemEnName, ItemPool<SceneItem>> ItemPools => m_itemPools;
 
+    //todo Read한 Item의 목록화(ItemEnName, ItemDataSO) - ItemEnName으로 접근하면 ItemDataSO
+
     /// <summary>
     /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화합니다
     /// </summary>

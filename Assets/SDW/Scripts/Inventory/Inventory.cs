@@ -27,6 +27,9 @@ public class Inventory : MonoBehaviour
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
     public static Action<int> OnSelectedItemChanged;
 
+    //todo 인벤토리의 남은 슬롯 수 관련해서 체크하도록 해야 함
+    public int RemainingSlots;
+
     private ItemEnName m_selectedItemEnName;
     private ToolType m_toolType = ToolType.None;
     private int m_itemAmounts = 0;

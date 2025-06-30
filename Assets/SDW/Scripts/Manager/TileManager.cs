@@ -12,6 +12,7 @@ public class TileManager : MonoBehaviour
     [Header("Map Size")]
     [SerializeField] private Vector2Int m_groundTileSize;
     [SerializeField] private Vector2Int m_buildableTileSize;
+    [SerializeField] private int m_tileSize;
 
     private void Awake()
     {
@@ -26,7 +27,7 @@ public class TileManager : MonoBehaviour
             for (int x = groundXArea.x; x < groundXArea.y + 1; x++)
             {
                 var groundTile = Instantiate(m_groundTile);
-                groundTile.transform.position = new Vector3(x, 0, y) * 10;
+                groundTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
                 groundTile.transform.parent = parentTiles.transform;
             }
         }
@@ -37,7 +38,7 @@ public class TileManager : MonoBehaviour
             {
                 if (x >= groundXArea.x && x <= groundXArea.y && y >= groundYArea.x && y <= groundYArea.y) continue;
                 var buildableTile = Instantiate(m_buildableTile);
-                buildableTile.transform.position = new Vector3(x, 0, y) * 10;
+                buildableTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
                 buildableTile.transform.parent = parentTiles.transform;
             }
         }
