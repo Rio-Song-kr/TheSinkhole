@@ -130,7 +130,7 @@ public class FarmUI : Singleton<FarmUI>
             }
         }
     }
-
+    #region UI Open/Close
     public void OpenUI()
     {
         GameManager.Instance.SetCursorUnlock();
@@ -161,6 +161,9 @@ public class FarmUI : Singleton<FarmUI>
         m_isEscapeKeyPressed = false;
         GameManager.Instance.SetCursorLock();
     }
+    #endregion
+
+    //작물 선택
     public void SelectCrop(CropDataSO crop)
     {
         //재배 중일 경우 다른 작물 선택 불가하도록
@@ -177,6 +180,7 @@ public class FarmUI : Singleton<FarmUI>
             ProgressBarImg.fillAmount = 0f;
         }
     }
+    //재배 시작
     private void StartGrowing(CropDataSO selectedCrop)
     {
         currentTile.StartPlanting(selectedCrop);
@@ -189,6 +193,7 @@ public class FarmUI : Singleton<FarmUI>
             btn.interactable = false;
         }
     }
+    //작물 설명 display
     public void DisplayCropDetail(CropDataSO data)
     {
         DetailGO.SetActive(true);
@@ -220,13 +225,20 @@ public class FarmUI : Singleton<FarmUI>
     {
         Debug.Log("수확 시스템 ON");
 
-        //1. 인벤토리 공간 확인
-        //2. 인벤토리에 추가
+        bool isAddInven =AddInvetory();
+        if (!isAddInven) return;
+        Debug.Log("성공");
 
 
+        //타일 재배 조건 초기화
         currentTile.HarvestingCrop();
 
         //초기화
+        InitTileSetting();
+    }
+
+    private void InitTileSetting()
+    {
         growTimer = 0f;
         selectedCrop = null;
         ProgressBarImg.fillAmount = 0f;
@@ -241,6 +253,38 @@ public class FarmUI : Singleton<FarmUI>
         {
             btn.interactable = true;
         }
+    }
+
+    private bool AddInvetory()
+    {
+        // var sceneItem = other.gameObject.GetComponent<SceneItem>();
+
+        // var inventory = GetComponent<Inventory>();
+        // if (!inventory) return false;
+
+        // int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
+
+        // //# 모든 아이템이 성공적으로 추가됨
+        // if (remainingAmount == 0)
+        // {
+        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
+        //     GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
+        // }
+        // else if (remainingAmount < sceneItem.ItemAmount)
+        // {
+        //     //@ 일부만 추가됨 - 남은 수량으로 업데이트
+        //     sceneItem.ItemAmount = remainingAmount;
+        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+
+        //     //todo 아이템이 부분적으로 추가되었음을 시각적으로 표시
+        //     //@ 예: 이펙트 재생, 사운드 등
+        // }
+        // else
+        // {
+        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+        // }
+        return true;
+
     }
 
     public static void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;
