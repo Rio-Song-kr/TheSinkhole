@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +14,7 @@ public class ViewmodelManager : MonoBehaviour
     public Transform ItemShowPos;
 
     [Header("TODO : Add Item Models")]
-    [SerializeField] GameObject toolModels;
+    [SerializeField] GameObject[] toolModels;
 
     private void Awake()
     {
@@ -23,6 +25,16 @@ public class ViewmodelManager : MonoBehaviour
     }
 
 
+    // 선택된 것을 제외하고 전부 비활성화하기. 이전에 것을 기억하는 것도 좋지만 스위치 형식을 사용하기엔 너무 복잡할듯
+    private void ActivateSelectedToolOnly(int index)
+    {
+        foreach (GameObject tool in toolModels)
+        {
+            tool.SetActive(false);
+        }
+        toolModels[index].SetActive(true);
+    }
+
     /// <summary>
     /// 퀵슬롯에 있는 아이템의 3D 모델링을 오른손에 보여주기
     /// </summary>
@@ -31,25 +43,27 @@ public class ViewmodelManager : MonoBehaviour
     public void ShowQuickslotViewModel(InputAction.CallbackContext ctx)
     {
         inventory.OnNumpadKeyPressed(ctx);
+        Debug.Log(inventory.GetItemToolType());
         ToolType tooltype = inventory.GetItemToolType();
         switch (tooltype)
-        {
-            case ToolType.None:
-                Debug.Log("일반 아이템, 보여줄 게 없다.");
-                break;
-            case ToolType.Shovel:
-                Debug.Log("삽 아이템 보여주기");
-                break;
-            case ToolType.Hammer:
-                Debug.Log("망치 아이템 보여주기");
-                break;
-            case ToolType.Pick:
-                Debug.Log("곡괭이 아이템 보여주기");
-                break;
-            default:
-                Debug.LogWarning("Quick Slot 부분에 뭔가 문제가 발생했다.");
-                break;
-        }
+            {
+                case ToolType.None:
+                    ActivateSelectedToolOnly(3);
+                    Debug.Log("아무것도 안 보여주기");
+                    break;
+                case ToolType.Shovel:
+                    ActivateSelectedToolOnly(0);
+                    Debug.Log("삽 아이템 보여주기");
+                    break;
+                case ToolType.Hammer:
+                    ActivateSelectedToolOnly(1);
+                    Debug.Log("망치 아이템 보여주기");
+                    break;
+                case ToolType.Pick:
+                    ActivateSelectedToolOnly(2);
+                    Debug.Log("곡괭이 아이템 보여주기");
+                    break;
+            }
         //inventory.GetItemName();
         //if(퀵슬롯 번호에 아이템이 있냐?)
         //{
@@ -58,12 +72,6 @@ public class ViewmodelManager : MonoBehaviour
         //  프리팹에 콜라이더가 있을 경우 비활성화하기(충돌 방지)    
         //}
     }
-
-    private void ShowToolItems(ToolType toolType)
-    {
-        
-    }
-
 
     /// <summary>
     /// This function is called when the object becomes enabled and active.
