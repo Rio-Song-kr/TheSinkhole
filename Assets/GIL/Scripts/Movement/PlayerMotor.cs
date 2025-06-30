@@ -13,6 +13,7 @@ public class PlayerMotor : MonoBehaviour
 
     [Header("Movement")]
     public float gravity = -9.8f;
+    public float jumpSpeed = 5f;
     public float jumpHeight = 1.5f;
     public float sprintingSpeed = 2f;
     [Header("Slope Sliding")]
@@ -78,7 +79,7 @@ public class PlayerMotor : MonoBehaviour
         if (isGrounded && playerVelocity.y < 0f)
             playerVelocity.y = -3.0f;
         else
-            playerVelocity.y += gravity * Time.deltaTime;
+            playerVelocity.y += gravity * jumpSpeed * Time.deltaTime;
 
         var totalVelocity = moveVelocity + playerVelocity;
         controller.Move(totalVelocity * Time.deltaTime);
@@ -100,7 +101,7 @@ public class PlayerMotor : MonoBehaviour
     {
         if (isGrounded && isSliding == false)
         {
-            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity * jumpSpeed);
         }
     }
 
@@ -183,7 +184,7 @@ public class PlayerMotor : MonoBehaviour
         {
             var slideDir = Vector3.ProjectOnPlane(Vector3.down, steepHit.normal).normalized;
 
-            playerVelocity.y += gravity * Time.deltaTime;
+            playerVelocity.y += gravity * jumpSpeed * Time.deltaTime;
 
             var slideVelocity = slideDir * slideSpeed;
             slideVelocity.y = playerVelocity.y;
