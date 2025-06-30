@@ -11,3 +11,9 @@ public interface IToolInteractable
     bool CanInteract(ToolType toolType);
     void OnInteract(ToolType toolType);
 }
+
+public interface ITileInteractable
+{
+    void OnTileInteractionStay(Interaction player);
+    void OnTileInteractionExit(Interaction player);
+}

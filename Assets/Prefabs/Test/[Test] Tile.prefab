@@ -101,6 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileState: 0
+  m_farmModelPrefab: {fileID: 3324768560896547876, guid: 0d9c906c0cc4da848806327528f43d05,
+    type: 3}
+  m_turretModelPrefab: {fileID: 0}
+  m_waterModelPrefab: {fileID: 0}
 --- !u!114 &6259747092334296136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +135,7 @@ MonoBehaviour:
   renderStyle: 1
   outlineParameters:
     enabled: 1
-    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    color: {r: 0.5019608, g: 0.007843138, b: 0.32941177, a: 1}
     dilateShift: 1
     blurShift: 1
     fillPass:
@@ -204,7 +208,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
