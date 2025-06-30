@@ -11,6 +11,8 @@ public class ViewmodelManager : MonoBehaviour
     [Header("Quickslot")]
     public Transform ItemShowPos;
 
+    [Header("TODO : Add Item Models")]
+    [SerializeField] GameObject toolModels;
 
     private void Awake()
     {
@@ -28,8 +30,8 @@ public class ViewmodelManager : MonoBehaviour
     // TODO : 모델링이 정해지면 해당 프리팹을 보여주기
     public void ShowQuickslotViewModel(InputAction.CallbackContext ctx)
     {
-        ToolType tooltype = inventory.GetItemToolType();
         inventory.OnNumpadKeyPressed(ctx);
+        ToolType tooltype = inventory.GetItemToolType();
         switch (tooltype)
         {
             case ToolType.None:
