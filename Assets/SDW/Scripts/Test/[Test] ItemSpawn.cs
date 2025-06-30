@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TestItemSpawn : MonoBehaviour
 {
-    private Vector3 m_position = Vector3.zero;
+    private Vector3 m_position = Vector3.left * 4;
 
     private void Start()
     {
