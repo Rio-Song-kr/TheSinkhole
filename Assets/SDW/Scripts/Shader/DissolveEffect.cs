@@ -1,13 +1,13 @@
+using System.Collections;
 using UnityEngine;
 
 public class DissolveEffect : MonoBehaviour
 {
+    [SerializeField] private float m_dissolveTime = 1f;
     private Renderer m_renderer;
     private Material m_material;
-    public readonly float MinValue = 0.3f;
-    public readonly float MaxValue = 1.5f;
-    private bool m_isMaximum;
-    private float m_valueRate = 0f;
+    private readonly float MinValue = 0.3f;
+    private readonly float MaxValue = 1.5f;
 
     private void Awake()
     {
@@ -16,21 +16,24 @@ public class DissolveEffect : MonoBehaviour
         m_material.SetFloat("_Cutoff_Height", 0.3f);
     }
 
-    public void Update()
+    public void Start()
     {
-        if (m_isMaximum)
-            m_valueRate -= 0.1f * Time.deltaTime * 10;
-        else
-            m_valueRate += 0.1f * Time.deltaTime * 10;
-        SetCutoffValue(m_valueRate);
-
-        if (m_valueRate <= 0f) m_isMaximum = false;
-        else if (m_valueRate >= 1f) m_isMaximum = true;
+        StartCoroutine(SetCutoffValue());
     }
 
-    public void SetCutoffValue(float valueRate)
+    private IEnumerator SetCutoffValue()
     {
-        float value = (MaxValue - MinValue) * valueRate + MinValue;
-        m_material.SetFloat("_Cutoff_Height", value);
+        float valueRate = 0;
+        float time = 0;
+        float value = 0;
+
+        do
+        {
+            time += Time.deltaTime;
+            valueRate += m_dissolveTime * Time.deltaTime;
+            value = (MaxValue - MinValue) * valueRate + MinValue;
+            m_material.SetFloat("_Cutoff_Height", value);
+            yield return null;
+        } while (time < m_dissolveTime);
     }
 }
