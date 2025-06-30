@@ -2,13 +2,16 @@ using EPOOutline;
 using TMPro;
 using UnityEngine;
 
-public class Tile : MonoBehaviour, IToolInteractable
+public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
 {
     public TileState tileState = TileState.None;
 
     public static GameObject InteractUiTextRef;
     //농사창 UI
     public static GameObject FarmUIRef;
+    [SerializeField] private GameObject m_farmModelPrefab;
+    [SerializeField] private GameObject m_turretModelPrefab;
+    [SerializeField] private GameObject m_waterModelPrefab;
 
     private Outlinable m_outlinable;
 
@@ -18,8 +21,8 @@ public class Tile : MonoBehaviour, IToolInteractable
         m_outlinable.enabled = false;
     }
 
-    public interactType GetInteractType() => interactType.MouseClick;
-    public bool CanInteract(ToolType toolType)
+    public virtual interactType GetInteractType() => interactType.MouseClick;
+    public virtual bool CanInteract(ToolType toolType)
     {
         switch (tileState)
         {
@@ -31,7 +34,7 @@ public class Tile : MonoBehaviour, IToolInteractable
                 return toolType == ToolType.Shovel;
             case TileState.DefenceArea:
                 return toolType == ToolType.Hammer;
-            case TileState.Water:
+            case TileState.WaterArea:
                 return toolType == ToolType.Water;
             default:
                 return false;
@@ -43,7 +46,7 @@ public class Tile : MonoBehaviour, IToolInteractable
 
     //곡괭이 -> 미개척지 -> 개척지
     //삽 -> 개척지 -> 경작지
-    public void OnInteract(ToolType toolType)
+    public virtual void OnInteract(ToolType toolType)
     {
         //타일 상태
         switch (tileState)
@@ -54,15 +57,12 @@ public class Tile : MonoBehaviour, IToolInteractable
                     tileState = TileState.Frontier;
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
                 }
-                else
-                {
-                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NoneTile);
-                }
                 break;
 
             case TileState.Frontier: // 개척지. 삽을 통해 경작지로 변경 가능하며, 추후 다른 건물을 짓는 것도 가능.
                 if (toolType == ToolType.Shovel)
                 {
+                    Instantiate(m_farmModelPrefab, transform);
                     tileState = TileState.Farmable;
                     SetFarmable();
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
@@ -125,5 +125,13 @@ public class Tile : MonoBehaviour, IToolInteractable
         {
             Destroy(turretTile);
         }
+    }
+
+    public virtual void OnTileInteractionStay(Interaction player)
+    {
+    }
+
+    public virtual void OnTileInteractionExit(Interaction player)
+    {
     }
 }
