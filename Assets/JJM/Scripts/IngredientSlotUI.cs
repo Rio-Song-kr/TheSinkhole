@@ -18,6 +18,12 @@ namespace CraftingSystem
             iconImage.sprite = item.Icon;
             nameText.text = item.name;
             countText.text = $"{ownedCount}/{needCount}";
+
+            // 색상 변경: 부족하면 빨간색, 충분하면 흰색
+            if (ownedCount < needCount)
+                countText.color = Color.red;
+            else
+                countText.color = Color.white;
         }
     }
 }
