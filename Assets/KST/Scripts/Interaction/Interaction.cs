@@ -3,7 +3,7 @@ using TMPro;
 using EPOOutline;
 using UnityEngine;
 
-public class Interaction : MonoBehaviour
+public class Interaction : Singleton<Interaction>
 {
     public ToolType CurrentTool = ToolType.None;
     [SerializeField] private Transform m_rayTransform; //레이 쏘는 위치(캐릭터의 카메라.)
@@ -25,8 +25,11 @@ public class Interaction : MonoBehaviour
     private Outlinable m_outlinable;
     private Tile m_interactionTile = null;
 
-    private void Awake() => m_inventory = GetComponent<Inventory>();
-
+    protected override void Awake()
+    {
+        base.Awake();
+        m_inventory = GetComponent<Inventory>();
+    }
     private void Update()
     {
         IsDetected = GetRaycastHit();
@@ -235,11 +238,13 @@ public class Interaction : MonoBehaviour
         m_itemPickUpTextObject.SetActive(isActive);
         m_itemPickUpText.text = text;
     }
+    
 
     public void SetCrosshairObject(bool isActive) => m_crosshairObject.SetActive(isActive);
 
     public void OnMouseButtonPressed() => m_isMouseButtonClicked = true;
     public void OnMouseButtonReleased() => m_isMouseButtonClicked = false;
     public void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;
+    public bool IsKeyPressed() => m_isIneractionKeyPressed = true;
     public void OnInteractionKeyReleased() => m_isIneractionKeyPressed = false;
 }

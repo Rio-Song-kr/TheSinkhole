@@ -33,6 +33,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.InventoryOpenClose.started += ctx => m_inventory.OnInventoryKeyPressed();
         onFoot.UIOpenClose.started += ctx => m_inventory.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => FarmUI.OnCloseKeyPressed();
+        onFoot.UIOpenClose.started += ctx => ExploitUI.OnCloseKeyPressed();
         onFoot.InventoryNumpad.started += m_inventory.OnNumpadKeyPressed;
         onFoot.InventoryPartial.started += ctx => InventoryDragHandler.OnPartialKeyPressed();
         onFoot.InventoryPartial.canceled += ctx => InventoryDragHandler.OnPartialKeyReleased();
@@ -40,6 +41,8 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.canceled += ctx => ItemPickUpInteraction.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => FarmUI.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => FarmUI.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => ExploitUI.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => ExploitUI.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
 
