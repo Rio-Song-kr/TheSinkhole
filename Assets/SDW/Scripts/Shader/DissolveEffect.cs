@@ -24,7 +24,6 @@ public class DissolveEffect : MonoBehaviour
 
     private IEnumerator SetCutoffValue()
     {
-        float valueRate = 0;
         float time = 0;
         float value = 0;
 

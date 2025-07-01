@@ -10,13 +10,19 @@ using UnityEngine.InputSystem;
 /// Inventory와 관련된 모델(데이터 계층) 역할
 /// </summary>
 [Serializable]
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, ISaveable
 {
+    [Header("Save Settings")]
+    [SerializeField] private string m_saveID;
+    [SerializeField] private ObjectType m_objectType;
+
     //# 비고 : 현재는 dynamicInventorySlot이라 사용하고 있지만, 추후 상자가 추가될 시 상자와 백팩은 변수명은 분리하여 구분
+    [Header("Set Slot Size")]
     [SerializeField] private int m_dynamicInventorySlotSize;
     [SerializeField] private int m_quickSlotSize;
 
     //# 하단의 Quick Slot용 Inventory System
+    [Header("Inventory System")]
     [SerializeField] private InventorySystem m_quickSlotInventorySystem;
     public InventorySystem QuickSlotInventorySystem => m_quickSlotInventorySystem;
 
@@ -35,10 +41,24 @@ public class Inventory : MonoBehaviour
     private int m_itemAmounts = 0;
 
     /// <summary>
+    /// 저장을 위한 Id 케ㅡ
     /// 인벤토리 시스템들을 size 만큼 초기화
     /// </summary>
     private void Awake()
     {
+        if (m_objectType == ObjectType.SceneStatic)
+        {
+            if (string.IsNullOrEmpty(m_saveID))
+            {
+                Debug.LogError($"{gameObject.name}의 Save ID가 설정되지 않았습니다.");
+                return;
+            }
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(m_saveID))
+                m_saveID = Guid.NewGuid().ToString();
+        }
         m_quickSlotInventorySystem = new InventorySystem(m_quickSlotSize);
         m_dynamicInventorySystem = new InventorySystem(m_dynamicInventorySlotSize);
     }
@@ -243,4 +263,41 @@ public class Inventory : MonoBehaviour
 
         return remainingAmount;
     }
+    
+    public string GetUniqueID() => m_saveID;
+    
+    public object GetSaveData() => new InventorySaveData
+    {
+        SaveID = m_saveID,
+        Type = m_objectType,
+        QuickSlotInventorySystem = m_quickSlotInventorySystem,
+        DynamicInventorySystem = m_dynamicInventorySystem,
+        SelectedItemEnName = m_selectedItemEnName,
+        ToolType = m_toolType,
+        ItemAmounts = m_itemAmounts
+    };
+
+    public void LoadSaveDta(object data)
+    {
+        var inventoryData = (InventorySaveData)data;
+        m_objectType = inventoryData.Type;
+        m_quickSlotInventorySystem = inventoryData.QuickSlotInventorySystem;
+        m_dynamicInventorySystem = inventoryData.DynamicInventorySystem;
+        m_selectedItemEnName = inventoryData.SelectedItemEnName;
+        m_toolType = inventoryData.ToolType;
+        m_itemAmounts = inventoryData.ItemAmounts;
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Generate Scene ID")]
+    public void GenerateSceneID()
+    {
+        if (m_objectType == ObjectType.SceneStatic)
+        {
+            m_saveID = Guid.NewGuid().ToString();
+            UnityEditor.EditorUtility.SetDirty(this);
+            Debug.Log($"Scene ID 생성: {m_saveID}");
+        }
+    }
+#endif
 }
