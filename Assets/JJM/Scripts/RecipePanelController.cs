@@ -75,6 +75,9 @@ namespace CraftingSystem
                     slotUI.Set(ing.item, ing.count, owned);
 
             }
+            // 제작 가능 여부에 따라 버튼 활성/비활성
+            bool canCraft = CraftingHelper.CanCraft(recipe, craftingManager.playerInventory);
+            craftingButton.interactable = canCraft && !craftingManager.IsCrafting; // 제작 중이면 비활성화
 
 
             // 버튼 텍스트

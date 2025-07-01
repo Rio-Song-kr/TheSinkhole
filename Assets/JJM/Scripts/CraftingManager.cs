@@ -10,6 +10,10 @@ namespace CraftingSystem
     {
         public Inventory playerInventory;// 플레이어 인벤토리 연결
 
+        private bool isCrafting = false; // 현재 제작 중인지 여부
+
+        public bool IsCrafting => isCrafting;
+
         private void Start()
         {
             // 자동 연결: "Player" 태그가 붙은 오브젝트에서 Inventory 컴포넌트 찾기
@@ -38,19 +42,17 @@ namespace CraftingSystem
         // 즉시 제작(제작 시간 무시)
         public void TryCraft(CraftingRecipe recipe)
         {
-            if (CraftingHelper.Craft(recipe, playerInventory))
-            {
-                // 성공 시 추가 연출
-            }
-            else
-            {
-                // 실패 시 안내
-            }
+            //즉시 제작 기능 넣을 시 작성
         }
 
         // 제작 시간 적용 (코루틴)
         public void TryCraftWithDelay(CraftingRecipe recipe)
         {
+            if (isCrafting)
+            {
+                Debug.Log("제작 중입니다. 다른 제작은 불가능합니다.");
+                return;
+            }
             if (CraftingHelper.CanCraft(recipe, playerInventory))
                 StartCoroutine(CraftCoroutine(recipe));// 코루틴으로 제작
 
@@ -61,10 +63,12 @@ namespace CraftingSystem
         // 실제 제작 시간 연출 및 제작 실행
         private IEnumerator CraftCoroutine(CraftingRecipe recipe)
         {
+            isCrafting = true; // 제작 시작
             Debug.Log($"{recipe.result.item.name} 제작 중... ({recipe.craftingTime}초)");
             yield return new WaitForSeconds(recipe.craftingTime);// 제작 시간 대기
 
             CraftingHelper.Craft(recipe, playerInventory);// 제작 실행
+            isCrafting = false; // 제작 끝
         }
         
     }
