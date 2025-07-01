@@ -27,5 +27,6 @@ public enum ItemEnName
     Crossword,
     LumpOfIron,
     Pick,
-    Pail
+    Pail,
+    FlareGun
 }
