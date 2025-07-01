@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using EPOOutline;
 using TMPro;
@@ -6,6 +7,9 @@ using UnityEngine;
 public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
 {
     public TileState tileState = TileState.None;
+    // [SerializeField] private bool m_isDeveloping; //개척 중이면 t, 아니면 F
+    // public bool IsDeveloping() => m_isDeveloping;
+    public bool isDeveloping;
 
     public static GameObject InteractUiTextRef;
     //농사창 UI
@@ -16,31 +20,30 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
 
     private Outlinable m_outlinable;
     private Coroutine m_coroutine;
+    //이벤트
+    public event Action OnTileStateChanged;
 
     private void Awake()
     {
         m_outlinable = GetComponent<Outlinable>();
         m_outlinable.enabled = false;
     }
+    private void SetTileState(TileState newState)
+    {
+        tileState = newState;
+        OnTileStateChanged?.Invoke();
+
+    }
 
     public virtual interactType GetInteractType() => interactType.MouseClick;
     public virtual bool CanInteract(ToolType toolType)
     {
-        switch (tileState)
+        return tileState switch
         {
-            case TileState.None:
-                return toolType == ToolType.Pick;
-            case TileState.Frontier:
-                return toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water;
-            case TileState.Farmable:
-                return toolType == ToolType.Shovel;
-            case TileState.DefenceArea:
-                return toolType == ToolType.Hammer;
-            case TileState.WaterArea:
-                return toolType == ToolType.Water;
-            default:
-                return false;
-        }
+            TileState.None => toolType == ToolType.Pick,
+            TileState.Frontier => toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water,
+            _ => false,
+        };
     }
 
     //타일마다 머터리얼 있어야 할 경우 변경할 수 있도록.
@@ -50,13 +53,21 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     //삽 -> 개척지 -> 경작지
     public virtual void OnInteract(ToolType toolType)
     {
+        if (!CanInteract(toolType)) return;
+        if(Interaction.Instance.IsKeyPressed())
+            ExploitUI.Instance.OpenUI(this, toolType);
+
+    }
+
+    public void TileStateChange(ToolType toolType)
+    {
         //타일 상태
         switch (tileState)
         {
             case TileState.None: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
                 if (toolType == ToolType.Pick)
                 {
-                    tileState = TileState.Frontier;
+                    SetTileState(TileState.Frontier);
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
                 }
                 break;
@@ -66,29 +77,19 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
                 {
                     if (m_coroutine != null) return;
 
-                    tileState = TileState.ChangingState;
+                    SetTileState(TileState.ChangingState);
+
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.ChangingState);
 
                     var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
                     m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
                 }
-                // else if (toolType == ToolType.Hammer)
-                // {
-                //     tileState = TileState.DeffenceArea;
-                //     SetDeffenceArea();
-                //     Debug.Log("터렛건설 지역으로 변경됐습니다.");
-
-                // }
                 break;
-
-            // case TileState.Farmable: //경작지
-            //     if (toolType == ToolType.Shovel)
-            //     {
-            //         //상호작용 아이콘 팝업
-            //         interactUiText.SetActive(true);
-            //         //농사창 팝업.
-            //     }
-            //     break;
+            //TODO<김승태> : 해머, 물 추가해야함.
+            case TileState.DefenceArea:
+                break;
+            case TileState.WaterArea:
+                break;
         }
     }
 
@@ -102,7 +103,6 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
         switch (toolType)
         {
             case ToolType.Shovel:
-                tileState = TileState.Farmable;
                 SetFarmable();
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
                 break;
@@ -118,12 +118,11 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     //FarmTile로 변경시 부착
     public void SetFarmable()
     {
-        tileState = TileState.Farmable;
-
+        SetTileState(TileState.Farmable);
+        
         if (!TryGetComponent<FarmTile>(out _))
         {
             var go = gameObject.AddComponent<FarmTile>();
-            // go.FarmUIObj = FarmUIRef;
             go.InteractUiText = InteractUiTextRef;
         }
     }
@@ -131,7 +130,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     //TurretTile로 변경시 부착
     public void SetDefenceArea()
     {
-        tileState = TileState.DefenceArea;
+        SetTileState(TileState.DefenceArea);
 
         if (!TryGetComponent<TurretTile>(out _))
         {
@@ -142,7 +141,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
 
     public void SetNoneGround()
     {
-        tileState = TileState.None;
+        SetTileState(TileState.None);
         if (TryGetComponent<FarmTile>(out var farmTile))
         {
             Destroy(farmTile);
