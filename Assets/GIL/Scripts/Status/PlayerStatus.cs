@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-
 public class PlayerStatus : MonoBehaviour
 {
     public static PlayerStatus Instance { get; set; }
@@ -15,13 +14,14 @@ public class PlayerStatus : MonoBehaviour
     // Cur스탯 : 현재 스탯들 <- Set스탯을 사용할 경우 이것들이 변화함.
     // 체력
     public float MaxHealth;
-    public float CurHealth { get; private set; }
+
+    [field: SerializeField] public float CurHealth { get; private set; }
     // 배고픔
     [Header("Hunger")]
     public float MaxHunger;
-    public float CurHunger { get; private set; }
-    [SerializeField] float moveSpeedDebuffStat = 0.5f;
-    [SerializeField] float actionSpeedDebuffStat = 2f;
+    [field: SerializeField] public float CurHunger { get; private set; }
+    [SerializeField] private float moveSpeedDebuffStat = 0.5f;
+    [SerializeField] private float actionSpeedDebuffStat = 2f;
     [Header("Debuff")]
     public bool isStarving;
     private bool isDehydrated;
@@ -31,11 +31,12 @@ public class PlayerStatus : MonoBehaviour
     // 갈증
     [Header("Thirst")]
     public float MaxThirst;
-    public float CurThirst { get; private set; }
+
+    [field: SerializeField] public float CurThirst { get; private set; }
     // 정신력
     [Header("Mentality")]
     public float MaxMentality;
-    public float CurMentality { get; private set; }
+    [field: SerializeField] public float CurMentality { get; private set; }
     [Header("Speed")]
     // 이동속도
     // TODO: 추후에 이동 구현 시 이동속도 관련 코드에다가 옮길지 고민하기.
@@ -170,7 +171,8 @@ public class PlayerStatus : MonoBehaviour
     // 플레이어의 현재 스텟들을 전부 출력하는 로직
     public void PrintAllCurStatus()
     {
-        Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}, 이동속도: {CurPlayerMoveSpeed}, 행동속도: {ActionSpeed}");
+        Debug.Log(
+            $"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}, 이동속도: {CurPlayerMoveSpeed}, 행동속도: {ActionSpeed}");
     }
     // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
     private void Init()
