@@ -8,6 +8,7 @@ public class TileManager : MonoBehaviour
     [Header("Tile Prefabs")]
     [SerializeField] private GameObject m_groundTile;
     [SerializeField] private GameObject m_buildableTile;
+    [SerializeField] private GameObject m_planeTile;
 
     [Header("Map Size")]
     [SerializeField] private Vector2Int m_groundTileSize;
@@ -42,5 +43,8 @@ public class TileManager : MonoBehaviour
                 buildableTile.transform.parent = parentTiles.transform;
             }
         }
+
+        var planeTile = Instantiate(m_planeTile);
+        planeTile.transform.localScale = new Vector3(m_buildableTileSize.x / 2, 1, m_buildableTileSize.y / 2);
     }
 }
