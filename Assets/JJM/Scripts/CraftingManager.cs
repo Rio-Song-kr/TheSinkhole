@@ -39,11 +39,24 @@ namespace CraftingSystem
             }
         }
 
-        // 즉시 제작(제작 시간 무시)
-        public void TryCraft(CraftingRecipe recipe)
+        private IEnumerator CraftCoroutine(CraftingRecipe recipe)
         {
-            //즉시 제작 기능 넣을 시 작성
+            isCrafting = true;
+
+            // 카운트다운 시작 (버튼 텍스트 변경)
+            var panel = FindObjectOfType<RecipePanelController>();
+            if (panel != null)
+                yield return StartCoroutine(panel.CraftingButtonCountdownCoroutine(recipe.craftingTime));
+
+            CraftingHelper.Craft(recipe, playerInventory);
+            isCrafting = false;
         }
+
+        // 즉시 제작(제작 시간 무시)
+        //public void TryCraft(CraftingRecipe recipe)
+        //{
+        //    //즉시 제작 기능 넣을 시 작성
+        //}
 
         // 제작 시간 적용 (코루틴)
         public void TryCraftWithDelay(CraftingRecipe recipe)
@@ -53,23 +66,10 @@ namespace CraftingSystem
                 Debug.Log("제작 중입니다. 다른 제작은 불가능합니다.");
                 return;
             }
-            if (CraftingHelper.CanCraft(recipe, playerInventory))
-                StartCoroutine(CraftCoroutine(recipe));// 코루틴으로 제작
-
-            else
-                Debug.Log("재료가 부족합니다.");
+            StartCoroutine(CraftCoroutine(recipe));
         }
 
-        // 실제 제작 시간 연출 및 제작 실행
-        private IEnumerator CraftCoroutine(CraftingRecipe recipe)
-        {
-            isCrafting = true; // 제작 시작
-            Debug.Log($"{recipe.result.item.name} 제작 중... ({recipe.craftingTime}초)");
-            yield return new WaitForSeconds(recipe.craftingTime);// 제작 시간 대기
-
-            CraftingHelper.Craft(recipe, playerInventory);// 제작 실행
-            isCrafting = false; // 제작 끝
-        }
+        
         
     }
 }

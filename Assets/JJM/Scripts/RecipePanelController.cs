@@ -53,31 +53,77 @@ namespace CraftingSystem
                 Destroy(child.gameObject);
 
             // 재료 슬롯 생성
+            //foreach (var ing in recipe.ingredients)
+            //{
+            //    Debug.Log($"Instantiate IngredientPanel: {ing.item?.name}, {ing.count}");
+
+            //    int owned = 0;
+            //    // 인벤토리에서 해당 아이템의 소지량 계산
+            //    if (craftingManager.playerInventory != null &&
+            //        craftingManager.playerInventory.DynamicInventorySystem != null)
+            //    {
+            //        if (craftingManager.playerInventory.DynamicInventorySystem.FindItemSlots(ing.item, out var slots))
+            //        {
+            //            foreach (var slot in slots)
+            //                owned += slot.ItemCount;
+            //        }
+            //    }
+
+            //    var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
+            //    var slotUI = go.GetComponent<IngredientSlotUI>();
+            //    if (slotUI != null)
+            //        slotUI.Set(ing.item, ing.count, owned);
+
+            //}
+            var inventory = craftingManager.playerInventory;
+            var invSys = inventory.DynamicInventorySystem;
+
+            bool allEnough = true;
+            bool allExact = true;
+
             foreach (var ing in recipe.ingredients)
             {
-                Debug.Log($"Instantiate IngredientPanel: {ing.item?.name}, {ing.count}");
-
                 int owned = 0;
-                // 인벤토리에서 해당 아이템의 소지량 계산
-                if (craftingManager.playerInventory != null &&
-                    craftingManager.playerInventory.DynamicInventorySystem != null)
+                if (invSys.FindItemSlots(ing.item, out var slots))
                 {
-                    if (craftingManager.playerInventory.DynamicInventorySystem.FindItemSlots(ing.item, out var slots))
-                    {
-                        foreach (var slot in slots)
-                            owned += slot.ItemCount;
-                    }
+                    foreach (var slot in slots)
+                        owned += slot.ItemCount;
                 }
 
+                // 재료 슬롯 UI 생성 및 색상 처리
                 var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
                 var slotUI = go.GetComponent<IngredientSlotUI>();
                 if (slotUI != null)
+                {
+                    // 보유 == 필요만 흰색, 그 외(작거나 많으면) 빨간색
                     slotUI.Set(ing.item, ing.count, owned);
+                }
 
+                if (owned < ing.count)
+                    allEnough = false;
+                if (owned != ing.count)
+                    allExact = false;
             }
-            // 제작 가능 여부에 따라 버튼 활성/비활성
-            bool canCraft = CraftingHelper.CanCraft(recipe, craftingManager.playerInventory);
-            craftingButton.interactable = canCraft && !craftingManager.IsCrafting; // 제작 중이면 비활성화
+
+            // 결과 아이템이 인벤토리에 이미 있는지 확인
+            bool hasResultItem = invSys.FindItemSlots(recipe.result.item, out var resultSlots) && resultSlots.Count > 0;
+            // 인벤토리에 빈 슬롯이 있는지 확인
+            bool hasEmptySlot = invSys.HasEmptySlot();
+
+            // 최종 제작 가능 조건
+            bool canCraft;
+            if (hasEmptySlot || hasResultItem)
+            {
+                // 기존 로직: 재료만 충분하면 제작 가능
+                canCraft = allEnough;
+            }
+            else
+            {
+                // 빈 슬롯도 없고, 결과 아이템도 없음
+                // 재료가 "정확히 필요량만큼" 있을 때만 제작 가능
+                canCraft = allExact;
+            }
+            craftingButton.interactable = canCraft && !craftingManager.IsCrafting;
 
 
             // 버튼 텍스트
@@ -90,7 +136,24 @@ namespace CraftingSystem
                 craftingManager.TryCraftWithDelay(recipe);
             });
         }
-        
+
+        public IEnumerator CraftingButtonCountdownCoroutine(float time)
+        {
+            string originalText = craftingButtonText.text; // 기존 텍스트 저장
+
+            int seconds = Mathf.CeilToInt(time);
+            for (int i = seconds; i > 0; i--)
+            {
+                craftingButtonText.text = i.ToString();
+                yield return new WaitForSeconds(1f);
+            }
+            craftingButtonText.text = "제작완료";
+            yield return new WaitForSeconds(1f);
+
+            craftingButtonText.text = originalText; // 원래 텍스트로 복구
+        }
+
+
         public CraftingRecipe GetCurrentRecipe()
         {
             return currentRecipe;
