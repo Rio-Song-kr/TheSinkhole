@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 생성된 Item을 등록하여 관리하기 위한 Scriptable Object
 /// </summary>
 [CreateAssetMenu(fileName = "New Item Database", menuName = "Inventory System/Items/Item Database")]
-public class ItemDatabaseSO : ScriptableObject
+public class ItemPrefabDatabaseSO : ScriptableObject
 {
     public GameObject[] ModelPrefabObjects;
 
