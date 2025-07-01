@@ -23,15 +23,23 @@ public class ItemPickUpInteraction : MonoBehaviour
                 m_interaction.SetCrosshairObject(true);
 
             //# Outline Off
-            if (m_prevSceneItem != null)
-                m_prevSceneItem.SetOutline(false);
-            m_prevSceneItem = null;
+            OutlineOff();
             return;
         }
 
-        if (!m_interaction.Hit.collider.gameObject.CompareTag("Item")) return;
+        if (!m_interaction.Hit.collider.gameObject.CompareTag("Item"))
+        {
+            OutlineOff();
+            return;
+        }
 
         HandleItems();
+    }
+    private void OutlineOff()
+    {
+        if (m_prevSceneItem != null)
+            m_prevSceneItem.SetOutline(false);
+        m_prevSceneItem = null;
     }
 
     private void HandleItems()
