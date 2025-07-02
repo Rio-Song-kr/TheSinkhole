@@ -17,7 +17,7 @@ public class ViewmodelManager : MonoBehaviour
 
     private void Awake()
     {
-        inventory = GetComponent<Inventory>();
+        inventory = GetComponentInParent<Inventory>();
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
