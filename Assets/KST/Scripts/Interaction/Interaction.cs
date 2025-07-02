@@ -64,13 +64,17 @@ public class Interaction : Singleton<Interaction>
             }
 
 
-            if (CurrentTool == ToolType.Pick && tileState == TileState.None)
+            if (CurrentTool == ToolType.Pick && tileState == TileState.PlainTile)
                 SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+            else if (tileState == TileState.PlainTile && CurrentTool != ToolType.Pick)
+            {
+                SetTextObject(false);
+            }
             else if (tileState == TileState.Frontier)
             {
                 HandleFrontierTile();
             }
-            else if (tileState != TileState.None && tileState != TileState.Frontier)
+            else if (tileState != TileState.PlainTile && tileState != TileState.Frontier)
             {
                 SetTextObject(false);
                 m_interactionTile = Hit.collider.gameObject.GetComponent<Tile>();
@@ -117,7 +121,8 @@ public class Interaction : Singleton<Interaction>
     }
     private void HandleFrontierTile()
     {
-        switch (CurrentTool)
+        if(!ExploitUI.Instance.IsOpen)
+        {switch (CurrentTool)
         {
             case ToolType.Hammer:
                 SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
@@ -131,7 +136,7 @@ public class Interaction : Singleton<Interaction>
             default:
                 SetTextObject(true, "시설 설치을 설치하려면 도구가 필요합니다.");
                 break;
-        }
+        }}
     }
     private void SetOutline()
     {
@@ -145,10 +150,10 @@ public class Interaction : Singleton<Interaction>
     {
         switch (tileState)
         {
-            case TileState.None: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
+            case TileState.PlainTile: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NoneTile);
                 break;
-            case TileState.Farmable:
+            case TileState.FarmTile:
                 if (CurrentTool != ToolType.Shovel)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedFarmable);
                 break;
@@ -156,7 +161,7 @@ public class Interaction : Singleton<Interaction>
                 if (CurrentTool != ToolType.Hammer)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedHammer);
                 break;
-            case TileState.WaterArea:
+            case TileState.WaterTile:
                 if (CurrentTool != ToolType.Water)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedWater);
                 break;
