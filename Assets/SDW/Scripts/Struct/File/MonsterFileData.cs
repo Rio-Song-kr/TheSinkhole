@@ -17,6 +17,8 @@ public struct MonsterFileData
     public float MonsterAtkSpeed;
     public float MonsterAtkRange;
     public float MonsterResearch;
+    public int MonsterDropItemId;
+    public int MonsterDropItemQuantity;
     public string MonsterDescription;
 
     public MonsterFileData(string[] field)
@@ -32,6 +34,8 @@ public struct MonsterFileData
         MonsterAtkSpeed = float.Parse(field[8]);
         MonsterAtkRange = float.Parse(field[9]);
         MonsterResearch = float.Parse(field[10]);
-        MonsterDescription = field[11];
+        MonsterDropItemId = int.Parse(field[11]);
+        MonsterDropItemQuantity = int.Parse(field[12]);
+        MonsterDescription = field[13];
     }
 }

@@ -22,9 +22,16 @@ public class MonsterManager : MonoBehaviour
     private Dictionary<MonsterEnName, MonsterDataSO> m_monsterEnDataSO;
 
     /// <summary>
-    /// 몬스터 영어 이름별 MonsterDataSO를 반환
+    /// 몬스터 ID별 MonsterDataSO를 반환
     /// </summary>
     public Dictionary<MonsterEnName, MonsterDataSO> MonsterEnDataSO => m_monsterEnDataSO;
+
+    private Dictionary<int, MonsterDataSO> m_monsterIdDataSO;
+
+    /// <summary>
+    /// 몬스터 ID별 MonsterDataSO를 반환
+    /// </summary>
+    public Dictionary<int, MonsterDataSO> MonsterIdDataSO => m_monsterIdDataSO;
 
     /// <summary>
     /// CSV 데이터를 로드하여 몬스터 데이터베이스와 오브젝트 풀을 초기화
@@ -58,6 +65,8 @@ public class MonsterManager : MonoBehaviour
                 monsterTierType = MonsterTierType.None;
             if (!Enum.TryParse<MonsterEnName>(monster.MonsterEnName, true, out var monsterEnName))
                 monsterEnName = MonsterEnName.None;
+            if (!Enum.TryParse<MonsterAttackType>(monster.MonsterAtkType, true, out var monsterAttackType))
+                monsterAttackType = MonsterAttackType.None;
 
             m_monsterPools.Add(monsterEnName, new MonsterPool<SceneMonster>());
 
@@ -93,17 +102,20 @@ public class MonsterManager : MonoBehaviour
                     return;
             }
 
-            newMonsterDataSO.MonsterData.MonsterId = monster.MonsterId;
+            newMonsterDataSO.MonsterData.SetMonsterId(monster.MonsterId);
             newMonsterDataSO.MonsterName = monster.MonsterName;
             newMonsterDataSO.MonsterTierType = monsterTierType;
-            newMonsterDataSO.MonsterData.MonsterHealth = monster.MonsterHealth;
+            newMonsterDataSO.MonsterData.SetMonsterHealth(monster.MonsterHealth);
             newMonsterDataSO.MaxMonsterHealth = monster.MonsterHealth;
-            newMonsterDataSO.MonsterData.MonsterSpeed = monster.MonsterSpeed;
+            newMonsterDataSO.MonsterData.SetMonsterSpeed(monster.MonsterSpeed);
             newMonsterDataSO.MaxMonsterSpeed = monster.MonsterSpeed;
+            newMonsterDataSO.MonsterAttackType = monsterAttackType;
             newMonsterDataSO.MonsterAttack = monster.MonsterAttack;
             newMonsterDataSO.MonsterAtkSpeed = monster.MonsterAtkSpeed;
             newMonsterDataSO.MonsterAtkRange = monster.MonsterAtkRange;
             newMonsterDataSO.MonsterResearch = monster.MonsterResearch;
+            newMonsterDataSO.MonsterDropItemId = monster.MonsterDropItemId;
+            newMonsterDataSO.MonsterDropItemQuantity = monster.MonsterDropItemQuantity;
             newMonsterDataSO.MonsterDescription = monster.MonsterDescription;
 
             var sceneMonster = monsterObject.GetComponent<SceneMonster>();
@@ -129,7 +141,7 @@ public class MonsterManager : MonoBehaviour
         {
             string[] fields = line.Split(',');
 
-            if (fields.Length >= 12)
+            if (fields.Length >= 14)
             {
                 var data = new MonsterFileData(fields);
 

@@ -32,7 +32,16 @@ public class ItemPickUpInteraction : MonoBehaviour
             return;
         }
 
-        if (!m_interaction.Hit.collider.gameObject.CompareTag("Item"))
+        var hitObject = m_interaction.Hit.collider.gameObject;
+
+        if (!hitObject.CompareTag("Item"))
+        {
+            OutlineOff();
+            return;
+        }
+
+        //# 이전에 활성화된 outline이 있으면서, 현재 바라보는 아이템과 다른 경우
+        if (m_prevSceneItem != null && hitObject.GetComponent<SceneItem>().GetInstanceID() != m_prevSceneItem.GetInstanceID())
         {
             OutlineOff();
             return;
