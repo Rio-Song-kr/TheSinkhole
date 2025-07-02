@@ -5,13 +5,18 @@ public class ItemPickUpInteraction : MonoBehaviour
     private static bool m_isInteractionKeyPressed;
     private SceneItem m_prevSceneItem = null;
     private Interaction m_interaction;
+    private Inventory m_inventory;
 
-    private void Awake() => m_interaction = GetComponent<Interaction>();
-
-    private void Update()
+    private void Awake()
     {
-        MouseInteraction();
+        m_interaction = GetComponent<Interaction>();
+        m_inventory = GetComponent<Inventory>();
+
+        if (!m_interaction) Debug.Log("Player에 Interaction이 없습니다.");
+        if (!m_inventory) Debug.Log("Player에 Inventory가 없습니다.");
     }
+
+    private void Update() => MouseInteraction();
 
     private void MouseInteraction()
     {
@@ -35,6 +40,7 @@ public class ItemPickUpInteraction : MonoBehaviour
 
         HandleItems();
     }
+
     private void OutlineOff()
     {
         if (m_prevSceneItem != null)
@@ -54,10 +60,7 @@ public class ItemPickUpInteraction : MonoBehaviour
 
         if (!m_isInteractionKeyPressed) return;
 
-        var inventory = GetComponent<Inventory>();
-        if (!inventory) return;
-
-        int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
+        int remainingAmount = m_inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
 
         //# 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0)

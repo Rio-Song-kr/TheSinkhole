@@ -263,9 +263,13 @@ public class Inventory : MonoBehaviour, ISaveable
 
         return remainingAmount;
     }
-    
+
     public string GetUniqueID() => m_saveID;
-    
+
+    /// <summary>
+    /// Save를 위한 데이터를 읽어오기 위한 메서드(프로토타입)
+    /// </summary>
+    /// <returns>InventorySaveData를 반환</returns>
     public object GetSaveData() => new InventorySaveData
     {
         SaveID = m_saveID,
@@ -277,6 +281,10 @@ public class Inventory : MonoBehaviour, ISaveable
         ItemAmounts = m_itemAmounts
     };
 
+    /// <summary>
+    /// 저장된 데이터로부터 Inventory 데이터를 할당(프로토타입)
+    /// </summary>
+    /// <param name="data">Inventory에 할당하기 위한 데이터</param>
     public void LoadSaveDta(object data)
     {
         var inventoryData = (InventorySaveData)data;
@@ -288,6 +296,9 @@ public class Inventory : MonoBehaviour, ISaveable
         m_itemAmounts = inventoryData.ItemAmounts;
     }
 
+    /// <summary>
+    /// Save/Load 시 Scene 기본 생성 Object의 ID를 생성하기 위한 메서드
+    /// </summary>
 #if UNITY_EDITOR
     [ContextMenu("Generate Scene ID")]
     public void GenerateSceneID()

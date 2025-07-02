@@ -61,9 +61,6 @@ public class MonsterManager : MonoBehaviour
 
             m_monsterPools.Add(monsterEnName, new MonsterPool<SceneMonster>());
 
-            //todo monster에 따라서 다르게 생성해야 함
-
-
             //# CSV에서 읽은 Data 연결
             newMonsterDataSO.MonsterEnName = monsterEnName;
 
@@ -99,8 +96,8 @@ public class MonsterManager : MonoBehaviour
             newMonsterDataSO.MonsterData.MonsterId = monster.MonsterId;
             newMonsterDataSO.MonsterName = monster.MonsterName;
             newMonsterDataSO.MonsterTierType = monsterTierType;
-            newMonsterDataSO.MonsterData.MonsterHP = monster.MonsterHp;
-            newMonsterDataSO.MaxMonsterHP = monster.MonsterHp;
+            newMonsterDataSO.MonsterData.MonsterHealth = monster.MonsterHealth;
+            newMonsterDataSO.MaxMonsterHealth = monster.MonsterHealth;
             newMonsterDataSO.MonsterData.MonsterSpeed = monster.MonsterSpeed;
             newMonsterDataSO.MaxMonsterSpeed = monster.MonsterSpeed;
             newMonsterDataSO.MonsterAttack = monster.MonsterAttack;
@@ -119,6 +116,11 @@ public class MonsterManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// CSV에서 읽어온 데이터를 MonsterFileData 구조체에 맞게 변환
+    /// </summary>
+    /// <param name="lines">CSV 파일에서 읽어온 각 줄 데이터</param>
+    /// <returns>각 열별로 구분된 MonsterFileData</returns>
     private List<MonsterFileData> ReadDataFromLines(string[] lines)
     {
         var dataList = new List<MonsterFileData>();

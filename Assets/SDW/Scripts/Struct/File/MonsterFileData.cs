@@ -10,7 +10,7 @@ public struct MonsterFileData
     public string MonsterName;
     public string MonsterEnName;
     public string MonsterTierType;
-    public int MonsterHp;
+    public int MonsterHealth;
     public int MonsterSpeed;
     public string MonsterAtkType;
     public int MonsterAttack;
@@ -25,7 +25,7 @@ public struct MonsterFileData
         MonsterName = field[1];
         MonsterEnName = field[2];
         MonsterTierType = field[3];
-        MonsterHp = int.Parse(field[4]);
+        MonsterHealth = int.Parse(field[4]);
         MonsterSpeed = int.Parse(field[5]);
         MonsterAtkType = field[6];
         MonsterAttack = int.Parse(field[7]);

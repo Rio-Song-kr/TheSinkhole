@@ -1,5 +1,8 @@
 using System;
 
+/// <summary>
+/// Player 정보를 저장/불러오기를 위한 구조체(프로토타입)
+/// </summary>
 [Serializable]
 public struct PlayerSaveData
 {

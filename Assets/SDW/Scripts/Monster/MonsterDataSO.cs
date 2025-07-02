@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Game에서 사용할 Monster의 데이터를 포함하고, Icon, Prefab 등을 정의하기 위한 Scriptable Object
+/// </summary>
 [CreateAssetMenu(fileName = "New Monster", menuName = "Monster System/Monster")]
 public class MonsterDataSO : ScriptableObject
 {
@@ -8,7 +11,7 @@ public class MonsterDataSO : ScriptableObject
     public MonsterEnName MonsterEnName;
     public MonsterTierType MonsterTierType;
     public MonsterAttackType MonsterAttackType;
-    public int MaxMonsterHP;
+    public int MaxMonsterHealth;
     public int MaxMonsterSpeed;
     public int MonsterAttack;
     public float MonsterAtkSpeed;
