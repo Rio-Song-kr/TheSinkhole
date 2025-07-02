@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
-public class PlayerStatus : MonoBehaviour
+public class PlayerStatus : MonoBehaviour, IDamageable
 {
     public static PlayerStatus Instance { get; set; }
     [Tooltip("값을 변화하고 싶을 땐 PlayerStatus.Instance.Set스텟명(변화량 퍼센트) 사용")]
@@ -185,5 +187,17 @@ public class PlayerStatus : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    /// <summary>
+    /// 정수형 데미지를 최대 체력의 비율로 전환하여 비율만큼 깎음
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakenDamage(int damage)
+    {
+        // damage가 최대 체력의 몇 퍼센트인지 계산
+        // 그만큼 SetHealth를 한다.
+        float percent = damage / MaxHealth;
+        SetHealth(-percent);
     }
 }
