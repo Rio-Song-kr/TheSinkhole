@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -11,6 +12,7 @@ public class ViewmodelManager : MonoBehaviour
     private PlayerInput playerInput;
     private PlayerInput.OnFootActions onFoot;
 
+    private Item itemData;
     
 
     private void Awake()
@@ -44,36 +46,38 @@ public class ViewmodelManager : MonoBehaviour
     // TODO : 모델링이 정해지면 해당 프리팹을 보여주기
     public void ShowQuickslotViewModel(InputAction.CallbackContext ctx)
     {
-        inventory.OnNumpadKeyPressed(ctx);
-        ToolType tooltype = inventory.GetItemToolType();
-        Debug.Log(tooltype);
-        ActivateSelectedToolOnly(3);
-        switch (tooltype)
+        int selectedIndex = int.Parse(ctx.control.name);
+
+        selectedIndex = selectedIndex == 0 ? 9 : selectedIndex - 1;
+        Debug.Log($"현재 번호 {ctx.control.name}");
+        try
         {
-            case ToolType.None:
-                ActivateSelectedToolOnly(3);
-                Debug.Log("아무것도 안 보여주기");
-                break;
-            case ToolType.Shovel:
+            itemData = inventory.QuickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO.ItemData;
+        }
+        catch (NullReferenceException n)
+        {
+            Debug.Log("빈 공간");
+            ActivateSelectedToolOnly(3);
+            return;
+        }
+        switch (itemData.ItemId)
+        {
+            case 20303:
                 ActivateSelectedToolOnly(0);
-                Debug.Log("삽 아이템 보여주기");
+                Debug.Log("삽");
                 break;
-            case ToolType.Hammer:
+            case 20304:
                 ActivateSelectedToolOnly(1);
-                Debug.Log("망치 아이템 보여주기");
+                Debug.Log("망치");
                 break;
-            case ToolType.Pick:
+            case 20307:
                 ActivateSelectedToolOnly(2);
-                Debug.Log("곡괭이 아이템 보여주기");
+                Debug.Log("곡괭이");
+                break;
+            default:
+                Debug.LogWarning("없는 id입니다!");
                 break;
         }
-        //inventory.GetItemName();
-        //if(퀵슬롯 번호에 아이템이 있냐?)
-        //{
-        //  있을 경우 해당 아이템의 프리팹 정보를 받아오기
-        //  프리팹을 ItemShowPos에 배치하기
-        //  프리팹에 콜라이더가 있을 경우 비활성화하기(충돌 방지)    
-        //}
     }
 
     /// <summary>
@@ -83,7 +87,7 @@ public class ViewmodelManager : MonoBehaviour
     {
         onFoot.Enable();
     }
-    private void OnDisalbe()
+    private void OnDisable()
     {
         onFoot.Disable();
     }
