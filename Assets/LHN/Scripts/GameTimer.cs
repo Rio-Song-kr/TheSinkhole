@@ -16,6 +16,7 @@ public class GameTimer : MonoBehaviour
     private int count = 1;
 
     public TextMeshProUGUI gameTimeText; // UI에 연결할 텍스트
+    public static int Day;
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class GameTimer : MonoBehaviour
         if (gameTimeFormatted == "AM 06" && beforeTime.ToString("tt hh", CultureInfo.GetCultureInfo("en-US")) == "AM 05")
         {
             count += 1;
+            Day = count;
         }
 
         if (gameTimeFormatted == "AM 06")
@@ -57,4 +59,6 @@ public class GameTimer : MonoBehaviour
         // 조건문 시간 비교를 위한 이전 시간 저장
         beforeTime = gameTime;
     }
+
+    public static int GetDay() => Day;
 }

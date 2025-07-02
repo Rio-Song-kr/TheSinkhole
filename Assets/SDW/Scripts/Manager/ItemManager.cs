@@ -8,12 +8,8 @@ using UnityEngine;
 /// </summary>
 public class ItemManager : MonoBehaviour
 {
-    [SerializeField] private ItemDatabaseSO m_itemDatabaseSO;
+    [SerializeField] private ItemPrefabDatabaseSO m_itemPrefabDatabaseSO;
     [SerializeField] private GameObject m_sceneItemPrefab;
-
-    //todo 테스트를 위한 prefab 추후 변경 예정
-    // [SerializeField] private GameObject _redPrefab;
-    // [SerializeField] private GameObject _greenPrefab;
 
     private Dictionary<ItemEnName, ItemPool<SceneItem>> m_itemPools;
 
@@ -22,24 +18,30 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     public Dictionary<ItemEnName, ItemPool<SceneItem>> ItemPools => m_itemPools;
 
-    //todo Read한 Item의 목록화(ItemEnName, ItemDataSO) - ItemEnName으로 접근하면 ItemDataSO
+    private Dictionary<ItemEnName, ItemDataSO> m_itemEnDataSO;
 
     /// <summary>
-    /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화합니다
+    /// 아이템 영어 이름별 ItemDataSO를 반환
+    /// </summary>
+    public Dictionary<ItemEnName, ItemDataSO> ItemEnDataSO => m_itemEnDataSO;
+
+    /// <summary>
+    /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화
     /// </summary>
     private void OnEnable()
     {
-        if (m_itemDatabaseSO.Equals(null))
+        if (m_itemPrefabDatabaseSO.Equals(null))
         {
             Debug.Log("Item Database SO가 연결되지 않았습니다.");
             return;
         }
 
-        //# 확장자 없이 파일 이름 문자열만 사용
+        //# 확장자없이 파일 이름 문자열만 사용
         string[] itemLines = LoadCSV.LoadFromCsv("Item");
         var itemList = ReadDataFromLines(itemLines);
 
         m_itemPools = new Dictionary<ItemEnName, ItemPool<SceneItem>>();
+        m_itemEnDataSO = new Dictionary<ItemEnName, ItemDataSO>();
 
         var parentObject = new GameObject();
         parentObject.name = "Items";
@@ -68,11 +70,7 @@ public class ItemManager : MonoBehaviour
             newItemDataSO.ItemMaxOwn = itemList[i].ItemMaxOwn;
             newItemDataSO.ItemText = itemList[i].ItemText;
 
-
-            //todo 테스트를 위한 prefab 추후 변경 예정
-            // newItemDataSO.ModelPrefab = i % 2 == 0 ? _redPrefab : _greenPrefab;
-
-            m_itemDatabaseSO.OnSetPrefab(ref newItemDataSO);
+            m_itemPrefabDatabaseSO.OnSetPrefab(ref newItemDataSO);
 
             //todo 데이터 초기화 및 모델, Icon 등 연결
 
@@ -91,6 +89,7 @@ public class ItemManager : MonoBehaviour
             itemObject.SetActive(false);
 
             m_itemPools[newItemDataSO.ItemEnName].SetPool(itemObject);
+            m_itemEnDataSO[newItemDataSO.ItemEnName] = newItemDataSO;
         }
     }
 

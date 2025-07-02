@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Tile(터렛 등) 설치 시 Dissolve 효과를 제어하기 위한 클래스
+/// </summary>
 public class DissolveEffect : MonoBehaviour
 {
     [SerializeField] private float m_dissolveTime = 5f;
@@ -17,10 +20,7 @@ public class DissolveEffect : MonoBehaviour
         m_material.SetFloat("_Cutoff_Height", 0.3f);
     }
 
-    public void Start()
-    {
-        StartCoroutine(SetCutoffValue());
-    }
+    private void Start() => StartCoroutine(SetCutoffValue());
 
     private IEnumerator SetCutoffValue()
     {

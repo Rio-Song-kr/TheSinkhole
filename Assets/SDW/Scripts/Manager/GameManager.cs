@@ -22,6 +22,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public ItemManager Item { get; private set; }
 
+    /// <summary>
+    /// 몬스터를 관리하는 매니저
+    /// </summary>
+    public MonsterManager Monster { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     private bool m_isDay = true;
@@ -56,6 +61,7 @@ public class GameManager : MonoBehaviour
 
         UI = GetComponent<GlobalUIManager>();
         Item = GetComponent<ItemManager>();
+        Monster = GetComponent<MonsterManager>();
     }
 
     private void Start()
