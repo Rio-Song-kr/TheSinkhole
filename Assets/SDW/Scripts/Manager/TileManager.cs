@@ -1,19 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 기본 맵 Tile 생성을 위한 클래스
+/// </summary>
 public class TileManager : MonoBehaviour
 {
     [Header("Tile Prefabs")]
     [SerializeField] private GameObject m_groundTile;
     [SerializeField] private GameObject m_buildableTile;
+    [SerializeField] private GameObject m_planeTile;
 
     [Header("Map Size")]
     [SerializeField] private Vector2Int m_groundTileSize;
     [SerializeField] private Vector2Int m_buildableTileSize;
     [SerializeField] private int m_tileSize;
 
+    //todo 울타리 - 출구 주변 3개 block은 개척이 가능한 tile로 변경되어야 함
     private void Awake()
     {
         var parentTiles = new GameObject();
@@ -42,5 +44,9 @@ public class TileManager : MonoBehaviour
                 buildableTile.transform.parent = parentTiles.transform;
             }
         }
+
+        var planeTile = Instantiate(m_planeTile);
+        planeTile.transform.localScale = new Vector3(m_buildableTileSize.x / 2, 1, m_buildableTileSize.y / 2);
+        planeTile.transform.parent = parentTiles.transform;
     }
 }
