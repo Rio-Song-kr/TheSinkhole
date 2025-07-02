@@ -3,6 +3,7 @@
 /// </summary>
 public enum MonsterAttackType
 {
+    None,
     CloseRange,
     LongRange
 }

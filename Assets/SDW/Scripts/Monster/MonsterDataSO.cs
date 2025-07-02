@@ -17,6 +17,8 @@ public class MonsterDataSO : ScriptableObject
     public float MonsterAtkSpeed;
     public float MonsterAtkRange;
     public float MonsterResearch;
+    public int MonsterDropItemId;
+    public int MonsterDropItemQuantity;
     [TextArea(4, 4)] public string MonsterDescription;
 
     [Header("2D Icon")]
