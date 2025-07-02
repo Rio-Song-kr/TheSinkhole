@@ -33,7 +33,7 @@ public class FarmTile : Tile
         FarmUI.Instance.OnIsUIOpen += SetInteraction;
         var tile = GetComponent<Tile>();
         Destroy(tile);
-        tileState = TileState.Farmable;
+        tileState = TileState.FarmTile;
     }
     private void OnDisable()
     {
