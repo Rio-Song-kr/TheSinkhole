@@ -120,7 +120,6 @@ public class MonsterManager : MonoBehaviour
 
             var sceneMonster = monsterObject.GetComponent<SceneMonster>();
             sceneMonster.MonsterDataSO = newMonsterDataSO;
-            sceneMonster.Initialize();
 
             monsterObject.SetActive(false);
 

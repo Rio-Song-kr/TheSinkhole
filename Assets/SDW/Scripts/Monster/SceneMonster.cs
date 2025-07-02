@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 씬에 배치될 몬스터를 관리하는 클래스
@@ -10,10 +12,41 @@ public class SceneMonster : MonoBehaviour
     private Vector3 m_targetPosition;
     private Transform m_playerTransform;
 
+    [Header("Layer To Track")]
+    [SerializeField] private LayerMask m_playerMask;
+    [SerializeField] private LayerMask m_fenceMask;
+
+    private NavMeshAgent m_navMeshAgent;
+    private static WaitForSeconds WaitTime = new WaitForSeconds(0.1f);
+
     //# 추적을 위한 필드
     private GameObject m_fence;
 
-    private void Start() => m_playerTransform = GameObject.FindWithTag("Player").transform;
+    private void Awake() => m_navMeshAgent = GetComponent<NavMeshAgent>();
+
+    private void Start()
+    {
+        m_playerTransform = GameObject.FindWithTag("Player").transform;
+
+        m_targetPosition = m_fence.gameObject.transform.position;
+    }
+
+    public void StartTrace()
+    {
+        m_navMeshAgent.enabled = true;
+
+        if (NavMesh.SamplePosition(transform.position, out var hit, 3f, NavMesh.AllAreas))
+        {
+            m_navMeshAgent.Warp(hit.position);
+            m_navMeshAgent.Resume();
+            StartCoroutine(UpdatePath());
+            StartCoroutine(TraverseOffMeshLink());
+        }
+        else
+        {
+            Debug.LogError("이동할 수 있는 NavMesh 위치를 찾을 수 없습니다");
+        }
+    }
 
     private void Update()
     {
@@ -23,14 +56,11 @@ public class SceneMonster : MonoBehaviour
             return;
         }
 
-        // m_targetPosition = FindTarget();
-
-        //todo navmesh에서 target을 추적해야 함
+        m_targetPosition = FindTarget();
     }
 
     public void Initialize()
     {
-        //todo 추후 Fence Tag가 추가되면 주석 제거
         m_fence = GameObject.FindWithTag("Fence");
 
         if (m_fence == null)
@@ -56,6 +86,10 @@ public class SceneMonster : MonoBehaviour
         //# 플레이어가 Fence에 있으면 Fence를 향해 걸어감
         if (IsPlayerStayInFence())
         {
+            if (m_fence == null)
+            {
+                Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
+            }
             return m_fence.transform.position;
         }
 
@@ -85,5 +119,47 @@ public class SceneMonster : MonoBehaviour
         if (m_playerTransform.position.y < fenceYArea.x || m_playerTransform.position.y > fenceYArea.y) return false;
 
         return true;
+    }
+
+    private IEnumerator UpdatePath()
+    {
+        //todo Game Over가 아니라면 계속 반복
+        while (!GameManager.Instance.IsGameOver)
+        {
+            m_navMeshAgent.isStopped = false;
+            m_navMeshAgent.SetDestination(m_targetPosition);
+
+            yield return WaitTime;
+        }
+    }
+
+    /// <summary>
+    /// OffLink를 지날 때 속도가 증가되는 문제를 해결하기 위한 코루틴
+    /// 수동으로 OffLink를 지날 때 로직 처리
+    /// </summary>
+    private IEnumerator TraverseOffMeshLink()
+    {
+        while (!GameManager.Instance.IsGameOver)
+        {
+            if (m_navMeshAgent.isOnOffMeshLink)
+            {
+                var linkData = m_navMeshAgent.currentOffMeshLinkData;
+                var startPos = m_navMeshAgent.transform.position;
+                var endPos = linkData.endPos;
+
+                float duration = Vector3.Distance(startPos, endPos) / m_navMeshAgent.speed;
+                float t = 0;
+
+                while (t < duration)
+                {
+                    m_navMeshAgent.transform.position = Vector3.Lerp(startPos, endPos, t / duration);
+                    t += Time.deltaTime;
+                    yield return null;
+                }
+
+                m_navMeshAgent.CompleteOffMeshLink();
+            }
+            yield return null;
+        }
     }
 }

@@ -46,8 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MonsterId: 0
-  MonsterHP: 0
+  MonsterHealth: 0
   MonsterSpeed: 0
+  IsAlive: 1
 --- !u!1 &1543357271404478795
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +59,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9000826679078631625}
   - component: {fileID: 6209199355731303613}
-  - component: {fileID: 2831905011187783626}
+  - component: {fileID: 1399509301045829272}
   m_Layer: 0
   m_Name: CorrectRotation
   m_TagString: Untagged
@@ -104,7 +105,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: a6bb4a1e7614f0844999e5c6eb8ff1aa, type: 3}
---- !u!54 &2831905011187783626
+--- !u!54 &1399509301045829272
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,6 +140,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9000826679078631625}
     m_Modifications:
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 5fe097f7eabcb8b4e89ad9493c6a84fc, type: 2}
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8672787908860700822, guid: d7aa467cc2d06614c81778313afa4825,
         type: 3}
       propertyPath: m_IsActive
