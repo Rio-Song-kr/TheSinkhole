@@ -46,29 +46,29 @@ public class ItemManager : MonoBehaviour
         var parentObject = new GameObject();
         parentObject.name = "Items";
 
-        for (int i = 0; i < itemList.Count; i++)
+        foreach (var item in itemList)
         {
             //# Scriptable Object 생성
             var newItemDataSO = ScriptableObject.CreateInstance<ItemDataSO>();
-            newItemDataSO.name = itemList[i].ItemId.ToString();
+            newItemDataSO.name = item.ItemId.ToString();
 
 
             //# string을 이용하여 enum을 읽어옴
-            if (!Enum.TryParse<ItemType>(itemList[i].ItemType, true, out var itemType))
+            if (!Enum.TryParse<ItemType>(item.ItemType, true, out var itemType))
                 itemType = ItemType.None; // 기본값 설정
 
-            if (!Enum.TryParse<ItemEnName>(itemList[i].ItemEnName, true, out var itemEnName))
+            if (!Enum.TryParse<ItemEnName>(item.ItemEnName, true, out var itemEnName))
                 itemEnName = ItemEnName.None; // 기본값 설정
 
             m_itemPools.Add(itemEnName, new ItemPool<SceneItem>());
 
             //# CSV에서 읽은 Data 연결
-            newItemDataSO.ItemData.ItemId = itemList[i].ItemId;
-            newItemDataSO.ItemData.ItemName = itemList[i].ItemName;
+            newItemDataSO.ItemData.ItemId = item.ItemId;
+            newItemDataSO.ItemData.ItemName = item.ItemName;
             newItemDataSO.ItemEnName = itemEnName;
             newItemDataSO.ItemType = itemType;
-            newItemDataSO.ItemMaxOwn = itemList[i].ItemMaxOwn;
-            newItemDataSO.ItemText = itemList[i].ItemText;
+            newItemDataSO.ItemMaxOwn = item.ItemMaxOwn;
+            newItemDataSO.ItemText = item.ItemText;
 
             m_itemPrefabDatabaseSO.OnSetPrefab(ref newItemDataSO);
 
