@@ -12,6 +12,8 @@ namespace CraftingSystem
 
         private bool isCrafting = false; // 현재 제작 중인지 여부
 
+        public FullInventoryPopup inventoryFullPopup;
+
         public bool IsCrafting => isCrafting;
 
         private void Start()
@@ -66,6 +68,30 @@ namespace CraftingSystem
                 Debug.Log("제작 중입니다. 다른 제작은 불가능합니다.");
                 return;
             }
+
+            // 낮/밤 시간 체크
+            if (!GameTimer.IsDay)
+            {
+                Debug.Log("밤에는 제작이 불가능합니다.");
+                // 밤에 제작 불가 팝업을 띄우고 싶으면 여기에 추가
+                // if (nightPopup != null) nightPopup.Show();
+                return;
+            }
+
+            // 인벤토리 공간 체크 (예시)
+            var invSys = playerInventory.DynamicInventorySystem;
+            bool hasEmptySlot = invSys.HasEmptySlot();
+            bool hasResultItem = invSys.FindItemSlots(recipe.result.item, out var resultSlots) && resultSlots.Count > 0;
+
+            if (!hasEmptySlot && !hasResultItem)
+            {
+                if (inventoryFullPopup != null)
+                    inventoryFullPopup.Show();
+                else
+                    Debug.LogWarning("InventoryFullPopup이 연결되어 있지 않습니다.");
+                return;
+            }
+
             StartCoroutine(CraftCoroutine(recipe));
         }
 
