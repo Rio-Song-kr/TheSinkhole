@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public MonsterManager Monster { get; private set; }
 
+    public TileManager Tile { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     private bool m_isDay = true;
@@ -62,6 +64,7 @@ public class GameManager : MonoBehaviour
         UI = GetComponent<GlobalUIManager>();
         Item = GetComponent<ItemManager>();
         Monster = GetComponent<MonsterManager>();
+        Tile = GetComponent<TileManager>();
     }
 
     private void Start()

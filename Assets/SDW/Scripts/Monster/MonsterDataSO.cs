@@ -16,7 +16,7 @@ public class MonsterDataSO : ScriptableObject
     public int MonsterAttack;
     public float MonsterAtkSpeed;
     public float MonsterAtkRange;
-    public float MonsterResearch;
+    public float MonsterDetectDistance;
     public int MonsterDropItemId;
     public int MonsterDropItemQuantity;
     [TextArea(4, 4)] public string MonsterDescription;
@@ -28,5 +28,5 @@ public class MonsterDataSO : ScriptableObject
     public GameObject ModelPrefab;
 
     [Header("Data")]
-    [SerializeReference] public Monster MonsterData;
+    [SerializeReference] public Monster Monster;
 }
