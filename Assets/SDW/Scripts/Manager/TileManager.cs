@@ -15,18 +15,21 @@ public class TileManager : MonoBehaviour
     [SerializeField] private Vector2Int m_buildableTileSize;
     [SerializeField] private int m_tileSize;
 
+    private Vector2Int m_groundXArea;
+    private Vector2Int m_groundYArea;
+
     //todo 울타리 - 출구 주변 3개 block은 개척이 가능한 tile로 변경되어야 함
     private void Awake()
     {
         var parentTiles = new GameObject();
         parentTiles.name = "Tiles";
 
-        var groundXArea = new Vector2Int(-m_groundTileSize.x / 2, m_groundTileSize.x / 2);
-        var groundYArea = new Vector2Int(-m_groundTileSize.y / 2, m_groundTileSize.y / 2);
+        m_groundXArea = new Vector2Int(-m_groundTileSize.x / 2, m_groundTileSize.x / 2);
+        m_groundYArea = new Vector2Int(-m_groundTileSize.y / 2, m_groundTileSize.y / 2);
 
-        for (int y = groundYArea.x; y < groundYArea.y + 1; y++)
+        for (int y = m_groundYArea.x; y < m_groundYArea.y + 1; y++)
         {
-            for (int x = groundXArea.x; x < groundXArea.y + 1; x++)
+            for (int x = m_groundXArea.x; x < m_groundXArea.y + 1; x++)
             {
                 var groundTile = Instantiate(m_groundTile);
                 groundTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
@@ -38,7 +41,7 @@ public class TileManager : MonoBehaviour
         {
             for (int x = -m_buildableTileSize.x / 2; x < m_buildableTileSize.x / 2 + 1; x++)
             {
-                if (x >= groundXArea.x && x <= groundXArea.y && y >= groundYArea.x && y <= groundYArea.y) continue;
+                if (x >= m_groundXArea.x && x <= m_groundXArea.y && y >= m_groundYArea.x && y <= m_groundYArea.y) continue;
                 var buildableTile = Instantiate(m_buildableTile);
                 buildableTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
                 buildableTile.transform.parent = parentTiles.transform;
@@ -49,4 +52,7 @@ public class TileManager : MonoBehaviour
         planeTile.transform.localScale = new Vector3(m_buildableTileSize.x / 2, 1, m_buildableTileSize.y / 2);
         planeTile.transform.parent = parentTiles.transform;
     }
+
+    public Vector2Int GetFenceXArea() => m_groundXArea * m_tileSize;
+    public Vector2Int GetFenceYArea() => m_groundYArea * m_tileSize;
 }

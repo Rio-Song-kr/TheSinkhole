@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 게임 내 몬스터들을 관리하는 매니저 클래스
@@ -82,6 +81,7 @@ public class MonsterManager : MonoBehaviour
             monsterObject.tag = "Monster";
 
             var monsterModel = Instantiate(newMonsterDataSO.ModelPrefab);
+            // monsterModel.SetActive(false);
             monsterModel.transform.parent = monsterObject.transform;
 
             switch (monsterEnName)
@@ -89,39 +89,41 @@ public class MonsterManager : MonoBehaviour
                 case MonsterEnName.BabySpider:
                 case MonsterEnName.Spider:
                 case MonsterEnName.HighSpider:
-                    newMonsterDataSO.MonsterData = monsterModel.GetComponent<Spider>();
+                    newMonsterDataSO.Monster = monsterModel.GetComponent<Spider>();
                     break;
                 case MonsterEnName.LittleWorm:
                 case MonsterEnName.Worm:
                 case MonsterEnName.BossWorm:
 
-                    newMonsterDataSO.MonsterData = monsterModel.GetComponent<Worm>();
+                    newMonsterDataSO.Monster = monsterModel.GetComponent<Worm>();
                     break;
                 default:
                     Debug.LogError("해당 몬스터 이름은 없습니다.");
                     return;
             }
 
-            newMonsterDataSO.MonsterData.SetMonsterId(monster.MonsterId);
+            newMonsterDataSO.Monster.MonsterId = monster.MonsterId;
             newMonsterDataSO.MonsterName = monster.MonsterName;
             newMonsterDataSO.MonsterTierType = monsterTierType;
-            newMonsterDataSO.MonsterData.SetMonsterHealth(monster.MonsterHealth);
+            newMonsterDataSO.Monster.MonsterHealth = monster.MonsterHealth;
+            newMonsterDataSO.Monster.MonsterSpeed = monster.MonsterSpeed;
             newMonsterDataSO.MaxMonsterHealth = monster.MonsterHealth;
-            newMonsterDataSO.MonsterData.SetMonsterSpeed(monster.MonsterSpeed);
             newMonsterDataSO.MaxMonsterSpeed = monster.MonsterSpeed;
             newMonsterDataSO.MonsterAttackType = monsterAttackType;
             newMonsterDataSO.MonsterAttack = monster.MonsterAttack;
             newMonsterDataSO.MonsterAtkSpeed = monster.MonsterAtkSpeed;
             newMonsterDataSO.MonsterAtkRange = monster.MonsterAtkRange;
-            newMonsterDataSO.MonsterResearch = monster.MonsterResearch;
+            newMonsterDataSO.MonsterDetectDistance = monster.MonsterResearch;
             newMonsterDataSO.MonsterDropItemId = monster.MonsterDropItemId;
             newMonsterDataSO.MonsterDropItemQuantity = monster.MonsterDropItemQuantity;
             newMonsterDataSO.MonsterDescription = monster.MonsterDescription;
 
             var sceneMonster = monsterObject.GetComponent<SceneMonster>();
             sceneMonster.MonsterDataSO = newMonsterDataSO;
+            sceneMonster.Initialize();
 
             monsterObject.SetActive(false);
+
 
             m_monsterPools[newMonsterDataSO.MonsterEnName].SetPool(monsterObject);
             m_monsterEnDataSO[newMonsterDataSO.MonsterEnName] = newMonsterDataSO;
