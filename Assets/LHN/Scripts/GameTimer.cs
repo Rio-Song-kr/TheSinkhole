@@ -17,6 +17,7 @@ public class GameTimer : MonoBehaviour
 
     public TextMeshProUGUI gameTimeText; // UI에 연결할 텍스트
     public static int Day;
+    public static bool IsDay;
 
     private void Start()
     {
@@ -48,17 +49,17 @@ public class GameTimer : MonoBehaviour
         {
             if (m_icon.sprite != m_daySprite)
                 m_icon.sprite = m_daySprite;
+            IsDay = true;
         }
         else if (gameTimeFormatted == "PM 06")
         {
             if (m_icon.sprite != m_nightSprite)
                 m_icon.sprite = m_nightSprite;
+            IsDay = false;
         }
 
         gameTimeText.text = $"DAY {count:D2}       {gameTimeFormatted}";
         // 조건문 시간 비교를 위한 이전 시간 저장
         beforeTime = gameTime;
     }
-
-    public static int GetDay() => Day;
 }
