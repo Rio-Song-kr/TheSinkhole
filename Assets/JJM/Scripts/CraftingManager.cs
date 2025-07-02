@@ -69,6 +69,15 @@ namespace CraftingSystem
                 return;
             }
 
+            // 낮/밤 시간 체크
+            if (!GameTimer.IsDay)
+            {
+                Debug.Log("밤에는 제작이 불가능합니다.");
+                // 밤에 제작 불가 팝업을 띄우고 싶으면 여기에 추가
+                // if (nightPopup != null) nightPopup.Show();
+                return;
+            }
+
             // 인벤토리 공간 체크 (예시)
             var invSys = playerInventory.DynamicInventorySystem;
             bool hasEmptySlot = invSys.HasEmptySlot();
