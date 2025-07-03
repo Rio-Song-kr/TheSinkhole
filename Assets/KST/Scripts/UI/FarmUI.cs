@@ -88,6 +88,11 @@ public class FarmUI : Singleton<FarmUI>
             //재배 가능한 상태
             if (m_isIneractionKeyPressed)
             {
+                if (!HasRequiredItems(selectedCrop))
+                {
+                    m_statusText.text = "재배에 필요한 재료가 부족합니다.";
+                    return;
+                }
                 isPressingE = true;
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
@@ -156,19 +161,9 @@ public class FarmUI : Singleton<FarmUI>
     //재배 시작
     private void StartGrowing(CropDataSO crop)
     {
-        if (crop.seedItemSo == null || !GameTimer.IsDay) return;//crop에 씨앗 아이템이 설정되지 않거나, 낮이 아니면
+        if (!GameTimer.IsDay) return; //낮이 아니면 리턴
 
-        int seedAmount = playerInven.GetItemAmounts(crop.seedItemSo.ItemEnName);
-        if (seedAmount <= 0)
-        {
-            m_statusText.text = "씨앗이 부족합니다. 인벤토리 확인하세요";
-            pressTimer = 0f;
-            isPressingE = false;
-            ProgressBarImg.fillAmount = 0f;
-            return;
-        }
-        // playerInven.AddItemSmart(crop.seedItemSo, -1);//씨앗 한 개 소모(TODO<김승태>: 이렇게 인벤토리 메서드 사용해도 되나?)
-        //TODO<김승태> : 아이템 사용 로직으로 변경
+        ConsumeRequiredItems(crop);
 
         currentTile.StartPlanting(crop);
         pressTimer = 0f;
@@ -232,16 +227,39 @@ public class FarmUI : Singleton<FarmUI>
         selectedCrop = null;
         DetailGO.SetActive(false);
     }
+    //재료 아이템 체크
+    private bool HasRequiredItems(CropDataSO crop)
+    {
+        foreach (var req in crop.RequireItems)
+        {
+            int currentCount = playerInven.GetItemAmounts(req.ItemName);
+            if (currentCount < req.RequireCount) return false;
+        }
+        return true;
+    }
+
+    private void ConsumeRequiredItems(CropDataSO crop)
+    {
+        foreach (var req in crop.RequireItems)
+        {
+            //TODO<김승태> : 아이템 소모하는 로직 추가
+            // playerInven.아이템소모(req.ItemName, req.RequireCount);
+        }
+    }
 
     private bool AddInvetory()
     {
-        if (selectedCrop == null || selectedCrop.harvestItemSo == null)
+        if (selectedCrop == null || selectedCrop.harvestItemSo == ItemEnName.None)
         {
             Debug.LogWarning("수확할 작물이 없거나, 아이템정보가 설정되지 않았습니다.");
             return false;
         }
-        var item = selectedCrop.harvestItemSo;
-        int remain = playerInven.AddItemSmart(item, 1);
+        // var item = selectedCrop.harvestItemSo;
+        if (!GameManager.Instance.Item.ItemEnDataSO.TryGetValue(selectedCrop.harvestItemSo, out var item))
+        {
+            return false;
+        }
+        int remain = playerInven.AddItemSmart(item, selectedCrop.harvestItemAmounts);
 
         if (remain == 0)
         {
