@@ -26,6 +26,8 @@ public class ViewmodelManager : MonoBehaviour
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
         onFoot.Movement.started += ctx => animation.WalkStart();
         onFoot.Movement.canceled += ctx => animation.WalkStop();
+        onFoot.Sprint.started += ctx => animation.SprintStart();
+        onFoot.Sprint.canceled += ctx => animation.SprintStop();
     }
 
     [Header("Quickslot")]
