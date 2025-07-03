@@ -48,7 +48,9 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     {
         return tileState switch
         {
+            //타일이 미개척지일 때는 삽으로만 상호작용해서 개척 UI를,
             TileState.PlainTile => toolType == ToolType.Pick,
+            //타일이 개척지일 때는 삽,망치,물컵으로 개척 UI를 띄울 수 있음. 
             TileState.Frontier => toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water,
             _ => false,
         };
@@ -138,8 +140,12 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
                 break;
             case ToolType.Hammer:
+                SetDefenceArea();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.DefenceArea);
                 break;
             case ToolType.Water:
+                SetWaterArea();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Water);
                 break;
         }
     }
@@ -162,6 +168,15 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
         if (!TryGetComponent<TurretTile>(out _))
         {
             var go = gameObject.AddComponent<TurretTile>();
+            go.InteractUiText = InteractUiTextRef;
+        }
+    }
+    public void SetWaterArea()
+    {
+        SetTileState(TileState.WaterTile);
+        if (!TryGetComponent<WaterTile>(out _))
+        {
+            var go = gameObject.AddComponent<WaterTile>();
             go.InteractUiText = InteractUiTextRef;
         }
     }
