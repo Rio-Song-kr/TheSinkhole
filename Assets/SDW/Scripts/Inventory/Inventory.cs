@@ -33,12 +33,8 @@ public class Inventory : MonoBehaviour, ISaveable
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
     public static Action<int> OnSelectedItemChanged;
 
-    //todo 인벤토리의 남은 슬롯 수 관련해서 체크하도록 해야 함
-    public int RemainingSlots;
-
     private ItemEnName m_selectedItemEnName;
     private ToolType m_toolType = ToolType.None;
-    private int m_itemAmounts = 0;
 
     /// <summary>
     /// 저장을 위한 Id 케ㅡ
@@ -145,9 +141,110 @@ public class Inventory : MonoBehaviour, ISaveable
     /// <returns>현재 선택된 아이템의 ToolType을 반환</returns>
     public ToolType GetItemToolType() => m_toolType;
 
-    public int GetItemAmounts(ItemEnName itemEnName) =>
-        //todo 아이템의 영문이름과 같은 이름을 가진 아이템의 총 수량을 반환)
-        m_itemAmounts;
+    /// <summary>
+    /// ItemEnName 아이템이 총 몇 개 있는지 반환
+    /// </summary>
+    /// <param name="itemEnName">찾을 아이템의 영어 이름</param>
+    /// <returns>찾은 아이템의 수를 반환</returns>
+    public int GetItemAmounts(ItemEnName itemEnName)
+    {
+        int itemAmounts = 0;
+
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName) itemAmounts += slot.ItemCount;
+        }
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName) itemAmounts += slot.ItemCount;
+        }
+
+        return itemAmounts;
+    }
+
+    /// <summary>
+    /// 비어있는 Slot의 수를 반환
+    /// </summary>
+    /// <returns>비어있는 Slot의 수</returns>
+    public int GetRemainingSlots()
+    {
+        int slotAmounts = 0;
+
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null)
+                slotAmounts++;
+        }
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null)
+                slotAmounts++;
+        }
+
+        return slotAmounts;
+    }
+
+    /// <summary>
+    /// 특정 아이템을 제거
+    /// </summary>
+    /// <param name="itemEnName">제거하려는 아이템 영어 이름</param>
+    /// <param name="amount">제거하려는 아이템의 수</param>
+    /// <returns>제거가 완료되면 true, 완료하지 못하면 false를 반환</returns>
+    public bool RemoveItemAmounts(ItemEnName itemEnName, int amount)
+    {
+        //todo 인벤토리 순회하면서 개수 채크
+        int remainingAmounts = GetItemAmounts(itemEnName);
+
+        if (amount > remainingAmounts) return false;
+
+        //# 1. 아이템 수가 충분한 경우, 그냥 슬롯 하나에서 처리
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            {
+                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
+                if (slot.ItemCount >= amount)
+                {
+                    slot.RemoveItem(amount);
+                    m_quickSlotInventorySystem.OnSlotChanged(slot);
+                    break;
+                }
+                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
+                amount -= slot.ItemCount;
+                slot.RemoveItem(slot.ItemCount);
+                m_quickSlotInventorySystem.OnSlotChanged(slot);
+            }
+        }
+        Debug.Log(amount);
+        if (amount == 0) return true;
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            {
+                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
+                if (slot.ItemCount >= amount)
+                {
+                    slot.RemoveItem(amount);
+                    m_dynamicInventorySystem.OnSlotChanged(slot);
+                    break;
+                }
+                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
+                amount -= slot.ItemCount;
+                slot.RemoveItem(slot.ItemCount);
+                m_dynamicInventorySystem.OnSlotChanged(slot);
+            }
+        }
+        Debug.Log(amount);
+
+        return true;
+    }
 
     /// <summary>
     /// 마인크래프트 스타일의 아이템 추가 방식
@@ -180,10 +277,7 @@ public class Inventory : MonoBehaviour, ISaveable
         }
 
         //# 빈 슬롯에 추가 (QuickSlot 우선)
-        if (remainingAmount > 0)
-        {
-            remainingAmount = AddToEmptySlots(itemData, remainingAmount);
-        }
+        if (remainingAmount > 0) remainingAmount = AddToEmptySlots(itemData, remainingAmount);
 
         return remainingAmount;
     }
@@ -277,8 +371,7 @@ public class Inventory : MonoBehaviour, ISaveable
         QuickSlotInventorySystem = m_quickSlotInventorySystem,
         DynamicInventorySystem = m_dynamicInventorySystem,
         SelectedItemEnName = m_selectedItemEnName,
-        ToolType = m_toolType,
-        ItemAmounts = m_itemAmounts
+        ToolType = m_toolType
     };
 
     /// <summary>
@@ -293,7 +386,6 @@ public class Inventory : MonoBehaviour, ISaveable
         m_dynamicInventorySystem = inventoryData.DynamicInventorySystem;
         m_selectedItemEnName = inventoryData.SelectedItemEnName;
         m_toolType = inventoryData.ToolType;
-        m_itemAmounts = inventoryData.ItemAmounts;
     }
 
     /// <summary>

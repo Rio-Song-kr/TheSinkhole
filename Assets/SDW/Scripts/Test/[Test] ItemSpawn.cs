@@ -10,7 +10,7 @@ public class TestItemSpawn : MonoBehaviour
         {
             var herb = GameManager.Instance.Item.ItemPools[ItemEnName.Herb].Pool.Get();
             herb.transform.parent = transform;
-            herb.ItemAmount = 500;
+            herb.ItemAmount = 100;
             m_position += Vector3.forward * 2f;
             herb.transform.position = m_position;
         }

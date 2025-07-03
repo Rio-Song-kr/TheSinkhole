@@ -12,5 +12,4 @@ public struct InventorySaveData
     public InventorySystem DynamicInventorySystem;
     public ItemEnName SelectedItemEnName;
     public ToolType ToolType;
-    public int ItemAmounts;
 }
