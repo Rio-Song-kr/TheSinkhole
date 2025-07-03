@@ -51,24 +51,4 @@ public class ViewmodelAnimationController : MonoBehaviour
             animator.SetBool("isSprinting", true);
         }
     }
-    public void WalkStart()
-    {
-        animator.SetBool("isWalking", true);
-    }
-
-
-    public void WalkStop()
-    {
-        animator.SetBool("isWalking", false);
-    }
-
-    public void SprintStart()
-    {
-        //animator.get
-        animator.SetBool("isSprinting", true);
-    }
-    public void SprintStop()
-    {
-        animator.SetBool("isSprinting", false);
-    }
 }

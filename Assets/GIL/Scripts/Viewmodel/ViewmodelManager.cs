@@ -12,7 +12,6 @@ public class ViewmodelManager : MonoBehaviour
     private Inventory inventory;
     private PlayerInput playerInput;
     private PlayerInput.OnFootActions onFoot;
-    //private ViewmodelAnimationController animation;
 
     private Item itemData;
 
@@ -23,11 +22,6 @@ public class ViewmodelManager : MonoBehaviour
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
-        // animation = GetComponent<ViewmodelAnimationController>();
-        // onFoot.Movement.started += ctx => animation.WalkStart();
-        // onFoot.Movement.canceled += ctx => animation.WalkStop();
-        // onFoot.Sprint.started += ctx => animation.SprintStart();
-        // onFoot.Sprint.canceled += ctx => animation.SprintStop();
     }
 
     [Header("Quickslot")]
