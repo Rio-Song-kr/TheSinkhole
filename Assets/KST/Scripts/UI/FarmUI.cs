@@ -38,6 +38,9 @@ public class FarmUI : Singleton<FarmUI>
     private float pressDuration = 5f;
     private bool isPressingE = false;
 
+    //인벤토리
+    [SerializeField] private Inventory playerInven;
+
     private void Start()
     {
         ScrollViewSetting();
@@ -54,6 +57,7 @@ public class FarmUI : Singleton<FarmUI>
             CloseUI();
             return;
         }
+        if (!GameTimer.IsDay) return;
 
         if (currentTile.IsPlanted())
         {
@@ -84,6 +88,11 @@ public class FarmUI : Singleton<FarmUI>
             //재배 가능한 상태
             if (m_isIneractionKeyPressed)
             {
+                if (!HasRequiredItems(selectedCrop))
+                {
+                    m_statusText.text = "재배에 필요한 재료가 부족합니다.";
+                    return;
+                }
                 isPressingE = true;
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
@@ -103,6 +112,8 @@ public class FarmUI : Singleton<FarmUI>
 
     public void OpenUI(FarmTile tile)
     {
+        if (!GameTimer.IsDay) return;
+
         currentTile = tile;
         selectedCrop = null;
         pressTimer = 0f;
@@ -150,6 +161,10 @@ public class FarmUI : Singleton<FarmUI>
     //재배 시작
     private void StartGrowing(CropDataSO crop)
     {
+        if (!GameTimer.IsDay) return; //낮이 아니면 리턴
+
+        ConsumeRequiredItems(crop);
+
         currentTile.StartPlanting(crop);
         pressTimer = 0f;
         isPressingE = false;
@@ -200,7 +215,8 @@ public class FarmUI : Singleton<FarmUI>
 
     private void Harvest()
     {
-        if (!AddInvetory()) return;
+        if (!AddInvetory() || !GameTimer.IsDay) return; // 인벤에 자리 없거나, 낮이 아니면
+
         currentTile.HarvestingCrop();
         ProgressBarImg.fillAmount = 0f;
         m_statusText.text = "수확 완료!";
@@ -211,36 +227,50 @@ public class FarmUI : Singleton<FarmUI>
         selectedCrop = null;
         DetailGO.SetActive(false);
     }
+    //재료 아이템 체크
+    private bool HasRequiredItems(CropDataSO crop)
+    {
+        foreach (var req in crop.RequireItems)
+        {
+            int currentCount = playerInven.GetItemAmounts(req.ItemName);
+            if (currentCount < req.RequireCount) return false;
+        }
+        return true;
+    }
+
+    private void ConsumeRequiredItems(CropDataSO crop)
+    {
+        foreach (var req in crop.RequireItems)
+        {
+            //TODO<김승태> : 아이템 소모하는 로직 추가
+            // playerInven.아이템소모(req.ItemName, req.RequireCount);
+        }
+    }
 
     private bool AddInvetory()
     {
-        // var sceneItem = other.gameObject.GetComponent<SceneItem>();
+        if (selectedCrop == null || selectedCrop.harvestItemSo == ItemEnName.None)
+        {
+            Debug.LogWarning("수확할 작물이 없거나, 아이템정보가 설정되지 않았습니다.");
+            return false;
+        }
+        // var item = selectedCrop.harvestItemSo;
+        if (!GameManager.Instance.Item.ItemEnDataSO.TryGetValue(selectedCrop.harvestItemSo, out var item))
+        {
+            return false;
+        }
+        int remain = playerInven.AddItemSmart(item, selectedCrop.harvestItemAmounts);
 
-        // var inventory = GetComponent<Inventory>();
-        // if (!inventory) return false;
-
-        // int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
-
-        // //# 모든 아이템이 성공적으로 추가됨
-        // if (remainingAmount == 0)
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
-        //     GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
-        // }
-        // else if (remainingAmount < sceneItem.ItemAmount)
-        // {
-        //     //@ 일부만 추가됨 - 남은 수량으로 업데이트
-        //     sceneItem.ItemAmount = remainingAmount;
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-
-        //     //todo 아이템이 부분적으로 추가되었음을 시각적으로 표시
-        //     //@ 예: 이펙트 재생, 사운드 등
-        // }
-        // else
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-        // }
-        return true;
+        if (remain == 0)
+        {
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, item, 1);
+            return true;
+        }
+        else
+        {
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+            return false;
+        }
 
     }
 
