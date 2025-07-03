@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
