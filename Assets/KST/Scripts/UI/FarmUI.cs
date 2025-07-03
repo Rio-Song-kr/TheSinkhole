@@ -38,6 +38,9 @@ public class FarmUI : Singleton<FarmUI>
     private float pressDuration = 5f;
     private bool isPressingE = false;
 
+    //인벤토리
+    [SerializeField] private Inventory playerInven;
+
     private void Start()
     {
         ScrollViewSetting();
@@ -54,6 +57,7 @@ public class FarmUI : Singleton<FarmUI>
             CloseUI();
             return;
         }
+        if (!GameTimer.IsDay) return;
 
         if (currentTile.IsPlanted())
         {
@@ -103,6 +107,8 @@ public class FarmUI : Singleton<FarmUI>
 
     public void OpenUI(FarmTile tile)
     {
+        if (!GameTimer.IsDay) return;
+
         currentTile = tile;
         selectedCrop = null;
         pressTimer = 0f;
@@ -150,6 +156,20 @@ public class FarmUI : Singleton<FarmUI>
     //재배 시작
     private void StartGrowing(CropDataSO crop)
     {
+        if (crop.seedItemSo == null || !GameTimer.IsDay) return;//crop에 씨앗 아이템이 설정되지 않거나, 낮이 아니면
+
+        int seedAmount = playerInven.GetItemAmounts(crop.seedItemSo.ItemEnName);
+        if (seedAmount <= 0)
+        {
+            m_statusText.text = "씨앗이 부족합니다. 인벤토리 확인하세요";
+            pressTimer = 0f;
+            isPressingE = false;
+            ProgressBarImg.fillAmount = 0f;
+            return;
+        }
+        // playerInven.AddItemSmart(crop.seedItemSo, -1);//씨앗 한 개 소모(TODO<김승태>: 이렇게 인벤토리 메서드 사용해도 되나?)
+        //TODO<김승태> : 아이템 사용 로직으로 변경
+
         currentTile.StartPlanting(crop);
         pressTimer = 0f;
         isPressingE = false;
@@ -200,7 +220,8 @@ public class FarmUI : Singleton<FarmUI>
 
     private void Harvest()
     {
-        if (!AddInvetory()) return;
+        if (!AddInvetory() || !GameTimer.IsDay) return; // 인벤에 자리 없거나, 낮이 아니면
+
         currentTile.HarvestingCrop();
         ProgressBarImg.fillAmount = 0f;
         m_statusText.text = "수확 완료!";
@@ -214,33 +235,24 @@ public class FarmUI : Singleton<FarmUI>
 
     private bool AddInvetory()
     {
-        // var sceneItem = other.gameObject.GetComponent<SceneItem>();
+        if (selectedCrop == null || selectedCrop.harvestItemSo == null)
+        {
+            Debug.LogWarning("수확할 작물이 없거나, 아이템정보가 설정되지 않았습니다.");
+            return false;
+        }
+        var item = selectedCrop.harvestItemSo;
+        int remain = playerInven.AddItemSmart(item, 1);
 
-        // var inventory = GetComponent<Inventory>();
-        // if (!inventory) return false;
-
-        // int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
-
-        // //# 모든 아이템이 성공적으로 추가됨
-        // if (remainingAmount == 0)
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
-        //     GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
-        // }
-        // else if (remainingAmount < sceneItem.ItemAmount)
-        // {
-        //     //@ 일부만 추가됨 - 남은 수량으로 업데이트
-        //     sceneItem.ItemAmount = remainingAmount;
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-
-        //     //todo 아이템이 부분적으로 추가되었음을 시각적으로 표시
-        //     //@ 예: 이펙트 재생, 사운드 등
-        // }
-        // else
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-        // }
-        return true;
+        if (remain == 0)
+        {
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, item, 1);
+            return true;
+        }
+        else
+        {
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+            return false;
+        }
 
     }
 
