@@ -36,7 +36,12 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     // 정신력
     [Header("Mentality")]
     public float MaxMentality;
+
     [field: SerializeField] public float CurMentality { get; private set; }
+
+    [SerializeField] public int AttackPower { get; private set; }
+
+
     [Header("Speed")]
     // 이동속도
     // TODO: 추후에 이동 구현 시 이동속도 관련 코드에다가 옮길지 고민하기.
