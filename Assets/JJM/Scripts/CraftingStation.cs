@@ -27,22 +27,31 @@ namespace CraftingSystem
 
         private void Update()
         {
+            if (isPlayerInRange)
+                Debug.Log("플레이어가 제작소 범위 안에 있음");
             // 플레이어가 범위 내에 있고 E키를 누르면 UI 오픈
             if (isPlayerInRange && Input.GetKeyDown(KeyCode.E))
             {
+                Debug.Log("E키 입력 감지, 제작소 UI 오픈 시도");
                 OpenStationUI();
             }
         }
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
+            {
+                Debug.Log("플레이어가 제작소 범위에 들어옴");
                 isPlayerInRange = true;
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("Player"))
+            {
+                Debug.Log("플레이어가 제작소 범위에서 나감");
                 isPlayerInRange = false;
+            }
         }
         // UI 오픈
         public void OpenStationUI()
