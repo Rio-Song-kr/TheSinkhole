@@ -9,7 +9,8 @@ public class SceneMonster : MonoBehaviour
 {
     [Header("Monster Settings")]
     public MonsterDataSO MonsterDataSO;
-    private Vector3 m_targetPosition;
+    private Transform m_targetTransform;
+    private Transform m_prevTargetTransform;
     private Transform m_playerTransform;
 
     [Header("Layer To Track")]
@@ -17,7 +18,9 @@ public class SceneMonster : MonoBehaviour
     [SerializeField] private LayerMask m_fenceMask;
 
     private NavMeshAgent m_navMeshAgent;
-    private static WaitForSeconds WaitTime = new WaitForSeconds(0.1f);
+    private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
+
+    private Collider m_targetCollider;
 
     //# 추적을 위한 필드
     private GameObject m_fence;
@@ -28,7 +31,10 @@ public class SceneMonster : MonoBehaviour
     {
         m_playerTransform = GameObject.FindWithTag("Player").transform;
 
-        m_targetPosition = m_fence.gameObject.transform.position;
+        m_targetTransform = m_fence.gameObject.transform;
+        m_targetCollider = m_targetTransform.GetComponent<Collider>();
+
+        // m_navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     public void StartTrace()
@@ -56,7 +62,34 @@ public class SceneMonster : MonoBehaviour
             return;
         }
 
-        m_targetPosition = FindTarget();
+        m_targetTransform = FindTarget();
+
+        m_targetCollider = m_targetTransform?.GetComponent<Collider>();
+        if (m_targetCollider != null)
+        {
+            // 몬스터와 타겟 경계 간의 최소 거리 계산
+            var closestPoint = m_targetCollider.ClosestPoint(transform.position);
+            float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
+
+            if (distanceToBoundary <= m_navMeshAgent.stoppingDistance)
+            {
+                var lookDirection = (m_targetTransform.position - transform.position).normalized;
+
+                if (lookDirection != Vector3.zero)
+                {
+                    lookDirection.y = 0;
+                    var lookRotation = Quaternion.LookRotation(lookDirection);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+                }
+
+                m_navMeshAgent.isStopped = true;
+                m_navMeshAgent.velocity = Vector3.zero;
+            }
+            else
+            {
+                m_navMeshAgent.isStopped = false;
+            }
+        }
     }
 
     public void Initialize()
@@ -81,8 +114,9 @@ public class SceneMonster : MonoBehaviour
     /// 플레이어가 감지거리 내에 있으면 Player의 Position을 반환
     /// </summary>
     /// <returns></returns>
-    private Vector3 FindTarget()
+    private Transform FindTarget()
     {
+        Transform targetTransform;
         //# 플레이어가 Fence에 있으면 Fence를 향해 걸어감
         if (IsPlayerStayInFence())
         {
@@ -90,13 +124,20 @@ public class SceneMonster : MonoBehaviour
             {
                 Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
             }
-            return m_fence.transform.position;
+            targetTransform = m_fence.transform;
+            return targetTransform;
         }
 
         //# 플레이어가 Fence 밖이면서 감지거리 밖에 있으면 Fence를 향해 걸어감
-        if (!FindPlayer()) return m_fence.transform.position;
+        if (!FindPlayer())
+        {
+            targetTransform = m_fence.transform;
+            return targetTransform;
+        }
 
-        return m_playerTransform.position;
+        targetTransform = m_playerTransform;
+
+        return targetTransform;
     }
 
     /// <summary>
@@ -126,9 +167,14 @@ public class SceneMonster : MonoBehaviour
         //todo Game Over가 아니라면 계속 반복
         while (!GameManager.Instance.IsGameOver)
         {
-            m_navMeshAgent.isStopped = false;
-            m_navMeshAgent.SetDestination(m_targetPosition);
-
+            if (!m_navMeshAgent.pathPending && m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
+            {
+                m_navMeshAgent.isStopped = true;
+            }
+            else
+                m_navMeshAgent.isStopped = false;
+            yield return WaitTime;
+            m_navMeshAgent.SetDestination(m_targetTransform.position);
             yield return WaitTime;
         }
     }
