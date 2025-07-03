@@ -1,13 +1,11 @@
 using UnityEngine;
 
-public class FarmTile : Tile
+public class WaterTile : Tile
 {
     [Header("Status")]
     [SerializeField] private bool m_isPlanted;
-    [SerializeField] private bool m_isPlayerOnFarmTile;
+    [SerializeField] private bool m_isPlayerOnWaterTile;
     public bool IsPlanted() => m_isPlanted;
-    public bool IsPlayerOnTile() => m_isPlayerOnFarmTile;
-
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
@@ -26,35 +24,35 @@ public class FarmTile : Tile
 
     private void Awake() => m_awakeTime = Time.time;
 
-    private void OnEnable()
-    {
-        FarmUI.Instance.OnIsUIOpen += SetInteraction;
-        var tile = GetComponent<Tile>();
-        Destroy(tile);
-        tileState = TileState.FarmTile;
-    }
+    // private void OnEnable()
+    // {
+    //     WaterUI.Instance.OnIsUIOpen += SetInteraction;
+    //     var tile = GetComponent<Tile>();
+    //     Destroy(tile);
+    //     tileState = TileState.WaterTile;
+    // }
 
-    private void OnDisable()
-    {
-        FarmUI.Instance.OnIsUIOpen -= SetInteraction;
-    }
+    // private void OnDisable()
+    // {
+    //     WaterUI.Instance.OnIsUIOpen -= SetInteraction;
+    // }
 
-    private void Update()
-    {
-        if (!isGrowing || growingCrop == null) return;
+    // private void Update()
+    // {
+    //     if (!isGrowing || growingCrop == null) return;
 
-        growTimer -= Time.deltaTime;
-        if (growTimer <= 0f)
-        {
-            growTimer = 0f;
-            isGrowing = false;
-        }
-    }
+    //     growTimer -= Time.deltaTime;
+    //     if (growTimer <= 0f)
+    //     {
+    //         growTimer = 0f;
+    //         isGrowing = false;
+    //     }
+    // }
     #region 상호작용 인터페이스 구현
     public override interactType GetInteractType() => interactType.PressE;
 
     public override bool CanInteract(ToolType toolType) => 
-        m_isPlayerOnFarmTile && toolType == ToolType.Shovel;
+        m_isPlayerOnWaterTile && toolType == ToolType.Water;
 
     public override void OnInteract(ToolType toolType)
     {
@@ -62,7 +60,7 @@ public class FarmTile : Tile
 
         if (GameManager.Instance.IsCursorLocked)
         {
-            FarmUI.Instance.OpenUI(this);
+            // WaterUI.Instance.OpenUI(this);
             InteractUiText.SetActive(false);
         }
     }
@@ -90,23 +88,23 @@ public class FarmTile : Tile
     }
 
     #region 타일 Ray 상호작용
-    public override void OnTileInteractionStay(Interaction player)
-    {
-        if (Time.time - m_awakeTime < m_interactDelay) return;
-        m_isPlayerOnFarmTile = true;
+    // public override void OnTileInteractionStay(Interaction player)
+    // {
+    //     if (Time.time - m_awakeTime < m_interactDelay) return;
+    //     m_isPlayerOnWaterTile = true;
 
-        var currentTool = player.CurrentTool;
-        if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
-            InteractUiText.SetActive(true);
-        else
-            InteractUiText.SetActive(false);
+    //     var currentTool = player.CurrentTool;
+    //     if (!WaterUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
+    //         InteractUiText.SetActive(true);
+    //     else
+    //         InteractUiText.SetActive(false);
 
-        player?.RegisterTrigger(this);
-    }
+    //     player?.RegisterTrigger(this);
+    // }
 
     public override void OnTileInteractionExit(Interaction player)
     {
-        m_isPlayerOnFarmTile = false;
+        m_isPlayerOnWaterTile = false;
         InteractUiText.SetActive(false);
         player?.ClearTrigger(this);
     }
