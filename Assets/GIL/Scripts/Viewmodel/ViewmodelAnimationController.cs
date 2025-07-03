@@ -49,6 +49,12 @@ public class ViewmodelAnimationController : MonoBehaviour
             SetSprinting();
         }
     }
+
+    public void SetAttack()
+    {
+        animator.SetBool("isAttacking", true);
+    }
+
     // 추후에 사운드 or 이펙트를 추가할 경우를 대비해 각각 상태에 대해 별도의 함수화.
     private void SetIdle()
     {

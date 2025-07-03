@@ -12,6 +12,7 @@ public class ViewmodelManager : MonoBehaviour
     private Inventory inventory;
     private PlayerInput playerInput;
     private PlayerInput.OnFootActions onFoot;
+    private ViewmodelAnimationController animController;
 
     private Item itemData;
 
@@ -19,9 +20,11 @@ public class ViewmodelManager : MonoBehaviour
     private void Awake()
     {
         inventory = GetComponentInParent<Inventory>();
+        animController = GetComponent<ViewmodelAnimationController>();
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
+        onFoot.LMBClick.started += ctx => animController.SetAttack();
     }
 
     [Header("Quickslot")]
