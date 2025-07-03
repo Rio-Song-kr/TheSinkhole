@@ -2,14 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.Rendering.Universal;
 public class ViewmodelAnimationController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    private CharacterController controller;
 
+    private Vector3 velocity;
+
+    private void Awake()
+    {
+        controller = GetComponentInParent<CharacterController>();
+    }
+
+    // private void FixedUpdate()
+    // {
+    //     velocity = controller.velocity;
+    //     if (velocity.magnitude < 0.1f)
+    //     {
+    //         animator.SetBool("isWalking", false);
+    //         animator.SetBool("isSprinting", false);
+    //     }
+    //     else if (velocity.magnitude < 3.8f)
+    //     {
+    //         animator.SetBool("isWalking", true);
+    //         animator.SetBool("isSprinting", false);
+    //     }
+    //     else if (velocity.magnitude > 3.8f)
+    //     {
+    //         animator.SetBool("isWalking", true);
+    //         animator.SetBool("isSprinting", true);
+    //     }
+    // }
     public void WalkStart()
     {
         animator.SetBool("isWalking", true);
     }
+
 
     public void WalkStop()
     {
@@ -18,12 +47,11 @@ public class ViewmodelAnimationController : MonoBehaviour
 
     public void SprintStart()
     {
-        Debug.Log("Sprint start");
+        //animator.get
         animator.SetBool("isSprinting", true);
     }
     public void SprintStop()
     {
-        Debug.Log("Sprint End");
         animator.SetBool("isSprinting", false);
     }
 }
