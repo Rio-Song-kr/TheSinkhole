@@ -8,6 +8,8 @@ public class ViewmodelAnimationController : MonoBehaviour
     [SerializeField] private Animator animator;
     private CharacterController controller;
 
+    private float delayTimer = 0.5f;
+    private bool allowAnimation;
     private Vector3 velocity;
 
     private void Awake()
@@ -16,8 +18,16 @@ public class ViewmodelAnimationController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
-        GetAnimationByVelocity();
+    {   
+        if (allowAnimation)
+        {
+            GetAnimationByVelocity();
+        }
+        else
+        {
+            delayTimer -= Time.fixedDeltaTime;
+            if (delayTimer <= 0f) allowAnimation = true;
+        }
     }
 
     // 이동속도에 따라 파라미터 수정
