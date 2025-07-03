@@ -9,15 +9,17 @@ public class SceneMonster : MonoBehaviour
 {
     [Header("Monster Settings")]
     public MonsterDataSO MonsterDataSO;
-    private Transform m_targetTransform;
-    private Transform m_prevTargetTransform;
-    private Transform m_playerTransform;
+    private NavMeshAgent m_navMeshAgent;
+    private MonsterAnimation m_monsterAnimation;
 
     [Header("Layer To Track")]
     [SerializeField] private LayerMask m_playerMask;
     [SerializeField] private LayerMask m_fenceMask;
 
-    private NavMeshAgent m_navMeshAgent;
+    private Transform m_targetTransform;
+    private Transform m_prevTargetTransform;
+    private Transform m_playerTransform;
+
     private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
 
     private Collider m_targetCollider;
@@ -25,7 +27,11 @@ public class SceneMonster : MonoBehaviour
     //# 추적을 위한 필드
     private GameObject m_fence;
 
-    private void Awake() => m_navMeshAgent = GetComponent<NavMeshAgent>();
+    private void Awake()
+    {
+        m_navMeshAgent = GetComponent<NavMeshAgent>();
+        m_monsterAnimation = GetComponent<MonsterAnimation>();
+    }
 
     private void Start()
     {
@@ -33,8 +39,6 @@ public class SceneMonster : MonoBehaviour
 
         m_targetTransform = m_fence.gameObject.transform;
         m_targetCollider = m_targetTransform.GetComponent<Collider>();
-
-        // m_navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     public void StartTrace()
@@ -82,12 +86,16 @@ public class SceneMonster : MonoBehaviour
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
                 }
 
+                Debug.Log("1");
                 m_navMeshAgent.isStopped = true;
                 m_navMeshAgent.velocity = Vector3.zero;
+                m_monsterAnimation.SetWalk(false);
             }
             else
             {
+                Debug.Log("2");
                 m_navMeshAgent.isStopped = false;
+                m_monsterAnimation.SetWalk(true);
             }
         }
     }
@@ -164,16 +172,22 @@ public class SceneMonster : MonoBehaviour
 
     private IEnumerator UpdatePath()
     {
+        yield return WaitTime;
         //todo Game Over가 아니라면 계속 반복
         while (!GameManager.Instance.IsGameOver)
         {
-            if (!m_navMeshAgent.pathPending && m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
-            {
-                m_navMeshAgent.isStopped = true;
-            }
-            else
-                m_navMeshAgent.isStopped = false;
-            yield return WaitTime;
+            // if (!m_navMeshAgent.pathPending && m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
+            // {
+            //     Debug.Log("3");
+            //     m_navMeshAgent.isStopped = true;
+            //     m_monsterAnimation.SetWalk(false);
+            // }
+            // else
+            // {
+            //     Debug.Log("4");
+            //     m_navMeshAgent.isStopped = false;
+            //     m_monsterAnimation.SetWalk(true);
+            // }
             m_navMeshAgent.SetDestination(m_targetTransform.position);
             yield return WaitTime;
         }

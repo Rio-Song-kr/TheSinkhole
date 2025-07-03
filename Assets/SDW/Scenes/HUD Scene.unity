@@ -184,7 +184,8 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 4005f7a0689fb894893d96d65fc976b4, type: 2}
   m_sharedMaterial: {fileID: 7244501442101459266, guid: 4005f7a0689fb894893d96d65fc976b4,
     type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 7244501442101459266, guid: 4005f7a0689fb894893d96d65fc976b4, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1313,7 +1314,8 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 5c69fed6b055d8c4490dced203e7e7b5, type: 2}
   m_sharedMaterial: {fileID: -9140257638941529392, guid: 5c69fed6b055d8c4490dced203e7e7b5,
     type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -9140257638941529392, guid: 5c69fed6b055d8c4490dced203e7e7b5, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1666,7 +1668,8 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 5c69fed6b055d8c4490dced203e7e7b5, type: 2}
   m_sharedMaterial: {fileID: -9140257638941529392, guid: 5c69fed6b055d8c4490dced203e7e7b5,
     type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -9140257638941529392, guid: 5c69fed6b055d8c4490dced203e7e7b5, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1954,6 +1957,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfb2cc3e0139c504fbeaa9b980b660f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_icon: {fileID: 0}
+  m_daySprite: {fileID: 0}
+  m_nightSprite: {fileID: 0}
   gameTimeText: {fileID: 104163085}
 --- !u!1 &2018870625
 GameObject:
