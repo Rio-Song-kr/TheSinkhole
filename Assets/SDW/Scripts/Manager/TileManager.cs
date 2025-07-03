@@ -1,4 +1,6 @@
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 기본 맵 Tile 생성을 위한 클래스
@@ -45,6 +47,16 @@ public class TileManager : MonoBehaviour
                 var buildableTile = Instantiate(m_buildableTile);
                 buildableTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
                 buildableTile.transform.parent = parentTiles.transform;
+
+                //# Tile에 미리 Surface를 Build하더라도 Surface의 위치가 변하지 않기에 Runtime에 빌드
+                var navMeshSurface = buildableTile.GetComponent<NavMeshSurface>();
+                if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
+
+                var links = buildableTile.GetComponents<NavMeshLink>();
+                foreach (var link in links)
+                {
+                    link.UpdateLink();
+                }
             }
         }
 

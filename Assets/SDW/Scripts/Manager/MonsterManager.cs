@@ -120,7 +120,9 @@ public class MonsterManager : MonoBehaviour
 
             var sceneMonster = monsterObject.GetComponent<SceneMonster>();
             sceneMonster.MonsterDataSO = newMonsterDataSO;
-            sceneMonster.Initialize();
+
+            // var meshCollider = sceneMonster.GetComponent<MeshCollider>();
+            // meshCollider.sharedMesh = newMonsterDataSO.Mesh;
 
             monsterObject.SetActive(false);
 

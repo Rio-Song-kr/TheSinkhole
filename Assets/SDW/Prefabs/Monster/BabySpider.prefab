@@ -46,8 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MonsterId: 0
-  MonsterHP: 0
+  MonsterHealth: 0
   MonsterSpeed: 0
+  IsAlive: 1
 --- !u!1 &1543357271404478795
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,8 +58,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9000826679078631625}
-  - component: {fileID: 6209199355731303613}
-  - component: {fileID: 2831905011187783626}
   m_Layer: 0
   m_Name: CorrectRotation
   m_TagString: Untagged
@@ -82,55 +81,6 @@ Transform:
   - {fileID: 3515226025429678021}
   m_Father: {fileID: 7475724382347459163}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!64 &6209199355731303613
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1543357271404478795}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: a6bb4a1e7614f0844999e5c6eb8ff1aa, type: 3}
---- !u!54 &2831905011187783626
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1543357271404478795}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!1001 &5229657548059558699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -139,6 +89,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9000826679078631625}
     m_Modifications:
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 5fe097f7eabcb8b4e89ad9493c6a84fc, type: 2}
+    - target: {fileID: 8672787908851178254, guid: d7aa467cc2d06614c81778313afa4825,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8672787908860700822, guid: d7aa467cc2d06614c81778313afa4825,
         type: 3}
       propertyPath: m_IsActive

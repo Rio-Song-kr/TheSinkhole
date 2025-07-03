@@ -32,7 +32,18 @@ public class GameManager : MonoBehaviour
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     private bool m_isDay = true;
+
+    /// <summary>
+    /// 낮 또는 방의 상태를 나타내기 위한 프로퍼티
+    /// </summary>
     public bool IsDay => m_isDay;
+
+    private bool m_isGameOver;
+
+    /// <summary>
+    /// GameOver 여부 확인
+    /// </summary>
+    public bool IsGameOver => m_isGameOver;
 
     [SerializeField] private GameObject m_crosshairUI;
 

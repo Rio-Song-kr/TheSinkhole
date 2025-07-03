@@ -20,6 +20,7 @@ public class MonsterDataSO : ScriptableObject
     public int MonsterDropItemId;
     public int MonsterDropItemQuantity;
     [TextArea(4, 4)] public string MonsterDescription;
+    public Mesh Mesh;
 
     [Header("2D Icon")]
     public Sprite Icon;
