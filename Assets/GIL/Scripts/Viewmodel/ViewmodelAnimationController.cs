@@ -18,7 +18,7 @@ public class ViewmodelAnimationController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {   
+    {
         if (allowAnimation)
         {
             GetAnimationByVelocity();
@@ -37,18 +37,32 @@ public class ViewmodelAnimationController : MonoBehaviour
         velocity = controller.velocity;
         if (velocity.magnitude < 0.1f)
         {
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isSprinting", false);
+            SetIdle();
         }
         else if (velocity.magnitude < 3.5f)
         {
-            animator.SetBool("isWalking", true);
-            animator.SetBool("isSprinting", false);
+            SetWalking();
+            
         }
         else if (velocity.magnitude > 3.5f)
         {
-            animator.SetBool("isWalking", true);
-            animator.SetBool("isSprinting", true);
+            SetSprinting();
         }
+    }
+    // 추후에 사운드 or 이펙트를 추가할 경우를 대비해 각각 상태에 대해 별도의 함수화.
+    private void SetIdle()
+    {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSprinting", false);
+    }
+    private void SetWalking()
+    {
+        animator.SetBool("isWalking", true);
+        animator.SetBool("isSprinting", false);
+    }
+    private void SetSprinting()
+    {
+        animator.SetBool("isWalking", true);
+        animator.SetBool("isSprinting", true);
     }
 }
