@@ -15,25 +15,32 @@ public class ViewmodelAnimationController : MonoBehaviour
         controller = GetComponentInParent<CharacterController>();
     }
 
-    // private void FixedUpdate()
-    // {
-    //     velocity = controller.velocity;
-    //     if (velocity.magnitude < 0.1f)
-    //     {
-    //         animator.SetBool("isWalking", false);
-    //         animator.SetBool("isSprinting", false);
-    //     }
-    //     else if (velocity.magnitude < 3.8f)
-    //     {
-    //         animator.SetBool("isWalking", true);
-    //         animator.SetBool("isSprinting", false);
-    //     }
-    //     else if (velocity.magnitude > 3.8f)
-    //     {
-    //         animator.SetBool("isWalking", true);
-    //         animator.SetBool("isSprinting", true);
-    //     }
-    // }
+    private void FixedUpdate()
+    {
+        GetAnimationByVelocity();
+    }
+
+    // 이동속도에 따라 파라미터 수정
+    // 
+    private void GetAnimationByVelocity()
+    {
+        velocity = controller.velocity;
+        if (velocity.magnitude < 0.1f)
+        {
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isSprinting", false);
+        }
+        else if (velocity.magnitude < 3.5f)
+        {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isSprinting", false);
+        }
+        else if (velocity.magnitude > 3.5f)
+        {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isSprinting", true);
+        }
+    }
     public void WalkStart()
     {
         animator.SetBool("isWalking", true);
