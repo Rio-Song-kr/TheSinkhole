@@ -35,6 +35,7 @@ public class ViewmodelAnimationController : MonoBehaviour
     private void GetAnimationByVelocity()
     {
         velocity = controller.velocity;
+        if (velocity.y > 0.1f) return;
         if (velocity.magnitude < 0.1f)
         {
             SetIdle();
@@ -42,7 +43,7 @@ public class ViewmodelAnimationController : MonoBehaviour
         else if (velocity.magnitude < 3.5f)
         {
             SetWalking();
-            
+
         }
         else if (velocity.magnitude > 3.5f)
         {
@@ -52,7 +53,8 @@ public class ViewmodelAnimationController : MonoBehaviour
 
     public void SetAttack()
     {
-        animator.SetBool("isAttacking", true);
+        Debug.Log("공격 실행");
+        animator.SetTrigger("Attack");
     }
 
     // 추후에 사운드 or 이펙트를 추가할 경우를 대비해 각각 상태에 대해 별도의 함수화.
