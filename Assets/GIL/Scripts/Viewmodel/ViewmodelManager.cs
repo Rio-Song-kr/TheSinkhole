@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -11,16 +12,20 @@ public class ViewmodelManager : MonoBehaviour
     private Inventory inventory;
     private PlayerInput playerInput;
     private PlayerInput.OnFootActions onFoot;
+    private ViewmodelAnimationController animation;
 
     private Item itemData;
-    
+
 
     private void Awake()
     {
         inventory = GetComponentInParent<Inventory>();
+        animation = GetComponent<ViewmodelAnimationController>();
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
+        onFoot.Movement.started += ctx => animation.WalkStart();
+        onFoot.Movement.canceled += ctx => animation.WalkStop();
     }
 
     [Header("Quickslot")]
