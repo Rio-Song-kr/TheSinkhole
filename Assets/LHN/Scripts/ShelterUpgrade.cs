@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ShelterUpgrade : MonoBehaviour
 {
+    public ToolType CurrentTool = ToolType.None;
     [SerializeField] private Inventory m_inventory;
+    [SerializeField] private GameObject m_itemPickUpTextObject;
+    [SerializeField] private TextMeshProUGUI m_itemPickUpText;
 
     private void Awake()
     {
@@ -22,18 +26,29 @@ public class ShelterUpgrade : MonoBehaviour
             // 레이캐스트로 5f 거리 내의 충돌 오브젝트 탐지
             if (Physics.Raycast(ray, out RaycastHit hit, 5f))
             {
-                // Fence 태그가 붙은 오브젝트인지 확인
-                if (hit.collider.CompareTag("Fence"))
-                {
-                    // 업그레이드 가능한 컴포넌트가 있는지 확인
-                    UpgradeableObject obj = hit.collider.GetComponent<UpgradeableObject>();
-                    // 있으면 업그레이드 실행
-                    if (obj != null)
+                if (CurrentTool == ToolType.Hammer)
+                { 
+                    SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+
+                    // Fence 태그가 붙은 오브젝트인지 확인
+                    if (hit.collider.CompareTag("Fence"))
                     {
-                        obj.Upgrade();
+                        // 업그레이드 가능한 컴포넌트가 있는지 확인
+                        UpgradeableObject obj = hit.collider.GetComponent<UpgradeableObject>();
+                        // 있으면 업그레이드 실행
+                        if (obj != null)
+                        {
+                            obj.Upgrade();
+                        }
                     }
                 }
+                
             }
         }
+    }
+    public void SetTextObject(bool isActive, string text = "")
+    {
+        m_itemPickUpTextObject.SetActive(isActive);
+        m_itemPickUpText.text = text;
     }
 }
