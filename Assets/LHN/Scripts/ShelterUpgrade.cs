@@ -16,33 +16,36 @@ public class ShelterUpgrade : MonoBehaviour
     }
     private void Update()
     {
-        // 사용자가 E 키를 눌렀을 때만 아래 코드 실행
-        if (Input.GetKeyDown(KeyCode.E))
+        if (GameManager.Instance.IsDay)
         {
-
-            // 카메라 기준으로 마우스 커서 방향으로 레이 생성
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            // 레이캐스트로 5f 거리 내의 충돌 오브젝트 탐지
-            if (Physics.Raycast(ray, out RaycastHit hit, 5f))
+            // 사용자가 E 키를 눌렀을 때만 아래 코드 실행
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (CurrentTool == ToolType.Hammer)
-                { 
-                    SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
 
-                    // Fence 태그가 붙은 오브젝트인지 확인
-                    if (hit.collider.CompareTag("Fence"))
+                // 카메라 기준으로 마우스 커서 방향으로 레이 생성
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                // 레이캐스트로 5f 거리 내의 충돌 오브젝트 탐지
+                if (Physics.Raycast(ray, out RaycastHit hit, 5f))
+                {
+                    if (CurrentTool == ToolType.Hammer)
                     {
-                        // 업그레이드 가능한 컴포넌트가 있는지 확인
-                        UpgradeableObject obj = hit.collider.GetComponent<UpgradeableObject>();
-                        // 있으면 업그레이드 실행
-                        if (obj != null)
+                        SetTextObject(true, "강화하려면 [E] 키를 눌러주세요.");
+
+                        // Fence 태그가 붙은 오브젝트인지 확인
+                        if (hit.collider.CompareTag("Fence"))
                         {
-                            obj.Upgrade();
+                            // 업그레이드 가능한 컴포넌트가 있는지 확인
+                            UpgradeableObject obj = hit.collider.GetComponent<UpgradeableObject>();
+                            // 있으면 업그레이드 실행
+                            if (obj != null)
+                            {
+                                obj.Upgrade();
+                            }
                         }
                     }
+
                 }
-                
             }
         }
     }
