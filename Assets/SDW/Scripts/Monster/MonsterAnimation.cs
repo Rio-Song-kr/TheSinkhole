@@ -8,9 +8,6 @@ public class MonsterAnimation : MonoBehaviour
     private int m_hashTakeDamage = Animator.StringToHash("TakeDamage");
     private int m_hashDie = Animator.StringToHash("Die");
 
-    private int m_hashTurnLeft = Animator.StringToHash("TurnLeft");
-    private int m_hashTurnRight = Animator.StringToHash("TurnRight");
-
     private void Awake() => m_animator = GetComponentInChildren<Animator>();
 
     public void SetWalk(bool isWalk)
@@ -28,7 +25,7 @@ public class MonsterAnimation : MonoBehaviour
         m_animator.SetBool(m_hashTakeDamage, isTakenDamage);
     }
 
-    public void TriggerDie()
+    public void TriggerToDie()
     {
         m_animator.SetTrigger(m_hashDie);
     }
