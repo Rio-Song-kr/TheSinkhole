@@ -31,7 +31,7 @@ public class TileManager : MonoBehaviour
 
         var planeTile = Instantiate(m_planeTile);
 
-        planeTile.transform.localScale = new Vector3(m_buildableTileSize.x / 2 - 0.5f, 1, m_buildableTileSize.y / 2 + 0.5f);
+        planeTile.transform.localScale = new Vector3(m_buildableTileSize.x / 2 + 0.5f, 1, m_buildableTileSize.y / 2 + 0.5f);
         planeTile.transform.parent = parentTiles.transform;
 
         for (int y = m_groundYArea.x; y < m_groundYArea.y + 1; y++)

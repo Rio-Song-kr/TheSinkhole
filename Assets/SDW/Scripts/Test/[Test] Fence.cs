@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestFence : MonoBehaviour, IDamageable
 {
-    private int m_fenceDurability = 100;
+    [SerializeField] private int m_fenceDurability = 100;
 
     public void TakenDamage(int damage)
     {

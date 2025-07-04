@@ -11,7 +11,7 @@ public class SceneMonster : MonoBehaviour
     [Header("Monster Settings")]
     private Monster m_monster;
     private NavMeshAgent m_navMeshAgent;
-    private MonsterAnimation m_monsterAnimation;
+    private MonsterAnimator m_monsterAnimator;
     public MonsterDataSO MonsterDataSO;
 
     [Header("Layer To Track")]
@@ -31,14 +31,14 @@ public class SceneMonster : MonoBehaviour
     private void Awake()
     {
         m_navMeshAgent = GetComponent<NavMeshAgent>();
-        m_monsterAnimation = GetComponent<MonsterAnimation>();
+        m_monsterAnimator = GetComponent<MonsterAnimator>();
     }
 
     private void OnDisable()
     {
         if (m_monster == null) return;
         m_monster.OnAttack -= OnAttack;
-        m_monster.OnHit -= OnHit;
+        m_monster.OnDie -= OnDie;
         m_monster.OnTakenDamaged -= OnTakenDamaged;
     }
 
@@ -52,7 +52,19 @@ public class SceneMonster : MonoBehaviour
     {
         if (!m_monster.IsAlive || GameManager.Instance.IsGameOver)
         {
-            GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+            var stateInfo = m_monsterAnimator.GetState();
+
+            m_monsterAnimator.SetAttack(false);
+            m_monsterAnimator.SetWalk(false);
+
+            if (m_monster.IsAlive)
+            {
+                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+                return;
+            }
+
+            if (stateInfo.IsName("Exit") || stateInfo.IsName("Die") && stateInfo.normalizedTime >= 1.0f)
+                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
             return;
         }
 
@@ -98,12 +110,11 @@ public class SceneMonster : MonoBehaviour
             return;
         }
 
-        m_monster.IsAlive = true;
         m_monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
         m_monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
 
         m_monster.OnAttack += OnAttack;
-        m_monster.OnHit += OnHit;
+        m_monster.OnDie += OnDie;
         m_monster.OnTakenDamaged += OnTakenDamaged;
     }
 
@@ -176,13 +187,13 @@ public class SceneMonster : MonoBehaviour
 
                 m_navMeshAgent.isStopped = true;
                 m_navMeshAgent.velocity = Vector3.zero;
-                m_monsterAnimation.SetWalk(false);
+                m_monsterAnimator.SetWalk(false);
                 m_monsterState = MonsterState.Attack;
             }
             else
             {
                 m_navMeshAgent.isStopped = false;
-                m_monsterAnimation.SetWalk(true);
+                m_monsterAnimator.SetWalk(true);
                 m_monsterState = MonsterState.Walk;
             }
         }
@@ -196,11 +207,11 @@ public class SceneMonster : MonoBehaviour
         {
             if (!GetRaycastHit()) return;
 
-            m_monsterAnimation.SetAttack(true);
+            m_monsterAnimator.SetAttack(true);
         }
         else
         {
-            m_monsterAnimation.SetAttack(false);
+            m_monsterAnimator.SetAttack(false);
             m_monsterState = MonsterState.Walk;
         }
     }
@@ -228,6 +239,7 @@ public class SceneMonster : MonoBehaviour
     private Transform FindTarget()
     {
         Transform targetTransform;
+
         //# 플레이어가 Fence에 있으면 Fence를 향해 걸어감
         if (IsPlayerStayInFence())
         {
@@ -244,6 +256,13 @@ public class SceneMonster : MonoBehaviour
         //# 플레이어가 Fence 밖이면서 감지거리 밖에 있으면 Fence를 향해 걸어감
         if (!FindPlayer())
         {
+            if (m_fenceTransform == null)
+            {
+                Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
+                GameManager.Instance.SetGameOver();
+                return null;
+            }
+
             targetTransform = m_fenceTransform.transform;
             return targetTransform;
         }
@@ -328,20 +347,36 @@ public class SceneMonster : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 몬스터 공격 애니메이션과 연동
+    /// </summary>
     private void OnAttack()
     {
+        if (Hit.collider == null) return;
         var target = Hit.collider.gameObject.GetComponent<IDamageable>();
 
         if (target == null) return;
-        target.TakenDamage(MonsterDataSO.MonsterAttack);
+        target?.TakenDamage(MonsterDataSO.MonsterAttack);
     }
 
-    private void OnHit()
-    {
-    }
-
+    /// <summary>
+    /// 몬스터 피격 애니메이션과 연동
+    /// </summary>
     private void OnTakenDamaged()
     {
+        m_navMeshAgent.isStopped = true;
+        m_navMeshAgent.velocity = Vector3.zero;
+        m_monsterAnimator.TriggerTakenDamage();
+    }
+
+    /// <summary>
+    /// 몬스터 사망 애니메이션과 연공
+    /// </summary>
+    private void OnDie()
+    {
+        m_navMeshAgent.isStopped = true;
+        m_navMeshAgent.velocity = Vector3.zero;
+        m_monsterAnimator.TriggerToDie();
     }
 
     private void OnDrawGizmos()
