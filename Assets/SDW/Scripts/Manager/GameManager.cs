@@ -103,4 +103,6 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         m_crosshairUI.SetActive(false);
     }
+
+    public void SetGameOver() => m_isGameOver = true;
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,27 +9,37 @@ using UnityEngine.AI;
 public class SceneMonster : MonoBehaviour
 {
     [Header("Monster Settings")]
-    public MonsterDataSO MonsterDataSO;
+    private Monster m_monster;
     private NavMeshAgent m_navMeshAgent;
     private MonsterAnimation m_monsterAnimation;
+    public MonsterDataSO MonsterDataSO;
 
     [Header("Layer To Track")]
-    [SerializeField] private LayerMask m_playerMask;
-    [SerializeField] private LayerMask m_fenceMask;
+    [SerializeField] private LayerMask m_targetMask;
 
     private Transform m_targetTransform;
     private Transform m_prevTargetTransform;
     private Transform m_playerTransform;
     private Transform m_fenceTransform;
+    private MonsterState m_monsterState = MonsterState.Walk;
 
     private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
 
     private Collider m_targetCollider;
+    private RaycastHit Hit;
 
     private void Awake()
     {
         m_navMeshAgent = GetComponent<NavMeshAgent>();
         m_monsterAnimation = GetComponent<MonsterAnimation>();
+    }
+
+    private void OnDisable()
+    {
+        if (m_monster == null) return;
+        m_monster.OnAttack -= OnAttack;
+        m_monster.OnHit -= OnHit;
+        m_monster.OnTakenDamaged -= OnTakenDamaged;
     }
 
     private void Start()
@@ -37,71 +48,30 @@ public class SceneMonster : MonoBehaviour
         m_targetCollider = m_targetTransform.GetComponent<Collider>();
     }
 
-    /// <summary>
-    /// MonsterPool에서 꺼내면서 추적을 위한 초기 세팅을 설정
-    /// </summary>
-    public void StartTrace()
-    {
-        m_navMeshAgent.enabled = true;
-
-        if (NavMesh.SamplePosition(transform.position, out var hit, 3f, NavMesh.AllAreas))
-        {
-            m_navMeshAgent.Warp(hit.position);
-            m_navMeshAgent.stoppingDistance = MonsterDataSO.MonsterAtkRange + 1f;
-            // m_navMeshAgent.Resume();
-            StartCoroutine(UpdatePath());
-            StartCoroutine(TraverseOffMeshLink());
-        }
-        else
-        {
-            Debug.LogError("이동할 수 있는 NavMesh 위치를 찾을 수 없습니다");
-        }
-    }
-
     private void Update()
     {
-        if (!MonsterDataSO.Monster.IsAlive)
+        if (!m_monster.IsAlive || GameManager.Instance.IsGameOver)
         {
             GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
             return;
         }
 
         m_targetTransform = FindTarget();
-        HandleMoveAndStop();
-    }
 
-    /// <summary>
-    /// 타겟의 콜라이더 범위 중 몬스터와 가장 가까운 포인트와 몬스터 사이의 거리로 몬스터의 이동 여부를 판단
-    /// </summary>
-    private void HandleMoveAndStop()
-    {
-        m_targetCollider = m_targetTransform?.GetComponent<Collider>();
-        if (m_targetCollider != null)
+        bool isTargetClose = IsTargetClose();
+
+        switch (m_monsterState)
         {
-            // 몬스터와 타겟 경계 간의 최소 거리 계산
-            var closestPoint = m_targetCollider.ClosestPoint(transform.position);
-            float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
-
-            if (distanceToBoundary <= m_navMeshAgent.stoppingDistance)
-            {
-                var lookDirection = (m_targetTransform.position - transform.position).normalized;
-
-                if (lookDirection != Vector3.zero)
-                {
-                    lookDirection.y = 0;
-                    var lookRotation = Quaternion.LookRotation(lookDirection);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                }
-
-                m_navMeshAgent.isStopped = true;
-                m_navMeshAgent.velocity = Vector3.zero;
-                m_monsterAnimation.SetWalk(false);
-            }
-            else
-            {
-                m_navMeshAgent.isStopped = false;
-                m_monsterAnimation.SetWalk(true);
-            }
+            case MonsterState.Walk:
+                HandleMoveAndStop(isTargetClose);
+                break;
+            case MonsterState.Attack:
+                HandleAttack(isTargetClose);
+                break;
+            case MonsterState.Hit:
+                break;
+            case MonsterState.Die:
+                break;
         }
     }
 
@@ -110,6 +80,8 @@ public class SceneMonster : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
+        if (m_monster == null)
+            m_monster = GetComponentInChildren<Monster>();
         m_fenceTransform = GameObject.FindWithTag("Fence").transform;
 
         if (m_fenceTransform == null)
@@ -126,10 +98,125 @@ public class SceneMonster : MonoBehaviour
             return;
         }
 
-        MonsterDataSO.Monster.IsAlive = true;
-        MonsterDataSO.Monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
-        MonsterDataSO.Monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
+        m_monster.IsAlive = true;
+        m_monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
+        m_monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
+
+        m_monster.OnAttack += OnAttack;
+        m_monster.OnHit += OnHit;
+        m_monster.OnTakenDamaged += OnTakenDamaged;
     }
+
+    /// <summary>
+    /// MonsterPool에서 꺼내면서 추적을 위한 초기 세팅을 설정
+    /// </summary>
+    public void StartTrace()
+    {
+        m_navMeshAgent.enabled = true;
+
+        if (NavMesh.SamplePosition(transform.position, out var hit, 3f, NavMesh.AllAreas))
+        {
+            m_navMeshAgent.Warp(hit.position);
+            m_navMeshAgent.stoppingDistance = MonsterDataSO.MonsterAtkRange - 1f;
+            // m_navMeshAgent.Resume();
+            StartCoroutine(UpdatePath());
+
+            //# MeshLink에서 사용했던 코드 - 레거시
+            // StartCoroutine(TraverseOffMeshLink());
+        }
+        else
+        {
+            Debug.LogError("이동할 수 있는 NavMesh 위치를 찾을 수 없습니다");
+        }
+    }
+
+    /// <summary>
+    /// 몬스터가 타겟 주위에 있는지 확인
+    /// </summary>
+    /// <returns>몬스터 주위에 있다면 true, 아니면 false를 반환</returns>
+    private bool IsTargetClose()
+    {
+        // 몬스터와 타겟 경계 간의 최소 거리 계산
+        if (m_targetTransform == null) return false;
+
+        var closestPoint = m_targetCollider.ClosestPoint(transform.position);
+
+        float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
+        return distanceToBoundary <= m_navMeshAgent.stoppingDistance;
+    }
+
+    /// <summary>
+    /// 몬스터가 타겟을 바라보기 위한 메서드
+    /// </summary>
+    private void LookAtTarget()
+    {
+        if (m_targetTransform == null) return;
+
+        var lookDirection = (m_targetTransform.position - transform.position).normalized;
+
+        if (lookDirection != Vector3.zero)
+        {
+            lookDirection.y = 0;
+            var lookRotation = Quaternion.LookRotation(lookDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+    }
+
+    /// <summary>
+    /// 타겟의 콜라이더 범위 중 몬스터와 가장 가까운 포인트와 몬스터 사이의 거리로 몬스터의 이동 여부를 판단
+    /// </summary>
+    private void HandleMoveAndStop(bool isTargetClose)
+    {
+        m_targetCollider = m_targetTransform?.GetComponent<Collider>();
+        if (m_targetCollider != null)
+        {
+            if (isTargetClose)
+            {
+                LookAtTarget();
+
+                m_navMeshAgent.isStopped = true;
+                m_navMeshAgent.velocity = Vector3.zero;
+                m_monsterAnimation.SetWalk(false);
+                m_monsterState = MonsterState.Attack;
+            }
+            else
+            {
+                m_navMeshAgent.isStopped = false;
+                m_monsterAnimation.SetWalk(true);
+                m_monsterState = MonsterState.Walk;
+            }
+        }
+    }
+
+    private void HandleAttack(bool isTargetClose)
+    {
+        LookAtTarget();
+
+        if (isTargetClose)
+        {
+            if (!GetRaycastHit()) return;
+
+            m_monsterAnimation.SetAttack(true);
+        }
+        else
+        {
+            m_monsterAnimation.SetAttack(false);
+            m_monsterState = MonsterState.Walk;
+        }
+    }
+
+    /// <summary>
+    /// 공격 시 피격을 당하는 타겟을 확인하기 위한 메서드
+    /// </summary>
+    /// <returns>타겟레이어가 hit 되었다면 true, 안되었다면 false를 반환</returns>
+    private bool GetRaycastHit() =>
+        Physics.Raycast(
+            transform.position + Vector3.up,
+            transform.forward,
+            out Hit,
+            MonsterDataSO.MonsterAtkRange,
+            m_targetMask
+        );
 
     /// <summary>
     /// Target을 찾기 위한 메서드
@@ -137,7 +224,7 @@ public class SceneMonster : MonoBehaviour
     /// 플레이어가 Fence 밖에 있지만, 감지거리 밖에 있으면 Fence의 Position을 반환
     /// 플레이어가 감지거리 내에 있으면 Player의 Position을 반환
     /// </summary>
-    /// <returns></returns>
+    /// <returns>타겟의 Transform을 반환</returns>
     private Transform FindTarget()
     {
         Transform targetTransform;
@@ -147,6 +234,8 @@ public class SceneMonster : MonoBehaviour
             if (m_fenceTransform == null)
             {
                 Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
+                GameManager.Instance.SetGameOver();
+                return null;
             }
             targetTransform = m_fenceTransform.transform;
             return targetTransform;
@@ -168,8 +257,16 @@ public class SceneMonster : MonoBehaviour
     /// 몬스터와 플레이어의 거리를 계산하여 감지거리 내에 플레이어가 있는지 확인
     /// </summary>
     /// <returns>감지 거리 내라면 true, 아니면 false를 반환</returns>
-    private bool FindPlayer() =>
-        Vector3.Distance(transform.position, m_playerTransform.position) <= MonsterDataSO.MonsterDetectDistance;
+    private bool FindPlayer()
+    {
+        if (m_playerTransform == null)
+        {
+            Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - player null");
+            GameManager.Instance.SetGameOver();
+            return false;
+        }
+        return Vector3.Distance(transform.position, m_playerTransform.position) <= MonsterDataSO.MonsterDetectDistance;
+    }
 
     /// <summary>
     /// Player가 Fence 내에 있는지 확인하는 메서드
@@ -201,6 +298,7 @@ public class SceneMonster : MonoBehaviour
     }
 
     /// <summary>
+    /// Legacy
     /// OffLink를 지날 때 속도가 증가되는 문제를 해결하기 위한 코루틴
     /// 수동으로 OffLink를 지날 때 로직 처리
     /// </summary>
@@ -228,5 +326,27 @@ public class SceneMonster : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    private void OnAttack()
+    {
+        var target = Hit.collider.gameObject.GetComponent<IDamageable>();
+
+        if (target == null) return;
+        target.TakenDamage(MonsterDataSO.MonsterAttack);
+    }
+
+    private void OnHit()
+    {
+    }
+
+    private void OnTakenDamaged()
+    {
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position + Vector3.up, transform.forward * MonsterDataSO.MonsterAtkRange);
     }
 }

@@ -92,7 +92,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4082542298753995393}
-  - component: {fileID: -5244952703005563850}
+  - component: {fileID: 7505088185916611875}
+  - component: {fileID: 6206521542405922318}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -116,7 +117,28 @@ Transform:
   - {fileID: 8997535383930902210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5244952703005563850
+--- !u!95 &7505088185916611875
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5503304724861520798}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 23257a295c7a2e74ea3c91fc781add7b, type: 3}
+  m_Controller: {fileID: 9100000, guid: 688230d3de5423545871f60dc3638bab, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6206521542405922318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,12 +147,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5503304724861520798}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06abc6e028384505a1a4992a29a941b7, type: 3}
+  m_Script: {fileID: 11500000, guid: cc2ba678179e41d4db6a146cb80d6774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MonsterId: 0
-  MonsterHP: 0
+  MonsterHealth: 0
   MonsterSpeed: 0
+  IsAlive: 1
 --- !u!1001 &804842510857823880
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -194,7 +217,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spider Toxin
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8754938060839623804, guid: 79f78ce4b8eba2a4c91a83e3d0133dbf, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

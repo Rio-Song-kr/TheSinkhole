@@ -81,27 +81,9 @@ public class MonsterManager : MonoBehaviour
             monsterObject.tag = "Monster";
 
             var monsterModel = Instantiate(newMonsterDataSO.ModelPrefab);
-            // monsterModel.SetActive(false);
             monsterModel.transform.parent = monsterObject.transform;
 
-            switch (monsterEnName)
-            {
-                case MonsterEnName.BabySpider:
-                case MonsterEnName.Spider:
-                case MonsterEnName.HighSpider:
-                    newMonsterDataSO.Monster = monsterModel.GetComponent<Spider>();
-                    break;
-                case MonsterEnName.LittleWorm:
-                case MonsterEnName.Worm:
-                case MonsterEnName.BossWorm:
-
-                    newMonsterDataSO.Monster = monsterModel.GetComponent<Worm>();
-                    break;
-                default:
-                    Debug.LogError("해당 몬스터 이름은 없습니다.");
-                    return;
-            }
-
+            newMonsterDataSO.Monster = monsterModel.GetComponent<Monster>();
             newMonsterDataSO.Monster.MonsterId = monster.MonsterId;
             newMonsterDataSO.MonsterName = monster.MonsterName;
             newMonsterDataSO.MonsterTierType = monsterTierType;
