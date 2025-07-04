@@ -20230,6 +20230,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3855451966942550759, guid: 3110b562deb014d4091efb2ea42fc9ab,
+        type: 3}
+      propertyPath: attackDelay
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4640909641780793488, guid: 3110b562deb014d4091efb2ea42fc9ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -20284,6 +20289,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player + Viewmodel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7783520699817109999, guid: 3110b562deb014d4091efb2ea42fc9ab,
+        type: 3}
+      propertyPath: attackCooldown
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8524097388615462324, guid: 3110b562deb014d4091efb2ea42fc9ab,
         type: 3}

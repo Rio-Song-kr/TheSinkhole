@@ -71,18 +71,21 @@ public class ViewmodelManager : MonoBehaviour
         {
             case 20303:
                 ActivateSelectedToolOnly(0);
+                isAttakable = true;
                 break;
             case 20304:
                 ActivateSelectedToolOnly(1);
+                isAttakable = true;
                 break;
             case 20307:
                 ActivateSelectedToolOnly(2);
+                isAttakable = true;
                 break;
             default:
-                Debug.LogWarning("없는 id입니다!");
+                ActivateSelectedToolOnly(3);
+                isAttakable = false;
                 break;
         }
-        isAttakable = true;
     }
 
     private void ShowAttackAnimation()
