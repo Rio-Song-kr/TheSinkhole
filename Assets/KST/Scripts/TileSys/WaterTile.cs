@@ -3,51 +3,50 @@ using UnityEngine;
 public class WaterTile : Tile
 {
     [Header("Status")]
-    [SerializeField] private bool m_isPlanted;
+    [SerializeField] private bool m_isWatered;
     [SerializeField] private bool m_isPlayerOnWaterTile;
-    public bool IsPlanted() => m_isPlanted;
+    public bool IsPlayerOnTile() => m_isPlayerOnWaterTile;
+    public bool IsWatered() => m_isWatered;
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
     public float m_interactDelay = 0.5f;
     public float m_awakeTime;
 
-    //Grwoing
-    [SerializeField] private float growTimer = 0f;
-    private bool isGrowing = false;
-    [SerializeField] private CropDataSO growingCrop;
-
-    public CropDataSO GetGrownCrop() => growingCrop;
-    public float GetRemainingGrowTime() => growTimer;
-    public bool IsGrowing() => isGrowing;
-
+    [Header("Water")]
+    private bool m_isWatering = false;
+    [SerializeField] private float m_waterTimer = 0f;
+    [SerializeField] private float m_waterDuration =5f;
+    public bool IsWatering() => m_isWatering;
+    // public float GetWaterDuration() => m_waterDuration;
+    public float GetRemainingWaterTime() => m_waterTimer;
 
     private void Awake() => m_awakeTime = Time.time;
 
-    // private void OnEnable()
-    // {
-    //     WaterUI.Instance.OnIsUIOpen += SetInteraction;
-    //     var tile = GetComponent<Tile>();
-    //     Destroy(tile);
-    //     tileState = TileState.WaterTile;
-    // }
+    private void OnEnable()
+    {
+        WaterUI.Instance.OnIsUIOpen += SetInteraction;
+        var tile = GetComponent<Tile>();
+        Destroy(tile);
+        tileState = TileState.WaterTile;
+    }
 
-    // private void OnDisable()
-    // {
-    //     WaterUI.Instance.OnIsUIOpen -= SetInteraction;
-    // }
+    private void OnDisable()
+    {
+        WaterUI.Instance.OnIsUIOpen -= SetInteraction;
+    }
 
-    // private void Update()
-    // {
-    //     if (!isGrowing || growingCrop == null) return;
+    private void Update()
+    {
+        if (!m_isWatering) return;
 
-    //     growTimer -= Time.deltaTime;
-    //     if (growTimer <= 0f)
-    //     {
-    //         growTimer = 0f;
-    //         isGrowing = false;
-    //     }
-    // }
+        m_waterTimer -= Time.deltaTime;
+        if (m_waterTimer <= 0f)
+        {
+            m_waterTimer = 0f;
+            m_isWatering = false;
+        }
+    }
     #region 상호작용 인터페이스 구현
     public override interactType GetInteractType() => interactType.PressE;
 
@@ -60,7 +59,7 @@ public class WaterTile : Tile
 
         if (GameManager.Instance.IsCursorLocked)
         {
-            // WaterUI.Instance.OpenUI(this);
+            WaterUI.Instance.OpenUI(this);
             InteractUiText.SetActive(false);
         }
     }
@@ -69,38 +68,36 @@ public class WaterTile : Tile
 
     #endregion
 
-    //심기 메서드
-    public void StartPlanting(CropDataSO crop)
+    //급수 메서드
+    public void StartWatering()
     {
-        growingCrop = crop;
-        growTimer = crop.growTime;
-        isGrowing = true;
-        m_isPlanted = true;
+        m_waterTimer = m_waterDuration;
+        m_isWatering = true;
+        m_isWatered = true;
     }
 
-    //수확 메서드
-    public void HarvestingCrop()
+    //물 급수 끝 메서드
+    public void EndWatering()
     {
-        m_isPlanted = false;
-        growingCrop = null;
-        isGrowing = false;
-        growTimer = 0f;
+        m_isWatered = false;
+        m_isWatering = false;
+        m_waterTimer = 0f;
     }
 
     #region 타일 Ray 상호작용
-    // public override void OnTileInteractionStay(Interaction player)
-    // {
-    //     if (Time.time - m_awakeTime < m_interactDelay) return;
-    //     m_isPlayerOnWaterTile = true;
+    public override void OnTileInteractionStay(Interaction player)
+    {
+        if (Time.time - m_awakeTime < m_interactDelay) return;
+        m_isPlayerOnWaterTile = true;
 
-    //     var currentTool = player.CurrentTool;
-    //     if (!WaterUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
-    //         InteractUiText.SetActive(true);
-    //     else
-    //         InteractUiText.SetActive(false);
+        var currentTool = player.CurrentTool;
+        if (!WaterUI.Instance.GetActiveself() && currentTool == ToolType.Water)
+            InteractUiText.SetActive(true);
+        else
+            InteractUiText.SetActive(false);
 
-    //     player?.RegisterTrigger(this);
-    // }
+        player?.RegisterTrigger(this);
+    }
 
     public override void OnTileInteractionExit(Interaction player)
     {
