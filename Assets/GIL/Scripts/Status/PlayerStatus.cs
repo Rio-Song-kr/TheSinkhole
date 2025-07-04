@@ -39,8 +39,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     [field: SerializeField] public float CurMentality { get; private set; }
 
-    [SerializeField] public int AttackPower { get; private set; }
-
+    [field: SerializeField] public int AttackPower { get; private set; }
 
     [Header("Speed")]
     // 이동속도
@@ -154,6 +153,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     // 플레이어 사망시 처리되는 로직들
     public void PlayerDeath()
     {
+        GameManager.Instance.SetGameOver();
         Debug.Log("플레이어 사망!");
     }
 
