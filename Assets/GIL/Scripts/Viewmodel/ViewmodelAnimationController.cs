@@ -12,6 +12,9 @@ public class ViewmodelAnimationController : MonoBehaviour
     private bool allowAnimation;
     private Vector3 velocity;
 
+    private bool canAttack = true;
+    [SerializeField] float attackCooldown = 1.5f;
+
     private void Awake()
     {
         controller = GetComponentInParent<CharacterController>();
@@ -53,8 +56,17 @@ public class ViewmodelAnimationController : MonoBehaviour
 
     public void SetAttack()
     {
-        Debug.Log("공격 실행");
+        if (!canAttack) return;
         animator.SetTrigger("Attack");
+        canAttack = false;
+        StartCoroutine(AttackCooldownRoutine());
+    }
+
+    private IEnumerator AttackCooldownRoutine()
+    {
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true;
+        Debug.Log("공격 가능");
     }
 
     // 추후에 사운드 or 이펙트를 추가할 경우를 대비해 각각 상태에 대해 별도의 함수화.
