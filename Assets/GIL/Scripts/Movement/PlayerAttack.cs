@@ -34,7 +34,6 @@ public class PlayerAttack : MonoBehaviour
         if (viewmodelManager.isAttakable == false) return;
         if (!readyToAttack) return;
 
-        Debug.Log("공격 호출");
         readyToAttack = false;
         StartCoroutine(PerformAttack());
         //audioSource.pitch = Random.Range(0.9f, 1.1f);
@@ -57,15 +56,10 @@ public class PlayerAttack : MonoBehaviour
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
         {
             HitTargetEffect(hit.point);
-            Debug.Log("몬스터 공격");
-            if (hit.transform.TryGetComponent<Monster>(out Monster T))
-            {
-                T.TakenDamage(attackDamage);
-            }
-        }
-        else
-        {
-            Debug.Log("공중에 휘두르기!");
+            Debug.Log(hit.transform.gameObject.name);
+            IDamageable monster = hit.collider.gameObject.GetComponentInChildren<Monster>();
+            monster.TakenDamage(attackDamage);
+            Debug.Log("공격 완료");
         }
     }
 
