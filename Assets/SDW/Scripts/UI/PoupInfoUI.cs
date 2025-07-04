@@ -73,6 +73,9 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.CantExploit:
                 m_popupText.text = "현재는 개척이 불가능합니다.";
                 break;
+            case PopupType.CantInteract:
+                m_popupText.text = "현재는 상호작용이 불가능합니다.";
+                break;
         }
 
         m_popupUIContainer.gameObject.SetActive(true);
