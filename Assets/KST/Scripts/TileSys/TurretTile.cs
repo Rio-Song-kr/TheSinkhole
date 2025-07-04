@@ -11,11 +11,18 @@ public class TurretTile : Tile
     [Header("UI")]
     //상호작용 UI
     public GameObject InteractUiText;
-    private bool m_isInteract;
+    public float m_interactDelay = 0.5f;
+    public float m_awakeTime;
 
+    //Turret
     [SerializeField] private TurretSo builtTurret;
+    [SerializeField] private float installTimer = 0f;
+    private bool isInstalling = false;
     public TurretSo GetBuiltTurret() => builtTurret;
-    //TODO: 터렛UI 이벤트 구독 처리
+    public float GetRemainingInstallTime() => installTimer;
+    public bool IsInstalling() => isInstalling;
+
+    private void Awake() => m_awakeTime = Time.time;
 
     private void OnEnable()
     {
@@ -29,36 +36,53 @@ public class TurretTile : Tile
         TurretUI.Instance.OnIsUIOpen -= SetInteraction;
     }
 
+    private void Update()
+    {
+        if (!isInstalling || builtTurret == null) return;
+
+        installTimer -= Time.deltaTime;
+        if (installTimer <= 0f)
+        {
+            installTimer = 0f;
+            isInstalling = false;
+        }
+    }
+
     #region 상호작용 인터페이스 구현
 
     public override interactType GetInteractType() => interactType.PressE;
 
     public override bool CanInteract(ToolType toolType) =>
-        // return m_isPlayerOnFarmTile && !m_isPlanted && toolType == ToolType.Shovel;
-        //TODO: 만약 플레이어가 해머 들 필요 없으면 해당 조건 수정 필요
         m_isPlayerOnTurretTile && toolType == ToolType.Hammer;
     public override void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None) return;
 
         TurretUI.Instance.OpenUI();
-        TurretUI.Instance.SetTile(this);
+        // TurretUI.Instance.SetTile(this);
         InteractUiText.SetActive(false);
     }
+    private void SetInteraction(bool _status) => InteractUiText.SetActive(_status);
 
     #endregion
 
     //터렛 설치 메서드
     public void StartBuiltTurret(TurretSo so)
     {
-        m_isBuild = true;
         builtTurret = so;
+        installTimer = so.buildingTime;
+        isInstalling = true;
+        m_isBuild = true;
     }
 
-    private void SetInteraction(bool _status)
+    public void EndBuilding()
     {
-        InteractUiText.SetActive(_status);
+        isInstalling = false;
+        builtTurret = null;
+        installTimer = 0f;
     }
+
+
 
     #region 충돌처리
 
