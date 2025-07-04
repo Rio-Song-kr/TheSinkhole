@@ -10,9 +10,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private ViewmodelManager viewmodelManager;
     [SerializeField] private float attackDistance = 3f;
     [SerializeField] private float attackDelay = 0.1f;
-    [SerializeField] private float attackSpeed;
-    [SerializeField] private int attackDamage;
     [SerializeField] private LayerMask attackLayer;
+    private int attackDamage;
+    private float attackSpeed;
 
     [Header("Sound")]
     [SerializeField] private GameObject hitEffect;
