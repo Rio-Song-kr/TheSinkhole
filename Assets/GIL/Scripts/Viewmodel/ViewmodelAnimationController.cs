@@ -14,7 +14,7 @@ public class ViewmodelAnimationController : MonoBehaviour
     private Vector3 velocity;
 
     private bool canAttack = true;
-    [SerializeField] float attackCooldown = 1.5f;
+    [SerializeField] float attackCooldown = 1f;
 
     private void Awake()
     {

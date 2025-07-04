@@ -7,9 +7,10 @@ public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] Camera cam;
     [Header("Attacking")]
+    [SerializeField] private ViewmodelManager viewmodelManager;
     [SerializeField] private float attackDistance = 3f;
-    [SerializeField] private float attackDelay = 0.5f;
-    [SerializeField] private float attackSpeed = 1f;
+    [SerializeField] private float attackDelay = 0.1f;
+    [SerializeField] private float attackSpeed;
     [SerializeField] private int attackDamage;
     [SerializeField] private LayerMask attackLayer;
 
@@ -22,26 +23,32 @@ public class PlayerAttack : MonoBehaviour
     private bool attacking = false;
     private bool readyToAttack = true;
 
-    private void Awake()
+    private void Start()
     {
         attackDamage = PlayerStatus.Instance.AttackPower;
+        attackSpeed = PlayerStatus.Instance.AtkSpeed;
     }
 
     public void Attack()
     {
-        if (!readyToAttack || attacking) return;
+        if (viewmodelManager.isAttakable == false) return;
+        if (!readyToAttack) return;
 
+        Debug.Log("공격 호출");
         readyToAttack = false;
-        attacking = true;
-        Invoke(nameof(ResetAttack), attackSpeed);
-        Invoke(nameof(AttackRaycast), attackDelay);
+        StartCoroutine(PerformAttack());
         //audioSource.pitch = Random.Range(0.9f, 1.1f);
         //audioSource.PlayOneShot(weaponSwing);
     }
 
-    private void ResetAttack()
+    private IEnumerator PerformAttack()
     {
-        attacking = false;
+        yield return new WaitForSeconds(attackDelay);
+
+        AttackRaycast();
+
+        yield return new WaitForSeconds(attackSpeed - attackDelay);
+
         readyToAttack = true;
     }
 
@@ -50,6 +57,7 @@ public class PlayerAttack : MonoBehaviour
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
         {
             HitTargetEffect(hit.point);
+            Debug.Log("몬스터 공격");
             if (hit.transform.TryGetComponent<Monster>(out Monster T))
             {
                 T.TakenDamage(attackDamage);
