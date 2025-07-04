@@ -4496,6 +4496,7 @@ MonoBehaviour:
     type: 3}
   contentTransfrom: {fileID: 974836315}
   ProgressBarImg: {fileID: 809632301}
+  playerInven: {fileID: 0}
 --- !u!1001 &508533052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5576,6 +5577,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f4e7c04db47242b38436a7e09b1287d, type: 2}
   - {fileID: 11400000, guid: 4c5ce3e053b6947b8be9ddb0a98a17da, type: 2}
   - {fileID: 11400000, guid: 791cf5043f4bf4e8a84eada14ac40bd4, type: 2}
+  playerInven: {fileID: 0}
 --- !u!1001 &621531777
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7030,6 +7032,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f4e7c04db47242b38436a7e09b1287d, type: 2}
   - {fileID: 11400000, guid: 4c5ce3e053b6947b8be9ddb0a98a17da, type: 2}
   - {fileID: 11400000, guid: 791cf5043f4bf4e8a84eada14ac40bd4, type: 2}
+  playerInven: {fileID: 0}
 --- !u!1 &804622723
 GameObject:
   m_ObjectHideFlags: 0
@@ -8891,7 +8894,6 @@ MonoBehaviour:
     m_inventorySlots: []
   m_dynamicInventorySystem:
     m_inventorySlots: []
-  RemainingSlots: 0
 --- !u!114 &966719157
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,5 +15,8 @@ public enum PopupType
     DefenceArea,
     Water,
     Full,
-    ChangingState
+    ChangingState,
+    CantPlant,
+    CantExploit,
+    CantInteract
 }

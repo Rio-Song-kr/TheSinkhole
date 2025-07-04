@@ -16,15 +16,17 @@ public class ViewmodelManager : MonoBehaviour
 
     private Item itemData;
 
+    public bool isAttakable { get; private set;}
 
     private void Awake()
     {
         inventory = GetComponentInParent<Inventory>();
         animController = GetComponent<ViewmodelAnimationController>();
         playerInput = new PlayerInput();
+        isAttakable = false;
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
-        onFoot.LMBClick.started += ctx => animController.SetAttack();
+        onFoot.LMBClick.started += ctx => ShowAttackAnimation();
     }
 
     [Header("Quickslot")]
@@ -62,26 +64,34 @@ public class ViewmodelManager : MonoBehaviour
         {
             Debug.Log("빈 공간");
             ActivateSelectedToolOnly(3);
+            isAttakable = false;
             return;
         }
         switch (itemData.ItemId)
         {
             case 20303:
                 ActivateSelectedToolOnly(0);
-                Debug.Log("삽");
+                isAttakable = true;
                 break;
             case 20304:
                 ActivateSelectedToolOnly(1);
-                Debug.Log("망치");
+                isAttakable = true;
                 break;
             case 20307:
                 ActivateSelectedToolOnly(2);
-                Debug.Log("곡괭이");
+                isAttakable = true;
                 break;
             default:
-                Debug.LogWarning("없는 id입니다!");
+                ActivateSelectedToolOnly(3);
+                isAttakable = false;
                 break;
         }
+    }
+
+    private void ShowAttackAnimation()
+    {
+        if (isAttakable == false) return;
+        animController.SetAttack();
     }
 
     /// <summary>
