@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ public class ViewmodelAnimationController : MonoBehaviour
     private float delayTimer = 0.5f;
     private bool allowAnimation;
     private Vector3 velocity;
+
+    private bool canAttack = true;
+    [SerializeField] float attackCooldown = 1f;
 
     private void Awake()
     {
@@ -35,6 +39,7 @@ public class ViewmodelAnimationController : MonoBehaviour
     private void GetAnimationByVelocity()
     {
         velocity = controller.velocity;
+        velocity.y = 0f;
         if (velocity.magnitude < 0.1f)
         {
             SetIdle();
@@ -42,7 +47,7 @@ public class ViewmodelAnimationController : MonoBehaviour
         else if (velocity.magnitude < 3.5f)
         {
             SetWalking();
-            
+
         }
         else if (velocity.magnitude > 3.5f)
         {
@@ -52,7 +57,16 @@ public class ViewmodelAnimationController : MonoBehaviour
 
     public void SetAttack()
     {
-        animator.SetBool("isAttacking", true);
+        if (!canAttack) return;
+        animator.SetTrigger("Attack");
+        canAttack = false;
+        StartCoroutine(AttackCooldownRoutine());
+    }
+
+    private IEnumerator AttackCooldownRoutine()
+    {
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true;
     }
 
     // 추후에 사운드 or 이펙트를 추가할 경우를 대비해 각각 상태에 대해 별도의 함수화.

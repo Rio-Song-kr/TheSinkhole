@@ -10,6 +10,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private PlayerMotor motor;
     private PlayerLook look;
+    private PlayerAttack attack;
     private Interaction interact;
     private Inventory m_inventory;
     public bool isSprinting;
@@ -23,6 +24,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot = playerInput.OnFoot;
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
+        attack = GetComponent <PlayerAttack>();
         interact = GetComponent<Interaction>();
         onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
@@ -46,6 +48,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
 
+        onFoot.LMBClick.started += ctx => attack.Attack();
         onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();
         onFoot.LMBClick.canceled += ctx => interact.OnMouseButtonReleased();
     }
