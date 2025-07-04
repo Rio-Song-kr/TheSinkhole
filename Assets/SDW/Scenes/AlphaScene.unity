@@ -9039,8 +9039,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8029812544267694410, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
+      propertyPath: MaxHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8029812544267694410, guid: 94b1251639e062b44a8f14c4de340e23,
+        type: 3}
+      propertyPath: <CurHealth>k__BackingField
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8029812544267694410, guid: 94b1251639e062b44a8f14c4de340e23,
+        type: 3}
       propertyPath: <AttackPower>k__BackingField
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8616414365209788872, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
@@ -18436,7 +18446,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -295}
+  m_AnchoredPosition: {x: 290, y: -425}
   m_SizeDelta: {x: 580, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1848458581
