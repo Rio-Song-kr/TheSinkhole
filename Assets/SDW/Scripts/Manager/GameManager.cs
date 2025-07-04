@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
-    private bool m_isDay = true;
+    private bool m_isDay = GameTimer.IsDay;
 
     /// <summary>
     /// 낮 또는 방의 상태를 나타내기 위한 프로퍼티
@@ -103,4 +103,6 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         m_crosshairUI.SetActive(false);
     }
+
+    public void SetGameOver() => m_isGameOver = true;
 }

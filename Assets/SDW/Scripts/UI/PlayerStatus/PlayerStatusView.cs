@@ -14,7 +14,7 @@ public class PlayerStatusView : MonoBehaviour
     [SerializeField] private Image m_mentalityOverlayImage;
 
     public void SetHealthBarFillAmount(float amount) => m_healthBarImage.fillAmount = amount;
-    public int GetHealthBarFillAmount() => (int)m_healthBarImage.fillAmount;
+    public float GetHealthBarFillAmount() => m_healthBarImage.fillAmount;
     public void SetHealthText(string amount) => m_healthBarText.text = amount;
 
     public void SetHungerOverlayFillAmount(float amount) => m_hungerOverlayImage.fillAmount = amount;

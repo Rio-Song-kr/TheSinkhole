@@ -23,6 +23,7 @@ public class MonsterSpawner : MonoBehaviour
 
     [SerializeField] private float m_creationInvervalTime = 5f;
     private float m_creationTime = 0f;
+
     private void Start()
     {
     }

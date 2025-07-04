@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,35 +9,118 @@ using UnityEngine.AI;
 public class SceneMonster : MonoBehaviour
 {
     [Header("Monster Settings")]
+    private Monster m_monster;
+    private NavMeshAgent m_navMeshAgent;
+    private MonsterAnimator m_monsterAnimator;
     public MonsterDataSO MonsterDataSO;
+
+    [Header("Layer To Track")]
+    [SerializeField] private LayerMask m_targetMask;
+
     private Transform m_targetTransform;
     private Transform m_prevTargetTransform;
     private Transform m_playerTransform;
+    private Transform m_fenceTransform;
+    private MonsterState m_monsterState = MonsterState.Walk;
 
-    [Header("Layer To Track")]
-    [SerializeField] private LayerMask m_playerMask;
-    [SerializeField] private LayerMask m_fenceMask;
-
-    private NavMeshAgent m_navMeshAgent;
     private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
 
     private Collider m_targetCollider;
+    private RaycastHit Hit;
 
-    //# 추적을 위한 필드
-    private GameObject m_fence;
+    private void Awake()
+    {
+        m_navMeshAgent = GetComponent<NavMeshAgent>();
+        m_monsterAnimator = GetComponent<MonsterAnimator>();
+    }
 
-    private void Awake() => m_navMeshAgent = GetComponent<NavMeshAgent>();
+    private void OnDisable()
+    {
+        if (m_monster == null) return;
+        m_monster.OnAttack -= OnAttack;
+        m_monster.OnDie -= OnDie;
+        m_monster.OnTakenDamaged -= OnTakenDamaged;
+    }
 
     private void Start()
     {
-        m_playerTransform = GameObject.FindWithTag("Player").transform;
-
-        m_targetTransform = m_fence.gameObject.transform;
+        m_targetTransform = m_fenceTransform;
         m_targetCollider = m_targetTransform.GetComponent<Collider>();
-
-        // m_navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
+    private void Update()
+    {
+        if (!m_monster.IsAlive || GameManager.Instance.IsGameOver)
+        {
+            var stateInfo = m_monsterAnimator.GetState();
+
+            m_monsterAnimator.SetAttack(false);
+            m_monsterAnimator.SetWalk(false);
+
+            if (m_monster.IsAlive)
+            {
+                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+                return;
+            }
+
+            if (stateInfo.IsName("Exit") || stateInfo.IsName("Die") && stateInfo.normalizedTime >= 1.0f)
+                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+            return;
+        }
+
+        m_targetTransform = FindTarget();
+
+        bool isTargetClose = IsTargetClose();
+
+        switch (m_monsterState)
+        {
+            case MonsterState.Walk:
+                HandleMoveAndStop(isTargetClose);
+                break;
+            case MonsterState.Attack:
+                HandleAttack(isTargetClose);
+                break;
+            case MonsterState.Hit:
+                break;
+            case MonsterState.Die:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 초기에는 Fence를 찾아서 목적지로 설정
+    /// </summary>
+    public void Initialize()
+    {
+        if (m_monster == null)
+            m_monster = GetComponentInChildren<Monster>();
+        m_fenceTransform = GameObject.FindWithTag("Fence").transform;
+
+        if (m_fenceTransform == null)
+        {
+            Debug.LogError("Fence가 없습니다.");
+            return;
+        }
+
+        m_playerTransform = GameObject.FindWithTag("Player").transform;
+
+        if (m_playerTransform == null)
+        {
+            Debug.LogError("Player가 없습니다.");
+            return;
+        }
+
+        m_monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
+        m_monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
+
+        m_monster.OnAttack += OnAttack;
+        m_monster.OnDie += OnDie;
+        m_monster.OnTakenDamaged += OnTakenDamaged;
+    }
+
+    /// <summary>
+    /// MonsterPool에서 꺼내면서 추적을 위한 초기 세팅을 설정
+    /// </summary>
     public void StartTrace()
     {
         m_navMeshAgent.enabled = true;
@@ -44,9 +128,12 @@ public class SceneMonster : MonoBehaviour
         if (NavMesh.SamplePosition(transform.position, out var hit, 3f, NavMesh.AllAreas))
         {
             m_navMeshAgent.Warp(hit.position);
-            m_navMeshAgent.Resume();
+            m_navMeshAgent.stoppingDistance = MonsterDataSO.MonsterAtkRange - 1f;
+            // m_navMeshAgent.Resume();
             StartCoroutine(UpdatePath());
-            StartCoroutine(TraverseOffMeshLink());
+
+            //# MeshLink에서 사용했던 코드 - 레거시
+            // StartCoroutine(TraverseOffMeshLink());
         }
         else
         {
@@ -54,58 +141,93 @@ public class SceneMonster : MonoBehaviour
         }
     }
 
-    private void Update()
+    /// <summary>
+    /// 몬스터가 타겟 주위에 있는지 확인
+    /// </summary>
+    /// <returns>몬스터 주위에 있다면 true, 아니면 false를 반환</returns>
+    private bool IsTargetClose()
     {
-        if (!MonsterDataSO.Monster.IsAlive)
+        // 몬스터와 타겟 경계 간의 최소 거리 계산
+        if (m_targetTransform == null) return false;
+
+        var closestPoint = m_targetCollider.ClosestPoint(transform.position);
+
+        float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
+        return distanceToBoundary <= m_navMeshAgent.stoppingDistance;
+    }
+
+    /// <summary>
+    /// 몬스터가 타겟을 바라보기 위한 메서드
+    /// </summary>
+    private void LookAtTarget()
+    {
+        if (m_targetTransform == null) return;
+
+        var lookDirection = (m_targetTransform.position - transform.position).normalized;
+
+        if (lookDirection != Vector3.zero)
         {
-            GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
-            return;
+            lookDirection.y = 0;
+            var lookRotation = Quaternion.LookRotation(lookDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
+    }
 
-        m_targetTransform = FindTarget();
-
+    /// <summary>
+    /// 타겟의 콜라이더 범위 중 몬스터와 가장 가까운 포인트와 몬스터 사이의 거리로 몬스터의 이동 여부를 판단
+    /// </summary>
+    private void HandleMoveAndStop(bool isTargetClose)
+    {
         m_targetCollider = m_targetTransform?.GetComponent<Collider>();
         if (m_targetCollider != null)
         {
-            // 몬스터와 타겟 경계 간의 최소 거리 계산
-            var closestPoint = m_targetCollider.ClosestPoint(transform.position);
-            float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
-
-            if (distanceToBoundary <= m_navMeshAgent.stoppingDistance)
+            if (isTargetClose)
             {
-                var lookDirection = (m_targetTransform.position - transform.position).normalized;
-
-                if (lookDirection != Vector3.zero)
-                {
-                    lookDirection.y = 0;
-                    var lookRotation = Quaternion.LookRotation(lookDirection);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                }
+                LookAtTarget();
 
                 m_navMeshAgent.isStopped = true;
                 m_navMeshAgent.velocity = Vector3.zero;
+                m_monsterAnimator.SetWalk(false);
+                m_monsterState = MonsterState.Attack;
             }
             else
             {
                 m_navMeshAgent.isStopped = false;
+                m_monsterAnimator.SetWalk(true);
+                m_monsterState = MonsterState.Walk;
             }
         }
     }
 
-    public void Initialize()
+    private void HandleAttack(bool isTargetClose)
     {
-        m_fence = GameObject.FindWithTag("Fence");
+        LookAtTarget();
 
-        if (m_fence == null)
+        if (isTargetClose)
         {
-            Debug.LogError("Fence가 없습니다.");
-            return;
-        }
+            if (!GetRaycastHit()) return;
 
-        MonsterDataSO.Monster.IsAlive = true;
-        MonsterDataSO.Monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
-        MonsterDataSO.Monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
+            m_monsterAnimator.SetAttack(true);
+        }
+        else
+        {
+            m_monsterAnimator.SetAttack(false);
+            m_monsterState = MonsterState.Walk;
+        }
     }
+
+    /// <summary>
+    /// 공격 시 피격을 당하는 타겟을 확인하기 위한 메서드
+    /// </summary>
+    /// <returns>타겟레이어가 hit 되었다면 true, 안되었다면 false를 반환</returns>
+    private bool GetRaycastHit() =>
+        Physics.Raycast(
+            transform.position + Vector3.up,
+            transform.forward,
+            out Hit,
+            MonsterDataSO.MonsterAtkRange,
+            m_targetMask
+        );
 
     /// <summary>
     /// Target을 찾기 위한 메서드
@@ -113,25 +235,35 @@ public class SceneMonster : MonoBehaviour
     /// 플레이어가 Fence 밖에 있지만, 감지거리 밖에 있으면 Fence의 Position을 반환
     /// 플레이어가 감지거리 내에 있으면 Player의 Position을 반환
     /// </summary>
-    /// <returns></returns>
+    /// <returns>타겟의 Transform을 반환</returns>
     private Transform FindTarget()
     {
         Transform targetTransform;
+
         //# 플레이어가 Fence에 있으면 Fence를 향해 걸어감
         if (IsPlayerStayInFence())
         {
-            if (m_fence == null)
+            if (m_fenceTransform == null)
             {
                 Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
+                GameManager.Instance.SetGameOver();
+                return null;
             }
-            targetTransform = m_fence.transform;
+            targetTransform = m_fenceTransform.transform;
             return targetTransform;
         }
 
         //# 플레이어가 Fence 밖이면서 감지거리 밖에 있으면 Fence를 향해 걸어감
         if (!FindPlayer())
         {
-            targetTransform = m_fence.transform;
+            if (m_fenceTransform == null)
+            {
+                Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - m_fence null");
+                GameManager.Instance.SetGameOver();
+                return null;
+            }
+
+            targetTransform = m_fenceTransform.transform;
             return targetTransform;
         }
 
@@ -144,8 +276,16 @@ public class SceneMonster : MonoBehaviour
     /// 몬스터와 플레이어의 거리를 계산하여 감지거리 내에 플레이어가 있는지 확인
     /// </summary>
     /// <returns>감지 거리 내라면 true, 아니면 false를 반환</returns>
-    private bool FindPlayer() =>
-        Vector3.Distance(transform.position, m_playerTransform.position) <= MonsterDataSO.MonsterDetectDistance;
+    private bool FindPlayer()
+    {
+        if (m_playerTransform == null)
+        {
+            Debug.LogWarning($"{MonsterDataSO.MonsterEnName} - player null");
+            GameManager.Instance.SetGameOver();
+            return false;
+        }
+        return Vector3.Distance(transform.position, m_playerTransform.position) <= MonsterDataSO.MonsterDetectDistance;
+    }
 
     /// <summary>
     /// Player가 Fence 내에 있는지 확인하는 메서드
@@ -156,30 +296,28 @@ public class SceneMonster : MonoBehaviour
         var fenceXArea = GameManager.Instance.Tile.GetFenceXArea();
         var fenceYArea = GameManager.Instance.Tile.GetFenceYArea();
 
-        if (m_playerTransform.position.x < fenceXArea.x || m_playerTransform.position.x > fenceXArea.y) return false;
-        if (m_playerTransform.position.y < fenceYArea.x || m_playerTransform.position.y > fenceYArea.y) return false;
+        if (m_playerTransform.position.x >= fenceXArea.x && m_playerTransform.position.x <= fenceXArea.y &&
+            m_playerTransform.position.z >= fenceYArea.x && m_playerTransform.position.z <= fenceYArea.y) return true;
 
-        return true;
+        return false;
     }
 
+    /// <summary>
+    /// 주기적으로 목적지를 target의 위치로 갱신
+    /// </summary>
     private IEnumerator UpdatePath()
     {
-        //todo Game Over가 아니라면 계속 반복
+        yield return WaitTime;
+
         while (!GameManager.Instance.IsGameOver)
         {
-            if (!m_navMeshAgent.pathPending && m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
-            {
-                m_navMeshAgent.isStopped = true;
-            }
-            else
-                m_navMeshAgent.isStopped = false;
-            yield return WaitTime;
             m_navMeshAgent.SetDestination(m_targetTransform.position);
             yield return WaitTime;
         }
     }
 
     /// <summary>
+    /// Legacy
     /// OffLink를 지날 때 속도가 증가되는 문제를 해결하기 위한 코루틴
     /// 수동으로 OffLink를 지날 때 로직 처리
     /// </summary>
@@ -207,5 +345,43 @@ public class SceneMonster : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// 몬스터 공격 애니메이션과 연동
+    /// </summary>
+    private void OnAttack()
+    {
+        if (Hit.collider == null) return;
+        var target = Hit.collider.gameObject.GetComponent<IDamageable>();
+
+        if (target == null) return;
+        target?.TakenDamage(MonsterDataSO.MonsterAttack);
+    }
+
+    /// <summary>
+    /// 몬스터 피격 애니메이션과 연동
+    /// </summary>
+    private void OnTakenDamaged()
+    {
+        m_navMeshAgent.isStopped = true;
+        m_navMeshAgent.velocity = Vector3.zero;
+        m_monsterAnimator.TriggerTakenDamage();
+    }
+
+    /// <summary>
+    /// 몬스터 사망 애니메이션과 연공
+    /// </summary>
+    private void OnDie()
+    {
+        m_navMeshAgent.isStopped = true;
+        m_navMeshAgent.velocity = Vector3.zero;
+        m_monsterAnimator.TriggerToDie();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position + Vector3.up, transform.forward * MonsterDataSO.MonsterAtkRange);
     }
 }

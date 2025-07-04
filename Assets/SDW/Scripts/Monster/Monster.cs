@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 
 /// <summary>
 /// 몬스터 Id, Health, Speed와 필수로 구현해야하는 메서드를 포함하는 몬스터 추상 클래스
 /// </summary>
-[System.Serializable]
-public abstract class Monster : MonoBehaviour, IDamageable
+[Serializable]
+public class Monster : MonoBehaviour, IDamageable
 {
     [field: SerializeField] public int MonsterId;
     [field: SerializeField] public int MonsterHealth;
     [field: SerializeField] public int MonsterSpeed;
-    public bool IsAlive = true;
+    public bool IsAlive { get; private set; } = false;
+    public Action OnAttack;
+    public Action OnDie;
+    public Action OnTakenDamaged;
 
     //! 의사코드
     //# 1. 가까운 울타리 타겟팅
@@ -20,18 +24,37 @@ public abstract class Monster : MonoBehaviour, IDamageable
     //@ 3.2.1 없음 - 울타리 타겟팅 유지
     //@ 3.2.2 있음 - 플레이어 타겟팅
 
-    public abstract void Attack();
-    public abstract void Defence();
-    public abstract void Hit();
+    private void OnEnable() => IsAlive = true;
 
-    public virtual void TakenDamage(int damage)
+    private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+            TakenDamage(50);
+    }
+
+    public void Attack()
+    {
+        if (MonsterHealth <= 0) return;
+        OnAttack?.Invoke();
+    }
+
+    public void Die()
+    {
+        if (MonsterHealth <= 0) return;
+        OnDie?.Invoke();
+    }
+
+    public void TakenDamage(int damage)
+    {
+        if (MonsterHealth <= 0) return;
+        OnTakenDamaged?.Invoke();
         MonsterHealth -= damage;
 
         if (MonsterHealth <= 0)
         {
             MonsterHealth = 0;
             IsAlive = false;
+            OnDie?.Invoke();
         }
     }
 }

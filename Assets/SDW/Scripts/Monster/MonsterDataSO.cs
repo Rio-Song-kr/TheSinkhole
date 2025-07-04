@@ -29,5 +29,5 @@ public class MonsterDataSO : ScriptableObject
     public GameObject ModelPrefab;
 
     [Header("Data")]
-    [SerializeReference] public Monster Monster;
+    public Monster Monster;
 }
