@@ -45,7 +45,8 @@ public class Shelter : MonoBehaviour, IDamageable
 
     private void OnShelterDestroyed()
     {
-        Debug.Log("쉘터가 파괴되었습니다!");
+        Debug.Log("쉘터가 파괴되었습니다! 플레이어가 죽었습니다");
+        //게임 오버 처리
         //파괴 연출, 오브젝트 비활성화 처리
         //gameObject.SetActive(false);
     }
