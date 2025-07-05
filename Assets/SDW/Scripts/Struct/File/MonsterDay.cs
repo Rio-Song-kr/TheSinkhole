@@ -7,4 +7,12 @@ public struct MonsterDay
     public int MonsterId;
     public int MonsterQuantity;
     public int MonsterStartQuantity;
+
+    public MonsterDay(string[] fields)
+    {
+        GameDay = int.Parse(fields[0]);
+        MonsterId = int.Parse(fields[1]);
+        MonsterQuantity = int.Parse(fields[2]);
+        MonsterStartQuantity = int.Parse(fields[3]);
+    }
 }

@@ -56,21 +56,23 @@ public class SceneMonster : MonoBehaviour
             m_monsterAnimator.SetAttack(false);
             m_monsterAnimator.SetWalk(false);
 
-            var itemEnName = GameManager.Instance.Item.ItemIdEnName[MonsterDataSO.MonsterDropItemId];
-            var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
-            item.ItemAmount = MonsterDataSO.MonsterDropItemQuantity;
-            item.transform.position = transform.position;
+            var stateInfo = m_monsterAnimator.GetState();
+            if (stateInfo.IsName("Exit") || stateInfo.IsName("Die") && stateInfo.normalizedTime >= 1.0f)
+            {
+                var itemEnName = GameManager.Instance.Item.ItemIdEnName[MonsterDataSO.MonsterDropItemId];
+                var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
+                item.ItemAmount = MonsterDataSO.MonsterDropItemQuantity;
+                item.transform.position = transform.position;
 
-            GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+                ReturnToPool();
+            }
             return;
         }
 
         if (GameManager.Instance.IsGameOver)
         {
-            var stateInfo = m_monsterAnimator.GetState();
+            ReturnToPool();
 
-            if (stateInfo.IsName("Exit") || stateInfo.IsName("Die") && stateInfo.normalizedTime >= 1.0f)
-                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
             return;
         }
 
@@ -90,11 +92,14 @@ public class SceneMonster : MonoBehaviour
             case MonsterState.Attack:
                 HandleAttack(isTargetClose);
                 break;
-            case MonsterState.Hit:
-                break;
-            case MonsterState.Die:
-                break;
         }
+    }
+
+    private void ReturnToPool()
+    {
+        transform.position = Vector3.down * 50;
+        m_navMeshAgent.enabled = false;
+        GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
     }
 
     /// <summary>
@@ -104,7 +109,7 @@ public class SceneMonster : MonoBehaviour
     {
         if (m_monster == null)
             m_monster = GetComponentInChildren<Monster>();
-        m_fenceTransform = GameObject.FindWithTag("Fence").transform;
+        m_fenceTransform = GameObject.FindWithTag("Fence")?.transform;
 
         if (m_fenceTransform == null)
         {
