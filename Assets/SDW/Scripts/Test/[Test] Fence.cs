@@ -9,7 +9,6 @@ public class TestFence : MonoBehaviour, IDamageable
     public void TakenDamage(int damage)
     {
         m_fenceDurability -= damage;
-        Debug.Log(m_fenceDurability);
 
         if (m_fenceDurability <= 0) Destroy(gameObject);
     }

@@ -69,6 +69,6 @@ public class TileManager : MonoBehaviour
         if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
     }
 
-    public Vector2Int GetFenceXArea() => m_groundXArea * m_tileSize;
-    public Vector2Int GetFenceYArea() => m_groundYArea * m_tileSize;
+    public Vector2Int GetFenceXArea() => m_groundXArea * m_tileSize + Vector2Int.one * m_tileSize / 2;
+    public Vector2Int GetFenceYArea() => m_groundYArea * m_tileSize + Vector2Int.one * m_tileSize / 2;
 }

@@ -25,6 +25,9 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     public Dictionary<ItemEnName, ItemDataSO> ItemEnDataSO => m_itemEnDataSO;
 
+    private Dictionary<int, ItemEnName> m_itemIdEnName;
+    public Dictionary<int, ItemEnName> ItemIdEnName => m_itemIdEnName;
+
     /// <summary>
     /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화
     /// </summary>
@@ -42,6 +45,7 @@ public class ItemManager : MonoBehaviour
 
         m_itemPools = new Dictionary<ItemEnName, ItemPool<SceneItem>>();
         m_itemEnDataSO = new Dictionary<ItemEnName, ItemDataSO>();
+        m_itemIdEnName = new Dictionary<int, ItemEnName>();
 
         var parentObject = new GameObject();
         parentObject.name = "Items";
@@ -90,6 +94,7 @@ public class ItemManager : MonoBehaviour
 
             m_itemPools[newItemDataSO.ItemEnName].SetPool(itemObject);
             m_itemEnDataSO[newItemDataSO.ItemEnName] = newItemDataSO;
+            m_itemIdEnName[newItemDataSO.ItemData.ItemId] = newItemDataSO.ItemEnName;
         }
     }
 

@@ -49,6 +49,7 @@ public class MonsterManager : MonoBehaviour
 
         m_monsterPools = new Dictionary<MonsterEnName, MonsterPool<SceneMonster>>();
         m_monsterEnDataSO = new Dictionary<MonsterEnName, MonsterDataSO>();
+        m_monsterIdDataSO = new Dictionary<int, MonsterDataSO>();
 
         var parentObject = new GameObject();
         parentObject.name = "Monsters";
@@ -106,11 +107,13 @@ public class MonsterManager : MonoBehaviour
             // var meshCollider = sceneMonster.GetComponent<MeshCollider>();
             // meshCollider.sharedMesh = newMonsterDataSO.Mesh;
 
+            monsterObject.transform.position = Vector3.down * 50;
             monsterObject.SetActive(false);
 
 
             m_monsterPools[newMonsterDataSO.MonsterEnName].SetPool(monsterObject);
             m_monsterEnDataSO[newMonsterDataSO.MonsterEnName] = newMonsterDataSO;
+            m_monsterIdDataSO[newMonsterDataSO.Monster.MonsterId] = newMonsterDataSO;
         }
     }
 

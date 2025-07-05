@@ -17,7 +17,7 @@ public class GameTimer : MonoBehaviour
 
     public TextMeshProUGUI gameTimeText; // UI에 연결할 텍스트
     public static int Day;
-    public static bool IsDay;
+    public static bool IsDay = true;
 
     private void Start()
     {
