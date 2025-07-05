@@ -16,7 +16,7 @@ public class ViewmodelManager : MonoBehaviour
 
     private Item itemData;
 
-    public bool isAttakable { get; private set;}
+    public bool isAttakable { get; private set; }
 
     private void Awake()
     {
@@ -33,12 +33,13 @@ public class ViewmodelManager : MonoBehaviour
     public Transform ItemShowPos;
 
     [Header("TODO : Add Item Models")]
-    [SerializeField] GameObject[] toolModels;
+    [SerializeField]
+    private GameObject[] toolModels;
 
     // 선택된 것을 제외하고 전부 비활성화하기. 이전에 것을 기억하는 것도 좋지만 스위치 형식을 사용하기엔 너무 복잡할듯
     private void ActivateSelectedToolOnly(int index)
     {
-        foreach (GameObject tool in toolModels)
+        foreach (var tool in toolModels)
         {
             tool.SetActive(false);
         }
@@ -91,6 +92,7 @@ public class ViewmodelManager : MonoBehaviour
     private void ShowAttackAnimation()
     {
         if (isAttakable == false) return;
+        if (!GameManager.Instance.IsCursorLocked) return;
         animController.SetAttack();
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] Camera cam;
+    [SerializeField] private Camera cam;
     [Header("Attacking")]
     [SerializeField] private ViewmodelManager viewmodelManager;
     [SerializeField] private float attackDistance = 3f;
@@ -34,6 +34,8 @@ public class PlayerAttack : MonoBehaviour
         if (viewmodelManager.isAttakable == false) return;
         if (!readyToAttack) return;
 
+        if (!GameManager.Instance.IsCursorLocked) return;
+
         readyToAttack = false;
         StartCoroutine(PerformAttack());
         //audioSource.pitch = Random.Range(0.9f, 1.1f);
@@ -53,13 +55,14 @@ public class PlayerAttack : MonoBehaviour
 
     private void AttackRaycast()
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, attackDistance, attackLayer))
         {
             HitTargetEffect(hit.point);
             Debug.Log(hit.transform.gameObject.name);
             IDamageable monster = hit.collider.gameObject.GetComponentInChildren<Monster>();
+
+            if (monster == null) return;
             monster.TakenDamage(attackDamage);
-            Debug.Log("공격 완료");
         }
     }
 

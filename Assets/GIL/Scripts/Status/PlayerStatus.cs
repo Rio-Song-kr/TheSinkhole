@@ -53,6 +53,9 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     // 추후에 공격등을 할 때 배율로 사용할 예정.
     public float AtkSpeed = 1;
 
+    public GameObject panel;
+    private Coroutine m_panelCoroutine;
+
     // 싱글톤 검정
     private void Awake() => Init();
     // 현재 스텟을 최대 스탯과 동일한 값으로 지정
@@ -200,7 +203,18 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     {
         // damage가 최대 체력의 몇 퍼센트인지 계산
         // 그만큼 SetHealth를 한다.
+        panel.SetActive(true);
+
+        if (m_panelCoroutine == null)
+            m_panelCoroutine = StartCoroutine(OnDisableHitPanel());
         float percent = damage / MaxHealth;
         SetHealth(-percent);
+    }
+
+    private IEnumerator OnDisableHitPanel()
+    {
+        yield return new WaitForSeconds(0.5f);
+        panel.SetActive(false);
+        m_panelCoroutine = null;
     }
 }
