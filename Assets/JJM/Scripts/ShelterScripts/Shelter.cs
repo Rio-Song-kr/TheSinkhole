@@ -6,15 +6,16 @@ public class Shelter : MonoBehaviour, IDamageable
 {
     [Header("쉘터 내구도")]
     public int maxDurability = 3000;//최대 내구도
-    public int currentDurability = 2500;//현재 내구도
+    public int currentDurability = 3000;//현재 내구도
 
     public GameObject shelterObject; //쉘터 오브젝트
-    //인터페이스 구현
+    
 
     void Update()
     {
         ColorChange();
     }
+    //인터페이스 구현
     public void TakenDamage(int damage)
     {
         currentDurability -= damage;
@@ -47,6 +48,7 @@ public class Shelter : MonoBehaviour, IDamageable
     {
         Debug.Log("쉘터가 파괴되었습니다! 플레이어가 죽었습니다");
         //게임 오버 처리
+
         //파괴 연출, 오브젝트 비활성화 처리
         //gameObject.SetActive(false);
     }
