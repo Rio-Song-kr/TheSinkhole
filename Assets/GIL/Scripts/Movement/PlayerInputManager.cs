@@ -13,6 +13,7 @@ public class PlayerInputManager : MonoBehaviour
     private PlayerAttack attack;
     private Interaction interact;
     private Inventory m_inventory;
+    private ShelterUpgrade m_shelterUpgrade;
     public bool isSprinting;
 
     private float lookDelaytimer = 0.5f;
@@ -24,8 +25,10 @@ public class PlayerInputManager : MonoBehaviour
         onFoot = playerInput.OnFoot;
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
-        attack = GetComponent <PlayerAttack>();
+        attack = GetComponent<PlayerAttack>();
         interact = GetComponent<Interaction>();
+        m_shelterUpgrade = GetComponent<ShelterUpgrade>();
+
         onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
         onFoot.Sprint.canceled += ctx => motor.DeactiveSprint();
@@ -50,6 +53,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.canceled += ctx => WaterUI.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => m_shelterUpgrade.OnInteraction();
 
         onFoot.LMBClick.started += ctx => attack.Attack();
         onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();

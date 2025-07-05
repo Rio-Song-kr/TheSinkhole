@@ -7785,10 +7785,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 855504013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b91c595dac5f35e4393f0803340a20a6, type: 3}
+  m_Script: {fileID: 11500000, guid: dad332a4f0b3cf949ade57f91553ae3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fenceDurability: 100
+  Level: 1
+  Durability: 300
+  MaxDurability: 0
+  ShelterName: 
 --- !u!1 &862767014
 GameObject:
   m_ObjectHideFlags: 0
@@ -9135,6 +9138,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 966719167}
+    - targetCorrespondingSourceObject: {fileID: 4118110345565756572, guid: 94b1251639e062b44a8f14c4de340e23,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 966719168}
     - targetCorrespondingSourceObject: {fileID: 8026314773297637380, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
       insertIndex: -1
@@ -9219,6 +9226,24 @@ MonoBehaviour:
   hitEffect: {fileID: 0}
   weaponSwing: {fileID: 0}
   hitSound: {fileID: 0}
+--- !u!114 &966719168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966719154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4644fb6ef5e4d645a4e97d296e3745b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentTool: 2
+  m_interaction: {fileID: 0}
+  m_inventory: {fileID: 0}
+  m_crosshairObject: {fileID: 1219213580}
+  m_itemPickUpTextObject: {fileID: 1834845615}
+  m_itemPickUpText: {fileID: 1834845617}
 --- !u!1 &969336137
 GameObject:
   m_ObjectHideFlags: 0
@@ -16504,6 +16529,7 @@ GameObject:
   - component: {fileID: 1617361746}
   - component: {fileID: 1617361750}
   - component: {fileID: 1617361751}
+  - component: {fileID: 1617361752}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -16609,6 +16635,18 @@ MonoBehaviour:
   m_groundTileSize: {x: 9, y: 9}
   m_buildableTileSize: {x: 21, y: 21}
   m_tileSize: 5
+--- !u!114 &1617361752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617361745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e507a988a794102bbed4e81c4fde4fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1618866554
 GameObject:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ public class Interaction : Singleton<Interaction>
         //todo 낮, 밤 관련된 스크립트 추가 - 낮이면 Tile, 밤이면 공격
         // if (!m_isMouseButtonClicked) return;
 
-        if (GameManager.Instance.IsDay) DayAction(); // 타일 개척
+        if (GameTimer.IsDay) DayAction(); // 타일 개척
         else NightAction(); // Attack
     }
     private void DayAction()
