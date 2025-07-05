@@ -31,14 +31,13 @@ public class PlayerMotor : MonoBehaviour
     private bool isJumping = false;
 
     // TODO : [Test] 추후에 개발이 완성되면 지울 것!
-    [Header("Test")]
-
-    #region [Test]
-
-    public TextMeshProUGUI curMoveVelocityText;
-    public GameObject panel;
-
-    #endregion
+    // [Header("Test")]
+    //
+    // #region [Test]
+    //
+    // public TextMeshProUGUI curMoveVelocityText;
+    //
+    // #endregion
 
     private void Awake()
     {
@@ -84,14 +83,14 @@ public class PlayerMotor : MonoBehaviour
         var totalVelocity = moveVelocity + playerVelocity;
         controller.Move(totalVelocity * Time.deltaTime);
 
-        // TODO : [Test] 추후에 개발이 완성되면 지울 것!
-
-        #region [Test]
-
-        float horizontalSpeed = new Vector3(moveVelocity.x, 0f, moveVelocity.z).magnitude;
-        if (curMoveVelocityText != null) curMoveVelocityText.text = $"Speed: {horizontalSpeed:F2}";
-
-        #endregion
+        // // TODO : [Test] 추후에 개발이 완성되면 지울 것!
+        //
+        // #region [Test]
+        //
+        // float horizontalSpeed = new Vector3(moveVelocity.x, 0f, moveVelocity.z).magnitude;
+        // if (curMoveVelocityText != null) curMoveVelocityText.text = $"Speed: {horizontalSpeed:F2}";
+        //
+        // #endregion
     }
 
     /// <summary>
@@ -116,7 +115,6 @@ public class PlayerMotor : MonoBehaviour
         if (PlayerStatus.Instance.isStarving || !GameManager.Instance.IsCursorLocked) return;
         movementSpeed *= sprintingSpeed;
         playerInput.isSprinting = true;
-        panel.SetActive(true);
     }
     /// <summary>
     /// 플레이어가 달리기를 멈출 경우 발동되는 기능들
@@ -127,7 +125,6 @@ public class PlayerMotor : MonoBehaviour
         if (!GameManager.Instance.IsCursorLocked) return;
         movementSpeed *= 1f;
         playerInput.isSprinting = false;
-        panel.SetActive(false);
     }
 
     private enum SlopeType

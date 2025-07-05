@@ -54,7 +54,10 @@ public class Interaction : Singleton<Interaction>
             if (m_outlinable != null && Hit.collider.gameObject.GetInstanceID() != m_outlinable.gameObject.GetInstanceID())
                 ClearInteractionTile();
 
+            if (!GameManager.Instance.IsCursorLocked) return;
+
             var tileState = Hit.collider.GetComponent<Tile>().tileState;
+
             SetOutline();
 
             if (CurrentTool == ToolType.None)
@@ -121,22 +124,24 @@ public class Interaction : Singleton<Interaction>
     }
     private void HandleFrontierTile()
     {
-        if(!ExploitUI.Instance.IsOpen)
-        {switch (CurrentTool)
+        if (!ExploitUI.Instance.IsOpen)
         {
-            case ToolType.Hammer:
-                SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            case ToolType.Shovel:
-                SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            case ToolType.Water:
-                SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            default:
-                SetTextObject(true, "시설 설치을 설치하려면 도구가 필요합니다.");
-                break;
-        }}
+            switch (CurrentTool)
+            {
+                case ToolType.Hammer:
+                    SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
+                    break;
+                case ToolType.Shovel:
+                    SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
+                    break;
+                case ToolType.Water:
+                    SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
+                    break;
+                default:
+                    SetTextObject(true, "시설 설치을 설치하려면 도구가 필요합니다.");
+                    break;
+            }
+        }
     }
     private void SetOutline()
     {
@@ -243,7 +248,6 @@ public class Interaction : Singleton<Interaction>
         m_itemPickUpTextObject.SetActive(isActive);
         m_itemPickUpText.text = text;
     }
-    
 
     public void SetCrosshairObject(bool isActive) => m_crosshairObject.SetActive(isActive);
 
