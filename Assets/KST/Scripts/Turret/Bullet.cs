@@ -58,15 +58,14 @@ public class Bullet : PooledObject
         if (other.CompareTag("Monster"))
         {
             Debug.Log("총알이 몬스터에게 부딪침");
-            // var effect = particlePool?.PopPool() as BulletParticle;
-            // effect?.Activate(transform.position);
             tower.SpawnEffect(transform.position);
 
 
             // 데미지 처리
-            // MonsterController monster = other.GetComponent<MonsterController>();
-            // monster.TakeDamage(tower.Damge.Value);
-            
+            var monster = other.GetComponentInChildren<Monster>();
+            if (monster == null) return;
+            monster.TakenDamage(tower.Damge.Value);
+
             ReturnPool(); // 풀로 반환
         }
     }

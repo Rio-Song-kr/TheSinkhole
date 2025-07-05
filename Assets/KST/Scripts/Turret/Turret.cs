@@ -28,6 +28,7 @@ public class Turret : MonoBehaviour
 
     [SerializeField] private float delayTime = 0.3f;
     YieldInstruction fireDelay;
+    [SerializeField] private TurretSo turretSo;
 
     public Transform targetTransform;
     public Coroutine shootCoroutine;
@@ -38,7 +39,7 @@ public class Turret : MonoBehaviour
 
     [SerializeField] private AudioClip towerAttackSFX;
 
-    public TriggerTurret towerZone;
+    // public TriggerTurret towerZone;
 
     void Awake()
     {
@@ -71,6 +72,18 @@ public class Turret : MonoBehaviour
             shootCoroutine = null;
         }
         targetTransform = null;
+    }
+
+    public void Init(TurretSo so)
+    {
+        turretSo = so;
+        Damge = new Stat<int>(turretSo.Atk);
+
+        var trigger = GetComponentInChildren<TurretDectTrigger>();
+        if (trigger != null)
+        {
+            trigger.SetDistance(turretSo.distance);
+        }
     }
 
     private void RotateTurret()
@@ -123,12 +136,12 @@ public class Turret : MonoBehaviour
 
     }
 
-    public void TowerDestory()
-    {
-        SpawnEffect(transform.position);
-        towerZone.TowerDestoried();
-        Destroy(gameObject);
-    }
+    // public void TowerDestory()
+    // {
+    //     SpawnEffect(transform.position);
+    //     towerZone.TowerDestoried();
+    //     Destroy(gameObject);
+    // }
 
     // public void LevelUp()
     // {

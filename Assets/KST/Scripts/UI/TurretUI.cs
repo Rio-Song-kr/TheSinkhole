@@ -57,60 +57,8 @@ public class TurretUI : Singleton<TurretUI>
         ScrollViewSetting();
         m_statusText.text = "";
         PrograssBarImg.fillAmount = 0f;
+        TurretUIGO.SetActive(false);
     }
-    /*
-        void Update()
-        {
-            if (currentTile == null) return;
-
-            if (currentTile.IsBuild())
-            {
-                var buildingTr = currentTile.GetBuiltTurret();
-
-                if (buildingTr == selectedTurret)
-                {
-                    builtTimer -= Time.deltaTime;
-                    m_statusText.text = $"제작중 : {builtTimer}";
-                    if (builtTimer < 0f)
-                    {
-                        builtTimer = 0f;
-                        m_statusText.text = $"제작 완료! 설치하려면 [E]키를 누르세요";
-                        if (Input.GetKeyDown(KeyCode.E))
-                        {
-                            Build();
-                        }
-                    }
-
-                }
-                else
-                {
-                    m_statusText.text = "설치할 수 없습니다.";
-                }
-                return;
-            }
-            if (selectedTurret == null) return;
-
-            //설치 가능한 상태
-            if (Input.GetKey(KeyCode.E))
-            {
-                isPressingE = true;
-                pressTimer += Time.deltaTime;
-                PrograssBarImg.fillAmount = pressTimer / pressDuration;
-                m_statusText.text = $"제작 준비 중. . .";
-
-
-                if (pressTimer >= pressDuration)
-                {
-                    StartBuilding(selectedTurret);
-                }
-            }
-            else if (pressTimer > 0f)
-            {
-                CancelBuilding();
-            }
-        }
-    */
-
     void Update()
     {
         if (currentTile == null) return;
@@ -347,7 +295,13 @@ public class TurretUI : Singleton<TurretUI>
     {
         var turretSo = currentTile.GetBuiltTurret();
         if (turretSo == null) return;
-        Instantiate(turretSo.turretPrefab, currentTile.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+        var go = Instantiate(turretSo.turretPrefab, currentTile.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+
+        var turret = go.GetComponent<Turret>();
+        if (turret != null)
+        {
+            turret.Init(turretSo);
+        }
 
         currentTile.EndBuilding();
 
