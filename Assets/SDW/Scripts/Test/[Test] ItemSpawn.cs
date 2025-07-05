@@ -6,14 +6,14 @@ public class TestItemSpawn : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < 10; i++)
-        {
-            var herb = GameManager.Instance.Item.ItemPools[ItemEnName.Herb].Pool.Get();
-            herb.transform.parent = transform;
-            herb.ItemAmount = 100;
-            m_position += Vector3.forward * 2f;
-            herb.transform.position = m_position;
-        }
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     var herb = GameManager.Instance.Item.ItemPools[ItemEnName.Herb].Pool.Get();
+        //     herb.transform.parent = transform;
+        //     herb.ItemAmount = 100;
+        //     m_position += Vector3.forward * 2f;
+        //     herb.transform.position = m_position;
+        // }
 
         m_position += Vector3.right * 2f;
 
