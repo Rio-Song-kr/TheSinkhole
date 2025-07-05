@@ -76,6 +76,9 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.CantInteract:
                 m_popupText.text = "현재는 상호작용이 불가능합니다.";
                 break;
+             case PopupType.CantBuildTurret:
+                m_popupText.text = "현재는 터렛 설치가 불가능합니다.";
+                break;
         }
 
         m_popupUIContainer.gameObject.SetActive(true);

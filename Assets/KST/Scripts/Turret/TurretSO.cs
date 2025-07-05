@@ -10,6 +10,7 @@ public class TurretSo : ScriptableObject
     public string TurretName; //터렛 이름
     public string TurretDesc; // 터렛 설명
     public float buildingTime;//제작 준비 시간
+    public RequireItemData[] RequireItems;
 
     //터렛 능력치 관련 세팅
     public float distance; //사거리
