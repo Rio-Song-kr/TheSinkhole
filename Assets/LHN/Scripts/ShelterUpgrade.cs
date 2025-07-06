@@ -24,6 +24,8 @@ public class ShelterUpgrade : MonoBehaviour
         m_interaction = GetComponent<Interaction>();
     }
 
+    private void Start() => m_interactionKeyClicked = false;
+
     private void Update()
     {
         //# 낮이 아니라면 return;
@@ -38,6 +40,7 @@ public class ShelterUpgrade : MonoBehaviour
         if (!m_interaction.Hit.collider.CompareTag("Fence"))
         {
             m_crosshairObject.SetActive(true);
+            m_interactionKeyClicked = false;
             return;
         }
 
@@ -46,11 +49,11 @@ public class ShelterUpgrade : MonoBehaviour
 
         //# 낮이고 Fence이지만 interaction 키가 안눌려 졌으면 return;
         if (!m_interactionKeyClicked) return;
+        m_interactionKeyClicked = false;
 
         //# 낮이고  Fence이고 interaction 키가 눌려져지만 도구가 해머가 아니면 return;
         if (CurrentTool != ToolType.Hammer)
         {
-            m_interactionKeyClicked = false;
             return;
         }
 
@@ -63,6 +66,12 @@ public class ShelterUpgrade : MonoBehaviour
 
         //todo UI Open해야 함
         //todo m_upgradableObject에 관한 고민 필요
+        //# Test
+        var testDict = GetMaterials();
+        foreach (var test in testDict)
+        {
+            Debug.Log($"{test.Key}, {test.Value}");
+        }
     }
 
     private void SetTextObject(bool isActive, string text = "")
@@ -80,7 +89,7 @@ public class ShelterUpgrade : MonoBehaviour
     /// <returns>아이템 영어 이름과 보유 수량, 필요 수량(수량 : List, 0 - 보유, 1 - 필요)을 반환</returns>
     private Dictionary<ItemEnName, List<int>> GetMaterials()
     {
-        foreach (var upgradeMaterials in GameManager.Instance.Shelter.ShelterUpgradeData[m_upgradeableObject.Level])
+        foreach (var upgradeMaterials in GameManager.Instance.Shelter.ShelterUpgradeData[m_upgradeableObject.LevelId])
         {
             var quantity = new List<int>();
             var itemEnName = GameManager.Instance.Item.ItemIdEnName[upgradeMaterials.ItemId];

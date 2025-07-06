@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UpgradeableObject : MonoBehaviour
 {
+    public int LevelId;
     public int Level;
     public int Durability;
     public int MaxDurability;
@@ -11,10 +12,10 @@ public class UpgradeableObject : MonoBehaviour
 
     private void Start()
     {
-        int levelId = GameManager.Instance.Shelter.ShelterLevelToId[Level];
-        Durability = GameManager.Instance.Shelter.ShelterLevelData[levelId].ShelterDurability;
+        LevelId = GameManager.Instance.Shelter.ShelterLevelToId[Level];
+        Durability = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterDurability;
         MaxDurability = Durability;
-        ShelterName = GameManager.Instance.Shelter.ShelterLevelData[levelId].ShelterName;
+        ShelterName = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterName;
     }
 
     public void Upgrade()
