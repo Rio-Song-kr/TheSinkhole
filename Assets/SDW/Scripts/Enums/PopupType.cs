@@ -7,6 +7,7 @@ public enum PopupType
     Destroyed,
     NotDestroyed,
     NoneTile,
+    NeedTool,
     NeedFarmable,
     NeedHammer,
     NeedWater,
