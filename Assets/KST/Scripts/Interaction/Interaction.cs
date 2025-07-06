@@ -7,7 +7,6 @@ public class Interaction : Singleton<Interaction>
 {
     public ToolType CurrentTool = ToolType.None;
     [SerializeField] private Transform m_rayTransform; //레이 쏘는 위치(캐릭터의 카메라.)
-    [SerializeField] private GameObject m_crosshairObject;
     public float InteractionDistance = 2.3f; //적당한 거리로 세팅바람.(상호작용 가능한 적당한 레이 길이 필요.)
 
     //트리거로 들어온 대상에 따라 나눔
@@ -18,17 +17,18 @@ public class Interaction : Singleton<Interaction>
     private bool m_isIneractionKeyPressed;
 
     [SerializeField] private Inventory m_inventory;
-    [SerializeField] private GameObject m_itemPickUpTextObject;
-    [SerializeField] private TextMeshProUGUI m_itemPickUpText;
     [NonSerialized] public RaycastHit Hit;
     [NonSerialized] public bool IsDetected;
     private Outlinable m_outlinable;
     private Tile m_interactionTile = null;
 
+    private InteractionUIManager m_uiManager;
+
     protected override void Awake()
     {
         base.Awake();
         m_inventory = GetComponent<Inventory>();
+        m_uiManager = GetComponent<InteractionUIManager>();
     }
     private void Update()
     {
@@ -66,12 +66,12 @@ public class Interaction : Singleton<Interaction>
                 return;
             }
 
-
             if (CurrentTool == ToolType.Pick && tileState == TileState.PlainTile)
-                SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+                m_uiManager.SetInteractionUI(InteractionType.Tile, true, "개척하려면 [E] 키를 눌러주세요.", false);
+
             else if (tileState == TileState.PlainTile && CurrentTool != ToolType.Pick)
             {
-                SetTextObject(false);
+                m_uiManager.SetInteractionUI(InteractionType.Tile, true, "개척을 위해 도구가 필요합니다.", false);
             }
             else if (tileState == TileState.Frontier)
             {
@@ -79,12 +79,12 @@ public class Interaction : Singleton<Interaction>
             }
             else if (tileState != TileState.PlainTile && tileState != TileState.Frontier)
             {
-                SetTextObject(false);
+                m_uiManager.ClearInteractionUI(InteractionType.Tile);
                 m_interactionTile = Hit.collider.gameObject.GetComponent<Tile>();
                 m_interactionTile.OnTileInteractionStay(this);
             }
 
-            SetCrosshairObject(false);
+            // SetCrosshairObject(false);
 
             if (toolInteractable.GetInteractType() == interactType.MouseClick &&
                 toolInteractable.CanInteract(CurrentTool))
@@ -106,15 +106,12 @@ public class Interaction : Singleton<Interaction>
         else
         {
             ClearInteractionTile();
-
-            if (GameManager.Instance.IsCursorLocked)
-                SetCrosshairObject(true);
         }
     }
     private void ClearInteractionTile()
     {
-        SetTextObject(false);
-        ClearPreviouseOutline();
+        m_uiManager.ClearInteractionUI(InteractionType.Tile);
+        ClearPreviousOutline();
 
         if (m_interactionTile != null)
         {
@@ -126,21 +123,15 @@ public class Interaction : Singleton<Interaction>
     {
         if (!ExploitUI.Instance.IsOpen)
         {
-            switch (CurrentTool)
+            string message = CurrentTool switch
             {
-                case ToolType.Hammer:
-                    SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                    break;
-                case ToolType.Shovel:
-                    SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
-                    break;
-                case ToolType.Water:
-                    SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                    break;
-                default:
-                    SetTextObject(true, "시설 설치을 설치하려면 도구가 필요합니다.");
-                    break;
-            }
+                ToolType.Hammer => "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.",
+                ToolType.Shovel => "경작지 타일로 변환하려면 [E] 키를 눌러주세요.",
+                ToolType.Water => "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.",
+                _ => "시설 설치을 설치하려면 도구가 필요합니다."
+            };
+
+            m_uiManager.SetInteractionUI(InteractionType.Tile, true, message, false);
         }
     }
     private void SetOutline()
@@ -148,8 +139,8 @@ public class Interaction : Singleton<Interaction>
         if (m_outlinable == null)
         {
             m_outlinable = Hit.collider.GetComponent<Outlinable>();
-            m_outlinable.enabled = true;
         }
+        m_outlinable.enabled = true;
     }
     private void DisplayTilePopup(TileState tileState)
     {
@@ -157,6 +148,9 @@ public class Interaction : Singleton<Interaction>
         {
             case TileState.PlainTile: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NoneTile);
+                break;
+            case TileState.Frontier:
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedTool);
                 break;
             case TileState.FarmTile:
                 if (CurrentTool != ToolType.Shovel)
@@ -172,7 +166,7 @@ public class Interaction : Singleton<Interaction>
                 break;
         }
     }
-    private void ClearPreviouseOutline()
+    private void ClearPreviousOutline()
     {
         if (m_outlinable != null)
         {
@@ -242,14 +236,6 @@ public class Interaction : Singleton<Interaction>
         if (m_currentTargetTriggerTool == iinteractable)
             m_currentTargetTriggerTool = null;
     }
-
-    public void SetTextObject(bool isActive, string text = "")
-    {
-        m_itemPickUpTextObject.SetActive(isActive);
-        m_itemPickUpText.text = text;
-    }
-
-    public void SetCrosshairObject(bool isActive) => m_crosshairObject.SetActive(isActive);
 
     public void OnMouseButtonPressed() => m_isMouseButtonClicked = true;
     public void OnMouseButtonReleased() => m_isMouseButtonClicked = false;

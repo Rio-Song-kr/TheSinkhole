@@ -588,7 +588,7 @@ GameObject:
   - component: {fileID: 21180176}
   - component: {fileID: 21180175}
   m_Layer: 5
-  m_Name: ItemPickUp Canvas
+  m_Name: CenterText Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9075,6 +9075,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 966719168}
+    - targetCorrespondingSourceObject: {fileID: 4118110345565756572, guid: 94b1251639e062b44a8f14c4de340e23,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 966719177}
+    - targetCorrespondingSourceObject: {fileID: 4118110345565756572, guid: 94b1251639e062b44a8f14c4de340e23,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 966719178}
     - targetCorrespondingSourceObject: {fileID: 8026314773297637380, guid: 94b1251639e062b44a8f14c4de340e23,
         type: 3}
       insertIndex: -1
@@ -9132,11 +9140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTool: 0
   m_rayTransform: {fileID: 0}
-  m_crosshairObject: {fileID: 1219213580}
   InteractionDistance: 5
   m_inventory: {fileID: 0}
-  m_itemPickUpTextObject: {fileID: 1834845615}
-  m_itemPickUpText: {fileID: 1834845617}
 --- !u!114 &966719167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9177,6 +9182,33 @@ MonoBehaviour:
   m_crosshairObject: {fileID: 1219213580}
   m_itemPickUpTextObject: {fileID: 1834845615}
   m_itemPickUpText: {fileID: 1834845617}
+--- !u!114 &966719177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966719154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7141517c4a925104bbf8dd782abd18a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &966719178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966719154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9773d59692d34e498492c8e766ae6322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_centerTextObject: {fileID: 1834845615}
+  m_centerText: {fileID: 1834845617}
+  m_crosshairObject: {fileID: 1219213582}
 --- !u!1 &969336137
 GameObject:
   m_ObjectHideFlags: 0
@@ -10110,7 +10142,7 @@ GameObject:
   - component: {fileID: 1039110090}
   - component: {fileID: 1039110089}
   m_Layer: 5
-  m_Name: ItemPickUp Image
+  m_Name: CenterText Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18130,7 +18162,7 @@ GameObject:
   - component: {fileID: 1834845618}
   - component: {fileID: 1834845617}
   m_Layer: 5
-  m_Name: ItemPickUp Text
+  m_Name: CenterText Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
