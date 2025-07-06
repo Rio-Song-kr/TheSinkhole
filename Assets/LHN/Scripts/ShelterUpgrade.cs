@@ -4,15 +4,13 @@ using TMPro;
 
 public class ShelterUpgrade : MonoBehaviour
 {
-    public ToolType CurrentTool = ToolType.None;
     [SerializeField] private Interaction m_interaction;
     [SerializeField] private Inventory m_inventory;
 
     [SerializeField] private GameObject m_crosshairObject;
-    [SerializeField] private GameObject m_itemPickUpTextObject;
-    [SerializeField] private TextMeshProUGUI m_itemPickUpText;
 
     private bool m_interactionKeyClicked;
+    private InteractionUIManager m_interactionUiManager;
 
     private Dictionary<ItemEnName, List<int>> m_materials;
 
@@ -22,6 +20,7 @@ public class ShelterUpgrade : MonoBehaviour
     {
         m_inventory = GetComponent<Inventory>();
         m_interaction = GetComponent<Interaction>();
+        m_interactionUiManager = GetComponent<InteractionUIManager>();
     }
 
     private void Start() => m_interactionKeyClicked = false;
@@ -31,31 +30,36 @@ public class ShelterUpgrade : MonoBehaviour
         //# 낮이 아니라면 return;
         if (!GameTimer.IsDay) return;
 
-        //# 낮이지만 Fence가 아니면 return;
-        if (m_interaction.Hit.collider == null)
+        var hitObject = m_interaction.Hit.collider;
+
+        if (hitObject == null)
         {
-            m_crosshairObject.SetActive(true);
+            m_interactionUiManager.SetInteractionUI(InteractionType.Shelter, false);
             return;
         }
+
         if (!m_interaction.Hit.collider.CompareTag("Fence"))
         {
-            m_crosshairObject.SetActive(true);
+            m_interactionUiManager.SetInteractionUI(InteractionType.Shelter, false);
             m_interactionKeyClicked = false;
             return;
         }
 
-        //# 강화를 위해 E 키를 누르는 표시
-        SetTextObject(true, "강화하려면 [E] 키를 눌러주세요.");
+        if (m_interaction.CurrentTool != ToolType.Hammer)
+        {
+            m_interactionUiManager.SetInteractionUI(
+                InteractionType.Shelter, true, "강화를 위해서는 다른 도구가 필요합니다", false
+            );
+
+            return;
+        }
+        m_interactionUiManager.SetInteractionUI(
+            InteractionType.Shelter, true, "강화하려면 [E] 키를 눌러주세요.", false
+        );
 
         //# 낮이고 Fence이지만 interaction 키가 안눌려 졌으면 return;
         if (!m_interactionKeyClicked) return;
         m_interactionKeyClicked = false;
-
-        //# 낮이고  Fence이고 interaction 키가 눌려져지만 도구가 해머가 아니면 return;
-        if (CurrentTool != ToolType.Hammer)
-        {
-            return;
-        }
 
         // 업그레이드 가능한 컴포넌트가 있는지 확인
         m_upgradeableObject = m_interaction.Hit.collider.GetComponent<UpgradeableObject>();
@@ -66,19 +70,16 @@ public class ShelterUpgrade : MonoBehaviour
 
         //todo UI Open해야 함
         //todo m_upgradableObject에 관한 고민 필요
+        //todo UI에서 업그레이드 아이템 이름, 보유 수량, 필요 수량을 가져오는 예시
         //# Test
         var testDict = GetMaterials();
         foreach (var test in testDict)
         {
+            //todo test.Value 는 List임(0 - 현재 보유 수량, 1 - 필요 수량)
             Debug.Log($"{test.Key}, {test.Value}");
+            //todo 아이템 아이콘을 가져오는 예시
+            //GameManager.Instance.Item.ItemEnDataSO[test.Key].Icon;
         }
-    }
-
-    private void SetTextObject(bool isActive, string text = "")
-    {
-        m_crosshairObject.SetActive(false);
-        m_itemPickUpTextObject.SetActive(isActive);
-        m_itemPickUpText.text = text;
     }
 
     //todo UI 연동 필요함 - UI에서 아이템 이름과 보유 수량, 필요 수량을 표시, presenter에서 업그레이드 가능 여부 판단

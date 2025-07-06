@@ -72,7 +72,6 @@ public class MonsterSpawner : MonoBehaviour
         if (GameManager.Instance.IsGameOver) return;
 
         int day = GameTimer.Day == 0 ? 1 : GameTimer.Day;
-        Debug.Log(day);
 
         if (m_isDayInit)
         {

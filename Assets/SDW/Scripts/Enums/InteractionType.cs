@@ -6,5 +6,6 @@ public enum InteractionType
     None,
     Item,
     ResourceItem,
-    Tile
+    Tile,
+    Shelter
 }
