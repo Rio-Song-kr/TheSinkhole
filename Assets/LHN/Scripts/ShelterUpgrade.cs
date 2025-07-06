@@ -10,7 +10,7 @@ public class ShelterUpgrade : MonoBehaviour
     [SerializeField] private GameObject m_crosshairObject;
 
     private bool m_interactionKeyClicked;
-    private InteractionUIManager m_interactionUiManager;
+    private InteractionUIManager m_uiManager;
 
     private Dictionary<ItemEnName, List<int>> m_materials;
 
@@ -22,7 +22,7 @@ public class ShelterUpgrade : MonoBehaviour
     {
         m_inventory = GetComponent<Inventory>();
         m_interaction = GetComponent<Interaction>();
-        m_interactionUiManager = GetComponent<InteractionUIManager>();
+        m_uiManager = GetComponent<InteractionUIManager>();
     }
 
     private void Start() => m_interactionKeyClicked = false;
@@ -36,26 +36,27 @@ public class ShelterUpgrade : MonoBehaviour
 
         if (hitObject == null)
         {
-            m_interactionUiManager.SetInteractionUI(InteractionType.Shelter, false);
+            m_uiManager.SetInteractionUI(InteractionType.Shelter, false);
             return;
         }
 
         if (!m_interaction.Hit.collider.CompareTag("Fence"))
         {
-            m_interactionUiManager.SetInteractionUI(InteractionType.Shelter, false);
+            m_uiManager.ClearInteractionUI(InteractionType.Shelter);
+
             m_interactionKeyClicked = false;
             return;
         }
 
         if (m_interaction.CurrentTool != ToolType.Hammer)
         {
-            m_interactionUiManager.SetInteractionUI(
+            m_uiManager.SetInteractionUI(
                 InteractionType.Shelter, true, "강화를 위해서는 다른 도구가 필요합니다", false
             );
 
             return;
         }
-        m_interactionUiManager.SetInteractionUI(
+        m_uiManager.SetInteractionUI(
             InteractionType.Shelter, true, "강화하려면 [E] 키를 눌러주세요.", false
         );
 
