@@ -8,7 +8,7 @@ public class Shelter : MonoBehaviour, IDamageable
     public int maxDurability = 3000;//최대 내구도
     public int currentDurability = 3000;//현재 내구도
 
-    public GameObject shelterObject; //쉘터 오브젝트
+    public Shelter shelterObject; //쉘터 오브젝트
     
 
     void Update()
@@ -30,18 +30,18 @@ public class Shelter : MonoBehaviour, IDamageable
 
     public void ColorChange()
     {
-        if(currentDurability >= maxDurability * 0.7)
-        {
-            shelterObject.GetComponent<Renderer>().material.color = Color.green; //녹색
-        }
-        else if (currentDurability<= maxDurability * 0.7 && currentDurability >= maxDurability * 0.4)
-        {
-            shelterObject.GetComponent<Renderer>().material.color = Color.yellow; //노란색
-        }
-        else if (currentDurability < maxDurability * 0.4)
-        {
-            shelterObject.GetComponent<Renderer>().material.color = Color.red; //빨간색
-        }
+        //if(currentDurability >= maxDurability * 0.7)
+        //{
+        //    shelterObject.GetComponent<Renderer>().material.color = Color.green; //녹색
+        //}
+        //else if (currentDurability<= maxDurability * 0.7 && currentDurability >= maxDurability * 0.4)
+        //{
+        //    shelterObject.GetComponent<Renderer>().material.color = Color.yellow; //노란색
+        //}
+        //else if (currentDurability < maxDurability * 0.4)
+        //{
+        //    shelterObject.GetComponent<Renderer>().material.color = Color.red; //빨간색
+        //}
     }
 
     private void OnShelterDestroyed()
