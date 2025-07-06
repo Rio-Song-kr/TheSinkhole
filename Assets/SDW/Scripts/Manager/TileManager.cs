@@ -63,6 +63,7 @@ public class TileManager : MonoBehaviour
                 if (x >= m_groundXArea.x && x <= m_groundXArea.y && y >= m_groundYArea.x && y <= m_groundYArea.y) continue;
 
                 GameObject monsterPathTile;
+                int randomRotation = Random.Range(0, 4);
 
                 if (x >= m_groundXArea.x - 1
                     && x <= m_groundXArea.y + 1
@@ -81,6 +82,7 @@ public class TileManager : MonoBehaviour
 
                     var tile = Instantiate(m_buildableTile[tileIndex]);
                     tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                    tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
                     tile.transform.parent = parentTiles.transform;
                     monsterPathTile = tile;
                 }
@@ -88,6 +90,7 @@ public class TileManager : MonoBehaviour
                 {
                     var buildableTile = Instantiate(m_buildableTile[0]);
                     buildableTile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                    buildableTile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
                     buildableTile.transform.parent = parentTiles.transform;
                     monsterPathTile = buildableTile;
                 }

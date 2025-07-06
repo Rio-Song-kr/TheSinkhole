@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 생성된 Item을 등록하여 관리하기 위한 Scriptable Object
@@ -7,14 +8,18 @@ using UnityEngine;
 public class ItemPrefabDatabaseSO : ScriptableObject
 {
     public GameObject[] ModelPrefabObjects;
+    public Sprite[] IconSprites;
 
     public void OnSetPrefab(ref ItemDataSO itemDataSO)
     {
-        foreach (var model in ModelPrefabObjects)
+        for (int i = 0; i < ModelPrefabObjects.Length; i++)
         {
-            if (!model.name.Equals(itemDataSO.ItemEnName.ToString())) continue;
+            if (!ModelPrefabObjects[i].name.Equals(itemDataSO.ItemEnName.ToString())) continue;
 
-            itemDataSO.ModelPrefab = model;
+            itemDataSO.ModelPrefab = ModelPrefabObjects[i];
+
+            if (!ModelPrefabObjects[i].name.Equals(IconSprites[i].name)) continue;
+            itemDataSO.Icon = IconSprites[i];
         }
 
         if (itemDataSO.ModelPrefab.Equals(null))

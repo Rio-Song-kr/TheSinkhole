@@ -15,18 +15,16 @@ public enum ItemEnName
     Coat,
     Tether,
     Plywood,
-    // HerbPill,
     Cloth,
     Bandage,
-    // Phone,
-    Scrap,
     Potato,
     Shovel,
     Hammer,
     Tobacco,
-    // Crossword,
     LumpOfIron,
     Pick,
     Pail,
-    FlareGun
+    FlareGun,
+    EmptyFlareGun,
+    FlareGunBullets
 }

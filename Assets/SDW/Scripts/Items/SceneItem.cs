@@ -8,6 +8,7 @@ using UnityEngine;
 public class SceneItem : MonoBehaviour
 {
     [Header("Item Settings")]
+    public ItemEnName ItemEnName;
     public ItemDataSO ItemDataSO;
     public int ItemAmount = 1;
 
@@ -21,6 +22,11 @@ public class SceneItem : MonoBehaviour
 
     private void Start()
     {
+        if (ItemDataSO == null && ItemEnName != ItemEnName.None)
+        {
+            ItemDataSO = GameManager.Instance.Item.ItemEnDataSO[ItemEnName];
+        }
+
         m_outline = GetComponentInChildren<Outlinable>();
         m_outline.enabled = false;
     }
