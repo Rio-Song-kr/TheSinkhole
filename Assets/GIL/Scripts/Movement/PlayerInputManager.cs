@@ -40,6 +40,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.UIOpenClose.started += ctx => FarmUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => ExploitUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => WaterUI.OnCloseKeyPressed();
+        onFoot.UIOpenClose.started += ctx => TurretUI.OnCloseKeyPressed();
         onFoot.InventoryNumpad.started += m_inventory.OnNumpadKeyPressed;
         onFoot.InventoryPartial.started += ctx => InventoryDragHandler.OnPartialKeyPressed();
         onFoot.InventoryPartial.canceled += ctx => InventoryDragHandler.OnPartialKeyReleased();
@@ -47,6 +48,8 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.canceled += ctx => ItemPickUpInteraction.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => FarmUI.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => FarmUI.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => TurretUI.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => TurretUI.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => ExploitUI.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => ExploitUI.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => WaterUI.OnInteractionKeyPressed();

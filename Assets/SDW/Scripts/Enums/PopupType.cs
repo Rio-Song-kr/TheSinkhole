@@ -19,5 +19,6 @@ public enum PopupType
     ChangingState,
     CantPlant,
     CantExploit,
-    CantInteract
+    CantInteract,
+    CantBuildTurret
 }

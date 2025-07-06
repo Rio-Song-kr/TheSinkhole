@@ -60,7 +60,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     {
         if (!CanInteract(toolType)) return;
         if (Interaction.Instance.IsKeyPressed())
-            if(!ExploitUI.Instance.IsOpen)
+            if (!ExploitUI.Instance.IsOpen)
                 ExploitUI.Instance.OpenUI(this, toolType);
     }
 
@@ -108,20 +108,40 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             case TileState.Frontier: // 개척지. 삽을 통해 경작지로 변경 가능하며, 추후 다른 건물을 짓는 것도 가능.
                 if (toolType == ToolType.Shovel)
                 {
-                    if (m_coroutine != null) return;
+                    // if (m_coroutine != null) return;
+
+                    // SetTileState(TileState.ChangingState);
+
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.ChangingState);
+
+                    // var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
+                    // m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
+                    ChangeTileState(toolType);
+                }
+                else if (toolType == ToolType.Hammer)
+                {
+                    // if (m_coroutine != null) return;
 
                     SetTileState(TileState.ChangingState);
 
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.ChangingState);
 
-                    var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
-                    m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
+                    // var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
+                    // m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
+                    ChangeTileState(toolType);
                 }
-                break;
-            //TODO<김승태> : 해머, 물 추가해야함.
-            case TileState.DefenceArea:
-                break;
-            case TileState.WaterTile:
+                else if (toolType == ToolType.Water)
+                {
+                    // if (m_coroutine != null) return;
+
+                    SetTileState(TileState.ChangingState);
+
+                    GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.ChangingState);
+
+                    // var newModel = Instantiate(m_farmModelPrefab, transform.parent).GetComponent<DissolveEffect>();
+                    // m_coroutine = StartCoroutine(ChangeTileState(toolType, newModel));
+                    ChangeTileState(toolType);
+                }
                 break;
         }
     }
@@ -133,6 +153,24 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             yield return null;
         }
 
+        switch (toolType)
+        {
+            case ToolType.Shovel:
+                SetFarmable();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
+                break;
+            case ToolType.Hammer:
+                SetDefenceArea();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.DefenceArea);
+                break;
+            case ToolType.Water:
+                SetWaterArea();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Water);
+                break;
+        }
+    }
+    private void ChangeTileState(ToolType toolType)
+    {
         switch (toolType)
         {
             case ToolType.Shovel:
@@ -164,6 +202,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     //TurretTile로 변경시 부착
     public void SetDefenceArea()
     {
+        Debug.Log("방어타일로 변경");
         SetTileState(TileState.DefenceArea);
         if (!TryGetComponent<TurretTile>(out _))
         {
