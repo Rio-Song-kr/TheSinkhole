@@ -37,6 +37,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public ShelterManager Shelter { get; private set; }
 
+    /// <summary>
+    /// Action 데이터를 관리하는 매니저
+    /// </summary>
+    public ActionManager Action { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     /// <summary>
@@ -81,6 +86,7 @@ public class GameManager : MonoBehaviour
         Monster = GetComponent<MonsterManager>();
         Tile = GetComponent<TileManager>();
         Shelter = GetComponent<ShelterManager>();
+        Action = GetComponent<ActionManager>();
     }
 
     private void Start()

@@ -9,7 +9,6 @@ public class WaterTile : Tile
     public bool IsWatered() => m_isWatered;
     [Header("UI")]
     //상호작용 UI
-    public GameObject InteractUiText;
     public float m_interactDelay = 0.5f;
     public float m_awakeTime;
 
@@ -26,8 +25,6 @@ public class WaterTile : Tile
     private void OnEnable()
     {
         WaterUI.Instance.OnIsUIOpen += SetInteraction;
-        var tile = GetComponent<Tile>();
-        Destroy(tile);
         tileState = TileState.WaterTile;
     }
 
@@ -47,7 +44,9 @@ public class WaterTile : Tile
             m_isWatering = false;
         }
     }
+
     #region 상호작용 인터페이스 구현
+
     public override interactType GetInteractType() => interactType.PressE;
 
     public override bool CanInteract(ToolType toolType) =>
@@ -60,11 +59,17 @@ public class WaterTile : Tile
         if (GameManager.Instance.IsCursorLocked)
         {
             WaterUI.Instance.OpenUI(this);
-            InteractUiText.SetActive(false);
+            InteractionUI.ClearInteractionUI(InteractionType.Water);
         }
     }
 
-    private void SetInteraction(bool status) => InteractUiText.SetActive(status);
+    private void SetInteraction(bool status)
+    {
+        if (status)
+            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.");
+        else
+            InteractionUI.ClearInteractionUI(InteractionType.Water);
+    }
 
     #endregion
 
@@ -85,6 +90,7 @@ public class WaterTile : Tile
     }
 
     #region 타일 Ray 상호작용
+
     public override void OnTileInteractionStay(Interaction player)
     {
         if (Time.time - m_awakeTime < m_interactDelay) return;
@@ -92,9 +98,9 @@ public class WaterTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!WaterUI.Instance.GetActiveself() && currentTool == ToolType.Water)
-            InteractUiText.SetActive(true);
+            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.");
         else
-            InteractUiText.SetActive(false);
+            InteractionUI.ClearInteractionUI(InteractionType.Water);
 
         player?.RegisterTrigger(this);
     }
@@ -102,7 +108,7 @@ public class WaterTile : Tile
     public override void OnTileInteractionExit(Interaction player)
     {
         m_isPlayerOnWaterTile = false;
-        InteractUiText.SetActive(false);
+        InteractionUI.ClearInteractionUI(InteractionType.Water);
         player?.ClearTrigger(this);
     }
 

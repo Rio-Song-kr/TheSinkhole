@@ -34,5 +34,17 @@ public class TestItemSpawn : MonoBehaviour
         pick.ItemAmount = 1;
         m_position -= Vector3.forward * 2f;
         pick.transform.position = m_position;
+
+        var pail = GameManager.Instance.Item.ItemPools[ItemEnName.Pail].Pool.Get();
+        pail.transform.parent = transform;
+        pail.ItemAmount = 1;
+        m_position -= Vector3.forward * 2f;
+        pail.transform.position = m_position;
+
+        var water = GameManager.Instance.Item.ItemPools[ItemEnName.Water].Pool.Get();
+        water.transform.parent = transform;
+        water.ItemAmount = 1;
+        m_position -= Vector3.forward * 2f;
+        water.transform.position = m_position;
     }
 }

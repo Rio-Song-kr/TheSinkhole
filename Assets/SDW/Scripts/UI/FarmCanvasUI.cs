@@ -9,7 +9,7 @@ public class FarmCanvasUI : MonoBehaviour
 
     private void Start()
     {
-        Tile.FarmUIRef = m_farmUIObjet;
-        Tile.InteractUiTextRef = m_interactionUIObjectd;
+        // Tile.FarmUIRef = m_farmUIObjet;
+        // Tile.InteractUiTextRef = m_interactionUIObjectd;
     }
 }

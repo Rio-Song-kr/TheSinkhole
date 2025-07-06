@@ -19,7 +19,12 @@ public class ResourceItemPickUpInteraction : PickUpInteraction
 
     private void GetItem()
     {
-        var hitObject = m_interaction.Hit.collider.gameObject;
+        if (!GameManager.Instance.IsCursorLocked) return;
+
+        var hitCollider = m_interaction.Hit.collider;
+
+        if (hitCollider == null) return;
+        var hitObject = hitCollider.gameObject;
 
         if (hitObject == null) return;
 

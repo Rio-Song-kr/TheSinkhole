@@ -120,7 +120,7 @@ public class Inventory : MonoBehaviour, ISaveable
             case ItemEnName.Pick:
                 m_toolType = ToolType.Pick;
                 break;
-            case ItemEnName.Water:
+            case ItemEnName.Pail:
                 m_toolType = ToolType.Water;
                 break;
             default:
