@@ -10,7 +10,6 @@ public class FarmTile : Tile
 
     [Header("UI")]
     //상호작용 UI
-    public GameObject InteractUiText;
     public float m_interactDelay = 0.5f;
     public float m_awakeTime;
 
@@ -23,14 +22,11 @@ public class FarmTile : Tile
     public float GetRemainingGrowTime() => growTimer;
     public bool IsGrowing() => isGrowing;
 
-
     private void Awake() => m_awakeTime = Time.time;
 
     private void OnEnable()
     {
         FarmUI.Instance.OnIsUIOpen += SetInteraction;
-        var tile = GetComponent<Tile>();
-        Destroy(tile);
         tileState = TileState.FarmTile;
     }
 
@@ -50,7 +46,9 @@ public class FarmTile : Tile
             isGrowing = false;
         }
     }
+
     #region 상호작용 인터페이스 구현
+
     public override interactType GetInteractType() => interactType.PressE;
 
     public override bool CanInteract(ToolType toolType) =>
@@ -63,11 +61,17 @@ public class FarmTile : Tile
         if (GameManager.Instance.IsCursorLocked)
         {
             FarmUI.Instance.OpenUI(this);
-            InteractUiText.SetActive(false);
+            InteractionUI.ClearInteractionUI(InteractionType.Farm);
         }
     }
 
-    private void SetInteraction(bool status) => InteractUiText.SetActive(status);
+    private void SetInteraction(bool status)
+    {
+        if (status)
+            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.");
+        else
+            InteractionUI.ClearInteractionUI(InteractionType.Farm);
+    }
 
     #endregion
 
@@ -90,6 +94,7 @@ public class FarmTile : Tile
     }
 
     #region 타일 Ray 상호작용
+
     public override void OnTileInteractionStay(Interaction player)
     {
         if (Time.time - m_awakeTime < m_interactDelay) return;
@@ -97,9 +102,9 @@ public class FarmTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
-            InteractUiText.SetActive(true);
+            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.");
         else
-            InteractUiText.SetActive(false);
+            InteractionUI.ClearInteractionUI(InteractionType.Farm);
 
         player?.RegisterTrigger(this);
     }
@@ -107,7 +112,7 @@ public class FarmTile : Tile
     public override void OnTileInteractionExit(Interaction player)
     {
         m_isPlayerOnFarmTile = false;
-        InteractUiText.SetActive(false);
+        InteractionUI.ClearInteractionUI(InteractionType.Farm);
         player?.ClearTrigger(this);
     }
 

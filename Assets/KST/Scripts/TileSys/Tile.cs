@@ -2,17 +2,12 @@ using System;
 using System.Collections;
 using UnityEngine;
 using EPOOutline;
+using Random = UnityEngine.Random;
 
 public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
 {
+    protected InteractionUIManager InteractionUI;
     public TileState tileState = TileState.PlainTile;
-    public static GameObject InteractUiTextRef;
-    //농사창 UI
-    public static GameObject FarmUIRef;
-
-    [SerializeField] private GameObject m_farmModelPrefab;
-    [SerializeField] private GameObject m_turretModelPrefab;
-    [SerializeField] private GameObject m_waterModelPrefab;
 
     private Outlinable m_outlinable;
     private Coroutine m_coroutine;
@@ -32,6 +27,13 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
         m_outlinable = GetComponent<Outlinable>();
         m_outlinable.enabled = false;
     }
+
+    private void Start()
+    {
+        var player = GameObject.FindWithTag("Player");
+        InteractionUI = player.GetComponent<InteractionUIManager>();
+    }
+
     public void SetDevelopSO(DevelopSO so)
     {
         developSO = so;
@@ -52,7 +54,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             TileState.PlainTile => toolType == ToolType.Pick,
             //타일이 개척지일 때는 삽,망치,물컵으로 개척 UI를 띄울 수 있음. 
             TileState.Frontier => toolType == ToolType.Shovel || toolType == ToolType.Hammer || toolType == ToolType.Water,
-            _ => false,
+            _ => false
         };
     }
 
@@ -100,8 +102,9 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             case TileState.PlainTile: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
                 if (toolType == ToolType.Pick)
                 {
-                    SetTileState(TileState.Frontier);
+                    // SetTileState(TileState.Frontier);
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
+                    ChangeTileState(toolType);
                 }
                 break;
 
@@ -173,6 +176,10 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     {
         switch (toolType)
         {
+            case ToolType.Pick:
+                SetFrontier();
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
+                break;
             case ToolType.Shovel:
                 SetFarmable();
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Farmable);
@@ -189,35 +196,64 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     }
     //테스트를 위해 잠시 public 메소드로 변경
 
+    //FrontierTile로 변경시 부착
+    public void SetFrontier()
+    {
+        SetTileState(TileState.Frontier);
+
+        int randomNumber = Random.Range(0, 100);
+        int index = -1;
+
+        if (randomNumber <= 11)
+            index = 0;
+        else if (randomNumber <= 33)
+            index = 1;
+        else if (randomNumber <= 55)
+            index = 2;
+        else if (randomNumber <= 77)
+            index = 3;
+        else if (randomNumber <= 99)
+            index = 4;
+
+        var newTileObject = Instantiate(developSO.TilePrefab[index]);
+        newTileObject.transform.parent = transform.parent.parent;
+        newTileObject.transform.position = transform.position;
+
+        Destroy(transform.parent.gameObject);
+    }
+
     //FarmTile로 변경시 부착
     public void SetFarmable()
     {
         SetTileState(TileState.FarmTile);
-        if (!TryGetComponent<FarmTile>(out _))
-        {
-            var go = gameObject.AddComponent<FarmTile>();
-            go.InteractUiText = InteractUiTextRef;
-        }
+
+        var newTileObject = Instantiate(developSO.TilePrefab[0]);
+        newTileObject.transform.parent = transform.parent.parent;
+        newTileObject.transform.position = transform.position;
+
+        Destroy(transform.parent.gameObject);
     }
     //TurretTile로 변경시 부착
     public void SetDefenceArea()
     {
         Debug.Log("방어타일로 변경");
         SetTileState(TileState.DefenceArea);
-        if (!TryGetComponent<TurretTile>(out _))
-        {
-            var go = gameObject.AddComponent<TurretTile>();
-            go.InteractUiText = InteractUiTextRef;
-        }
+
+        var newTileObject = Instantiate(developSO.TilePrefab[0]);
+        newTileObject.transform.parent = transform.parent.parent;
+        newTileObject.transform.position = transform.position;
+
+        Destroy(transform.parent.gameObject);
     }
     public void SetWaterArea()
     {
         SetTileState(TileState.WaterTile);
-        if (!TryGetComponent<WaterTile>(out _))
-        {
-            var go = gameObject.AddComponent<WaterTile>();
-            go.InteractUiText = InteractUiTextRef;
-        }
+
+        var newTileObject = Instantiate(developSO.TilePrefab[0]);
+        newTileObject.transform.parent = transform.parent.parent;
+        newTileObject.transform.position = transform.position;
+
+        Destroy(transform.parent.gameObject);
     }
 
     public void SetNoneGround()
@@ -229,7 +265,11 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             Destroy(turretTile);
     }
 
-    public virtual void OnTileInteractionStay(Interaction player) { }
+    public virtual void OnTileInteractionStay(Interaction player)
+    {
+    }
 
-    public virtual void OnTileInteractionExit(Interaction player) { }
+    public virtual void OnTileInteractionExit(Interaction player)
+    {
+    }
 }

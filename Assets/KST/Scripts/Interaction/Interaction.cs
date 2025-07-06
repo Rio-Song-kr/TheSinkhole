@@ -90,7 +90,10 @@ public class Interaction : Singleton<Interaction>
                 toolInteractable.CanInteract(CurrentTool))
             {
                 if (m_isIneractionKeyPressed)
+                {
+                    m_uiManager.ClearInteractionUI(InteractionType.Tile);
                     toolInteractable.OnInteract(CurrentTool);
+                }
             }
             else
             {

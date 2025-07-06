@@ -7,5 +7,8 @@ public enum InteractionType
     Item,
     ResourceItem,
     Tile,
-    Shelter
+    Shelter,
+    Farm,
+    Turret,
+    Water
 }

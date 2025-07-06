@@ -10,12 +10,11 @@ public class TurretTile : Tile
 
     [Header("UI")]
     //상호작용 UI
-    public GameObject InteractUiText;
     public float m_interactDelay = 0.5f;
     public float m_awakeTime;
 
     //Turret
-    [SerializeField] private TurretSo builtTurretSo; 
+    [SerializeField] private TurretSo builtTurretSo;
     [SerializeField] private float m_remainingBuildTime = 0f; //설치까지 남은 시간
     private bool isInstalling = false; // 현재 설치 중인지 여부
     public TurretSo GetBuiltTurret() => builtTurretSo;
@@ -27,8 +26,6 @@ public class TurretTile : Tile
     private void OnEnable()
     {
         TurretUI.Instance.OnIsUIOpen += SetInteraction;
-        var tile = GetComponent<Tile>();
-        Destroy(tile);
         tileState = TileState.DefenceArea;
     }
     private void OnDisable()
@@ -60,9 +57,15 @@ public class TurretTile : Tile
 
         TurretUI.Instance.OpenUI(this);
         TurretUI.Instance.SetTile(this);
-        InteractUiText.SetActive(false);
+        InteractionUI.ClearInteractionUI(InteractionType.Turret);
     }
-    private void SetInteraction(bool _status) => InteractUiText.SetActive(_status);
+    private void SetInteraction(bool status)
+    {
+        if (status)
+            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.");
+        else
+            InteractionUI.ClearInteractionUI(InteractionType.Turret);
+    }
 
     #endregion
 
@@ -84,9 +87,8 @@ public class TurretTile : Tile
         m_remainingBuildTime = 0f;
     }
 
-
-
     #region 충돌처리
+
     public override void OnTileInteractionStay(Interaction player)
     {
         if (Time.time - m_awakeTime < m_interactDelay) return;
@@ -94,9 +96,9 @@ public class TurretTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Hammer)
-            InteractUiText.SetActive(true);
+            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.");
         else
-            InteractUiText.SetActive(false);
+            InteractionUI.ClearInteractionUI(InteractionType.Turret);
 
         player?.RegisterTrigger(this);
     }
@@ -104,12 +106,9 @@ public class TurretTile : Tile
     public override void OnTileInteractionExit(Interaction player)
     {
         m_isPlayerOnTurretTile = false;
-        InteractUiText.SetActive(false);
+        InteractionUI.ClearInteractionUI(InteractionType.Turret);
         player?.ClearTrigger(this);
     }
-    
 
     #endregion
-
-    
 }

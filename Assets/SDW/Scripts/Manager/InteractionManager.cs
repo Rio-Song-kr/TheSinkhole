@@ -49,7 +49,6 @@ public class InteractionUIManager : MonoBehaviour
             InteractionType.ResourceItem => 3,
             InteractionType.Shelter => 2,
             InteractionType.Tile => 1,
-            InteractionType.None => 0,
             _ => 0
         };
     }
