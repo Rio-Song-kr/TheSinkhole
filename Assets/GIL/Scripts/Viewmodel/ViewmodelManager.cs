@@ -56,14 +56,12 @@ public class ViewmodelManager : MonoBehaviour
         int selectedIndex = int.Parse(ctx.control.name);
 
         selectedIndex = selectedIndex == 0 ? 9 : selectedIndex - 1;
-        Debug.Log($"현재 번호 {ctx.control.name}");
         try
         {
             itemData = inventory.QuickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO.ItemData;
         }
         catch (NullReferenceException n)
         {
-            Debug.Log("빈 공간");
             ActivateSelectedToolOnly(3);
             isAttakable = false;
             return;

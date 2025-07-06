@@ -80,8 +80,6 @@ public class SceneMonster : MonoBehaviour
 
         if (m_targetTransform == null) return;
 
-        Debug.Log(m_targetTransform.name);
-
         bool isTargetClose = IsTargetClose();
 
         switch (m_monsterState)
