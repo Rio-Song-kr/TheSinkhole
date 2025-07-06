@@ -58,8 +58,8 @@ public class TurretTile : Tile
     {
         if (toolType == ToolType.None) return;
 
-        TurretUI.Instance.OpenUI();
-        // TurretUI.Instance.SetTile(this);
+        TurretUI.Instance.OpenUI(this);
+        TurretUI.Instance.SetTile(this);
         InteractUiText.SetActive(false);
     }
     private void SetInteraction(bool _status) => InteractUiText.SetActive(_status);
@@ -87,38 +87,29 @@ public class TurretTile : Tile
 
 
     #region 충돌처리
-
-    private void OnTriggerStay(Collider other)
+    public override void OnTileInteractionStay(Interaction player)
     {
-        if (other.CompareTag("Player"))
-        {
-            m_isPlayerOnTurretTile = true;
-            if (!TurretUI.Instance.GetActiveself())
-            {
-                InteractUiText.SetActive(true);
-            }
-            var player = other.GetComponent<Interaction>();
-            player?.RegisterTrigger(this);
-        }
-    }
+        if (Time.time - m_awakeTime < m_interactDelay) return;
+        m_isPlayerOnTurretTile = true;
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            m_isPlayerOnTurretTile = false;
+        var currentTool = player.CurrentTool;
+        if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
+            InteractUiText.SetActive(true);
+        else
             InteractUiText.SetActive(false);
-            var player = other.GetComponent<Interaction>();
-            player?.ClearTrigger(this);
-        }
+
+        player?.RegisterTrigger(this);
     }
+
+    public override void OnTileInteractionExit(Interaction player)
+    {
+        m_isPlayerOnTurretTile = false;
+        InteractUiText.SetActive(false);
+        player?.ClearTrigger(this);
+    }
+    
 
     #endregion
 
-    public override void OnTileInteractionStay(Interaction player)
-    {
-    }
-    public override void OnTileInteractionExit(Interaction player)
-    {
-    }
+    
 }

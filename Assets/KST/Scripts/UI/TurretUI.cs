@@ -14,16 +14,18 @@ public class TurretUI : Singleton<TurretUI>
     [Header("UI")]
     public GameObject TurretUIGO;
     public bool GetActiveself() => TurretUIGO.activeSelf;
+    private bool isBuiltOnce = false;
 
     //터렛 Detail
     public GameObject DetailGO;
     [SerializeField] private Image turretImg;
     [SerializeField] private TMP_Text turretName;
     [SerializeField] private TMP_Text turretDesc;
+    [SerializeField] private TMP_Text turretRequiedTime;
 
 
     [SerializeField] private TMP_Text m_statusText; //상태 메세지
-    public Image PrograssBarImg;
+    public Image ProgressBarImg;
     public Button[] turretButtons;
 
     private float pressTimer = 0f;
@@ -56,7 +58,7 @@ public class TurretUI : Singleton<TurretUI>
     {
         ScrollViewSetting();
         m_statusText.text = "";
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         TurretUIGO.SetActive(false);
     }
     void Update()
@@ -93,15 +95,16 @@ public class TurretUI : Singleton<TurretUI>
         {
             if (m_isIneractionKeyPressed)
             {
-                if (!HasRequiredItems())
+                if (!HasRequiredItems(selectedTurret))
                 {
                     m_statusText.text = "재료 아이템이 부족합니다.";
                     return;
                 }
 
                 isPressingE = true;
+                Debug.Log($"isPressingE : {isPressingE}");
                 pressTimer += Time.deltaTime;
-                PrograssBarImg.fillAmount = pressTimer / pressDuration;
+                ProgressBarImg.fillAmount = pressTimer / pressDuration;
                 m_statusText.text = $"개척 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
 
                 if (pressTimer >= pressDuration)
@@ -138,22 +141,28 @@ public class TurretUI : Singleton<TurretUI>
         var turret = currentTile.GetBuiltTurret();
         DisplayTurretDetail(turret);
 
+        if (isBuiltOnce)
+        {
+            m_statusText.text = "설치 완료된 타일입니다.";
+            ProgressBarImg.fillAmount = 0f;
+            return;
+        }
+
         float remain = currentTile.GetRemainingInstallTime();
 
         if (currentTile.IsInstalling())
         {
             m_statusText.text = $"설치중 {FormatingTime.FormatMinTime(remain)}";
-            PrograssBarImg.fillAmount = 1f;
+            ProgressBarImg.fillAmount = 1f;
         }
         else
         {
             m_statusText.text = "설치 완료! 배치하려면 [E]키를 누르세요";
-            PrograssBarImg.fillAmount = 1f;
+            ProgressBarImg.fillAmount = 1f;
 
             if (m_isIneractionKeyPressed)
             {
                 Build();
-                Debug.Log("수확");
             }
         }
     }
@@ -163,13 +172,14 @@ public class TurretUI : Singleton<TurretUI>
         //상태 전부 초기화
 
         pressTimer = 0f;
-        PrograssBarImg.fillAmount = 0f;
+        ProgressBarImg.fillAmount = 0f;
         isPressingE = false;
         m_statusText.text = $"제작하려면 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
     public void SetTile(TurretTile tile)
     {
         currentTile = tile;
+        isBuiltOnce = tile.IsBuild();
         //해당 타일이 이미 설치중이라면 해당 터렛 표시
         if (tile.IsBuild())
         {
@@ -182,20 +192,32 @@ public class TurretUI : Singleton<TurretUI>
                 DisplayTurretDetail(selectedTurret);
                 m_statusText.text = $"제작하려면 [E]키를 {pressDuration}초 동안 눌러주세요. ";
 
-                PrograssBarImg.fillAmount = 0f;
+                ProgressBarImg.fillAmount = 0f;
             }
         }
     }
 
-    public void OpenUI()
+    public void OpenUI(TurretTile tile)
     {
+        if (!GameTimer.IsDay) return;
+
+        currentTile = tile;
+        selectedTurret = null;
+        pressTimer = 0f;
+        isPressingE = false;
+        isBuiltOnce = tile.IsBuild();
+
         TurretUIGO.SetActive(true);
+        GameManager.Instance.SetCursorUnlock();
         OnIsUIOpen?.Invoke(true);
+
+        m_isIneractionKeyPressed = false;
+
         if (selectedTurret == null)
         {
-            m_statusText.text = "";
-            PrograssBarImg.fillAmount = 0f;
-            DetailGO.SetActive(false);
+            m_statusText.text = " 터렛을 선택해주세요";
+            ProgressBarImg.fillAmount = 0f;
+            // DetailGO.SetActive(false);
             return;
         }
 
@@ -206,13 +228,17 @@ public class TurretUI : Singleton<TurretUI>
         {
             m_statusText.text = $"제작하려면 [E]키를 {pressDuration}초 동안 눌러주세요. ";
 
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     public void CloseUI()
     {
+        currentTile = null;
+
         TurretUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
+        GameManager.Instance.SetCursorLock();
+        m_isEscapeKeyPressed = false;
     }
     public void SelectTurret(TurretSo turret)
     {
@@ -228,7 +254,7 @@ public class TurretUI : Singleton<TurretUI>
         {
             m_statusText.text = $"제작하려면 [E]키를 {pressDuration}초 동안 눌러주세요. ";
 
-            PrograssBarImg.fillAmount = 0f;
+            ProgressBarImg.fillAmount = 0f;
         }
     }
     private void StartBuilding(TurretSo so)
@@ -237,10 +263,11 @@ public class TurretUI : Singleton<TurretUI>
         builtTimer = so.buildingTime;
 
         m_statusText.text = $"제작중 {builtTimer}";
-        PrograssBarImg.fillAmount = 1f;
+        ProgressBarImg.fillAmount = 1f;
         foreach (var btn in turretButtons)
         {
-            btn.interactable = false;
+            btn.interactable = false
+            ;
         }
     }
     public void DisplayTurretDetail(TurretSo data)
@@ -249,6 +276,7 @@ public class TurretUI : Singleton<TurretUI>
 
         turretImg.sprite = data.TurretImg;
         turretName.text = data.TurretName;
+        turretRequiedTime.text = $"{data.buildingTime} Seconds";
         turretDesc.text = $"타워 상세정보 : {data.TurretDesc}초 \n 공격력: {data.Atk} \n 사거리 : {data.distance} %";
 
         // 기존에 있던 RequireItem 오브젝트 제거
@@ -293,9 +321,15 @@ public class TurretUI : Singleton<TurretUI>
     //수확
     private void Build()
     {
+        if (!GameTimer.IsDay) return; //낮이 아니면
+
+        if (isBuiltOnce) return;
+        isBuiltOnce = true;
+
         var turretSo = currentTile.GetBuiltTurret();
         if (turretSo == null) return;
-        var go = Instantiate(turretSo.turretPrefab, currentTile.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+
+        var go = Instantiate(turretSo.turretPrefab, currentTile.transform.position + Vector3.up * 0.1f, Quaternion.identity);
 
         var turret = go.GetComponent<Turret>();
         if (turret != null)
@@ -307,8 +341,8 @@ public class TurretUI : Singleton<TurretUI>
 
         //초기화
         builtTimer = 0f;
-        PrograssBarImg.fillAmount = 0f;
-        m_statusText.text = $"";
+        ProgressBarImg.fillAmount = 0f;
+        m_statusText.text = $"설치 완료된 타일입니다.";
 
         // foreach (var btn in turretButtons)
         // {
@@ -317,9 +351,9 @@ public class TurretUI : Singleton<TurretUI>
     }
 
     //재료 아이템 체크
-    private bool HasRequiredItems()
+    private bool HasRequiredItems(TurretSo so)
     {
-        foreach (var req in selectedTurret.RequireItems)
+        foreach (var req in so.RequireItems)
         {
             if (req.ItemName == ItemEnName.None) continue;
 
