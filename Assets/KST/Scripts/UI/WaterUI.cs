@@ -79,12 +79,14 @@ public class WaterUI : Singleton<WaterUI>
             float remain = currentTile.GetRemainingWaterTime();
 
             m_statusText.text = $"급수중 {FormatingTime.FormatMinTime(remain)}";
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
             ProgressBarImg.fillAmount = 1f;
             return;
         }
         if (currentTile.IsWatered())
         {
             m_statusText.text = "급수 완료! [E]키를 누르세요";
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CEF8F", Color.green);
             ProgressBarImg.fillAmount = 1f;
 
             if (m_isIneractionKeyPressed)
@@ -171,14 +173,14 @@ public class WaterUI : Singleton<WaterUI>
             return; // 인벤에 예외 발생시.
         }
 
-
+        ProgressBarImg.color = ColorUtil.Hexcode("#865A5A", Color.red);
         currentTile.EndWatering();
         ProgressBarImg.fillAmount = 0f;
-        m_statusText.text = "수확 완료!";
+        m_statusText.text = "[E]키를 눌러서 급수하세요.";
         pressTimer = 0f;
         isPressingE = false;
     }
-    
+
 
     private bool AddInventory()
     {

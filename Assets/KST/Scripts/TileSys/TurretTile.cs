@@ -93,7 +93,7 @@ public class TurretTile : Tile
         m_isPlayerOnTurretTile = true;
 
         var currentTool = player.CurrentTool;
-        if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
+        if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Hammer)
             InteractUiText.SetActive(true);
         else
             InteractUiText.SetActive(false);
