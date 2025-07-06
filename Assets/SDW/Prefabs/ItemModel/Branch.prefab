@@ -48,7 +48,18 @@ MonoBehaviour:
   complexMaskingMode: 0
   drawingMode: 1
   outlineLayer: 0
-  outlineTargets: []
+  outlineTargets:
+  - CutoutMask: 0
+    renderer: {fileID: 1404491782510347132}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    CutoutThreshold: 0.5
+    CullMode: 0
+    cutoutTextureName: 
+    cutoutTextureIndex: 0
   renderStyle: 1
   outlineParameters:
     enabled: 1
@@ -92,7 +103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4556319141443578, guid: 7135daec5c9f4834bb09e3b1683b9746, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.029
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4556319141443578, guid: 7135daec5c9f4834bb09e3b1683b9746, type: 3}
       propertyPath: m_LocalPosition.z
@@ -157,6 +168,12 @@ MonoBehaviour:
 --- !u!4 &1386005737740031966 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4556319141443578, guid: 7135daec5c9f4834bb09e3b1683b9746,
+    type: 3}
+  m_PrefabInstance: {fileID: 1381544137165987876}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1404491782510347132 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 23075205906785112, guid: 7135daec5c9f4834bb09e3b1683b9746,
     type: 3}
   m_PrefabInstance: {fileID: 1381544137165987876}
   m_PrefabAsset: {fileID: 0}
