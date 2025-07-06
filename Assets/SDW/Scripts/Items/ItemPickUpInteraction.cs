@@ -52,6 +52,7 @@ public class ItemPickUpInteraction : PickUpInteraction
         //# 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0)
         {
+            sceneItem.SetOutline(false);
             GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
             GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
             // m_interaction.SetTextObject(false);

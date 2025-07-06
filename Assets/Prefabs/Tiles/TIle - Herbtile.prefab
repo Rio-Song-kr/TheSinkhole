@@ -747,7 +747,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4958682583173902, guid: efed0d9bfc3a06841bdac6f14c559c13, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.632885
+      value: 0.494
       objectReference: {fileID: 0}
     - target: {fileID: 4958682583173902, guid: efed0d9bfc3a06841bdac6f14c559c13, type: 3}
       propertyPath: m_LocalPosition.z
@@ -838,11 +838,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4530720403909628, guid: 38a679cbf2c60174f878721348dc3381, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.323001
+      value: 0.28
       objectReference: {fileID: 0}
     - target: {fileID: 4530720403909628, guid: 38a679cbf2c60174f878721348dc3381, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.547892
+      value: -0.7001
       objectReference: {fileID: 0}
     - target: {fileID: 4530720403909628, guid: 38a679cbf2c60174f878721348dc3381, type: 3}
       propertyPath: m_LocalRotation.w
@@ -919,6 +919,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8456068263226584163}
     m_Modifications:
+    - target: {fileID: 4563272088755017235, guid: 3078c73f94cda234099546aa9ac0ca1f,
+        type: 3}
+      propertyPath: ItemEnName
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4643656682970552222, guid: 3078c73f94cda234099546aa9ac0ca1f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1026,7 +1031,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

@@ -49,7 +49,6 @@ public class ResourceItemPickUpInteraction : PickUpInteraction
 
         //# Outline On
         sceneItem.SetOutline(true);
-        m_prevSceneItem = sceneItem;
 
         if (!m_isInteractionKeyPressed) return;
 
@@ -58,8 +57,9 @@ public class ResourceItemPickUpInteraction : PickUpInteraction
         //# 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0)
         {
+            sceneItem.SetOutline(false);
             sceneItem.gameObject.SetActive(false);
-            // m_interaction.SetTextObject(false);
+            StartCoroutine(Respawn(sceneItem.gameObject));
         }
         else if (remainingAmount < sceneItem.ItemAmount)
         {
@@ -76,9 +76,9 @@ public class ResourceItemPickUpInteraction : PickUpInteraction
         }
     }
 
-    private IEnumerator Respawn()
+    private IEnumerator Respawn(GameObject sceneItemObject)
     {
         yield return m_respawnTime;
-        m_prevSceneItem.gameObject.SetActive(true);
+        sceneItemObject.SetActive(true);
     }
 }
