@@ -27,17 +27,21 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public MonsterManager Monster { get; private set; }
 
+    /// <summary>
+    /// 타일을 관리하는 매니저
+    /// </summary>
     public TileManager Tile { get; private set; }
 
-    public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
+    /// <summary>
+    /// 쉘터 데이터를 관리하는 매니저
+    /// </summary>
+    public ShelterManager Shelter { get; private set; }
 
-    private bool m_isDay = GameTimer.IsDay;
+    public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     /// <summary>
     /// 낮 또는 방의 상태를 나타내기 위한 프로퍼티
     /// </summary>
-    public bool IsDay => m_isDay;
-
     private bool m_isGameOver;
 
     /// <summary>
@@ -76,6 +80,7 @@ public class GameManager : MonoBehaviour
         Item = GetComponent<ItemManager>();
         Monster = GetComponent<MonsterManager>();
         Tile = GetComponent<TileManager>();
+        Shelter = GetComponent<ShelterManager>();
     }
 
     private void Start()
