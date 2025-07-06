@@ -43,6 +43,9 @@ public class PopupInfoUI : MonoBehaviour
             case PopupType.NoneTile:
                 m_popupText.text = "미개척지입니다.\n곡괭이가 필요합니다.";
                 break;
+            case PopupType.NeedTool:
+                m_popupText.text = "개척지입니다.\n다른 도구가 필요합니다.";
+                break;
             case PopupType.NeedFarmable:
                 m_popupText.text = "경작지입니다.\n삽이 필요합니다.";
                 break;
@@ -75,6 +78,9 @@ public class PopupInfoUI : MonoBehaviour
                 break;
             case PopupType.CantInteract:
                 m_popupText.text = "현재는 상호작용이 불가능합니다.";
+                break;
+             case PopupType.CantBuildTurret:
+                m_popupText.text = "현재는 터렛 설치가 불가능합니다.";
                 break;
         }
 

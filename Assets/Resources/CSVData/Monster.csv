@@ -1,9 +1,9 @@
 몬스터 고유 ID,몬스터 이름,몬스터 영어 이름,객체의 종류 구분(몬스터, 터렛 등),몬스터 체력,몬스터 속도,몬스터 공격 유형(원/근),몬스터 공격력,몬스터 공격속도,몬스터의 공격 사거리 (m),몬스터가 적을 인식하는 범위 (m),드롭 아이템 ID,자원 획득 가능 개수,설명란
 MonsterId,MonsterName,MonsterEnName,MonterType,MonsterHP,MonsterSpeed,MonsterAtkType,MonsterAttack,MonsterAtkSpeed,MonsterAtkRange,MonsterResearch,ItemId,Quantity,Description
 int,String,String,String,int,int,Stirng,int,float,float,float,String,int,String
-10100,새끼 거미,BabySpider,NormalMonster,10,3,근거리,5,2,4,5,20106,1,아직 다 자라지 않은 새끼 거미다.
-10200,일반 거미,Spider,RareMonster,100,3,근거리,10,2,4,5,20106,2,다 자란 거미. 독니에 물리면 희망은 사라질 것이다.
-10300,강화 거미,HighSpider,UniqueMonster,200,3,근거리,15,2,4,5,20108,2,지하에서 변이된 거미. 마주치면 도망가는 게 현명할 것 같다.
-10400,새끼 웜,LittleWorm,NormalMonster,10,3,근거리,5,2,4,5,20107,1,아직은 귀여운 크기의 웜이다.
-10500,일반 웜,Worm,RareMonster,100,3,근거리,10,2,4,5,20107,2,잘못하다간 신체의 일부는 금방 사라질 크기의 웜이다.
-10600,보스 웜,BossWorm,UniqueMonster,500,3,근거리,25,2,4,5,20302,1,지하를 통으로 집어삼킬 크기의 악몽이다.
+10100,새끼 거미,BabySpider,NormalMonster,10,3,근거리,5,2,10,5,20106,1,아직 다 자라지 않은 새끼 거미다.
+10200,일반 거미,Spider,RareMonster,100,3,근거리,10,2,10,5,20106,2,다 자란 거미. 독니에 물리면 희망은 사라질 것이다.
+10300,강화 거미,HighSpider,UniqueMonster,200,3,근거리,15,2,10,5,20108,2,지하에서 변이된 거미. 마주치면 도망가는 게 현명할 것 같다.
+10400,새끼 웜,LittleWorm,NormalMonster,10,3,근거리,5,2,10,5,20107,1,아직은 귀여운 크기의 웜이다.
+10500,일반 웜,Worm,RareMonster,100,3,근거리,10,2,10,5,20107,2,잘못하다간 신체의 일부는 금방 사라질 크기의 웜이다.
+10600,보스 웜,BossWorm,UniqueMonster,500,3,근거리,25,2,10,5,20302,1,지하를 통으로 집어삼킬 크기의 악몽이다.

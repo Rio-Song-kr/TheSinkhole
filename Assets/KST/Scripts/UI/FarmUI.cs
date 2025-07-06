@@ -46,6 +46,7 @@ public class FarmUI : Singleton<FarmUI>
         ScrollViewSetting();
         m_statusText.text = "";
         ProgressBarImg.fillAmount = 0f;
+        FarmUIGO.SetActive(false);
     }
 
     private void Update()

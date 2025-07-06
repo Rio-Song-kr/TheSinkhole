@@ -16,6 +16,10 @@ public class TurretDectTrigger : MonoBehaviour
         sc.radius = distance;
     }
     //TODO: 여기서 몬스터 감지시, 해당 몬스터 HP컴포넌트 획득 하기.
+    public void SetDistance(float range)
+    {
+        sc.radius = range;
+    }
     void OnTriggerStay(Collider other)
     {
 

@@ -3,9 +3,9 @@ using UnityEngine;
 public class TurretTile : Tile
 {
     [Header("Status")]
-    [SerializeField] private bool m_isBuild; //터렛 설치되어 있으면 true, 아니면 false
+    [SerializeField] private bool m_isTurretBuilt; //터렛 설치되어 있으면 true, 아니면 false
     [SerializeField] private bool m_isPlayerOnTurretTile; //터렛타일에 플레이어가 있으면 true, 없으면 false
-    public bool IsBuild() => m_isBuild;
+    public bool IsBuild() => m_isTurretBuilt;
     public bool IsPlayerOnTile() => m_isPlayerOnTurretTile;
 
     [Header("UI")]
@@ -15,11 +15,11 @@ public class TurretTile : Tile
     public float m_awakeTime;
 
     //Turret
-    [SerializeField] private TurretSo builtTurret;
-    [SerializeField] private float installTimer = 0f;
-    private bool isInstalling = false;
-    public TurretSo GetBuiltTurret() => builtTurret;
-    public float GetRemainingInstallTime() => installTimer;
+    [SerializeField] private TurretSo builtTurretSo; 
+    [SerializeField] private float m_remainingBuildTime = 0f; //설치까지 남은 시간
+    private bool isInstalling = false; // 현재 설치 중인지 여부
+    public TurretSo GetBuiltTurret() => builtTurretSo;
+    public float GetRemainingInstallTime() => m_remainingBuildTime;
     public bool IsInstalling() => isInstalling;
 
     private void Awake() => m_awakeTime = Time.time;
@@ -38,12 +38,12 @@ public class TurretTile : Tile
 
     private void Update()
     {
-        if (!isInstalling || builtTurret == null) return;
+        if (!isInstalling || builtTurretSo == null) return;
 
-        installTimer -= Time.deltaTime;
-        if (installTimer <= 0f)
+        m_remainingBuildTime -= Time.deltaTime;
+        if (m_remainingBuildTime <= 0f)
         {
-            installTimer = 0f;
+            m_remainingBuildTime = 0f;
             isInstalling = false;
         }
     }
@@ -58,8 +58,8 @@ public class TurretTile : Tile
     {
         if (toolType == ToolType.None) return;
 
-        TurretUI.Instance.OpenUI();
-        // TurretUI.Instance.SetTile(this);
+        TurretUI.Instance.OpenUI(this);
+        TurretUI.Instance.SetTile(this);
         InteractUiText.SetActive(false);
     }
     private void SetInteraction(bool _status) => InteractUiText.SetActive(_status);
@@ -69,54 +69,47 @@ public class TurretTile : Tile
     //터렛 설치 메서드
     public void StartBuiltTurret(TurretSo so)
     {
-        builtTurret = so;
-        installTimer = so.buildingTime;
+        if (m_isTurretBuilt) return;
+        builtTurretSo = so;
+        m_remainingBuildTime = so.buildingTime;
         isInstalling = true;
-        m_isBuild = true;
+        m_isTurretBuilt = true;
     }
 
+    //터렛 설치 완료 메서드
     public void EndBuilding()
     {
         isInstalling = false;
-        builtTurret = null;
-        installTimer = 0f;
+        // builtTurretSo = null;
+        m_remainingBuildTime = 0f;
     }
 
 
 
     #region 충돌처리
-
-    private void OnTriggerStay(Collider other)
+    public override void OnTileInteractionStay(Interaction player)
     {
-        if (other.CompareTag("Player"))
-        {
-            m_isPlayerOnTurretTile = true;
-            if (!TurretUI.Instance.GetActiveself())
-            {
-                InteractUiText.SetActive(true);
-            }
-            var player = other.GetComponent<Interaction>();
-            player?.RegisterTrigger(this);
-        }
-    }
+        if (Time.time - m_awakeTime < m_interactDelay) return;
+        m_isPlayerOnTurretTile = true;
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            m_isPlayerOnTurretTile = false;
+        var currentTool = player.CurrentTool;
+        if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
+            InteractUiText.SetActive(true);
+        else
             InteractUiText.SetActive(false);
-            var player = other.GetComponent<Interaction>();
-            player?.ClearTrigger(this);
-        }
+
+        player?.RegisterTrigger(this);
     }
+
+    public override void OnTileInteractionExit(Interaction player)
+    {
+        m_isPlayerOnTurretTile = false;
+        InteractUiText.SetActive(false);
+        player?.ClearTrigger(this);
+    }
+    
 
     #endregion
 
-    public override void OnTileInteractionStay(Interaction player)
-    {
-    }
-    public override void OnTileInteractionExit(Interaction player)
-    {
-    }
+    
 }

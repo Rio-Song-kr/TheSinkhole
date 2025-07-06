@@ -21,6 +21,7 @@ public class SceneMonster : MonoBehaviour
     private Transform m_prevTargetTransform;
     private Transform m_playerTransform;
     private Transform m_fenceTransform;
+
     private MonsterState m_monsterState = MonsterState.Walk;
 
     private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
@@ -50,25 +51,34 @@ public class SceneMonster : MonoBehaviour
 
     private void Update()
     {
-        if (!m_monster.IsAlive || GameManager.Instance.IsGameOver)
+        if (!m_monster.IsAlive)
         {
-            var stateInfo = m_monsterAnimator.GetState();
-
             m_monsterAnimator.SetAttack(false);
             m_monsterAnimator.SetWalk(false);
 
-            if (m_monster.IsAlive)
-            {
-                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
-                return;
-            }
-
+            var stateInfo = m_monsterAnimator.GetState();
             if (stateInfo.IsName("Exit") || stateInfo.IsName("Die") && stateInfo.normalizedTime >= 1.0f)
-                GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
+            {
+                var itemEnName = GameManager.Instance.Item.ItemIdEnName[MonsterDataSO.MonsterDropItemId];
+                var item = GameManager.Instance.Item.ItemPools[itemEnName].Pool.Get();
+                item.ItemAmount = MonsterDataSO.MonsterDropItemQuantity;
+                item.transform.position = transform.position;
+
+                ReturnToPool();
+            }
+            return;
+        }
+
+        if (GameManager.Instance.IsGameOver)
+        {
+            ReturnToPool();
+
             return;
         }
 
         m_targetTransform = FindTarget();
+
+        if (m_targetTransform == null) return;
 
         bool isTargetClose = IsTargetClose();
 
@@ -80,11 +90,14 @@ public class SceneMonster : MonoBehaviour
             case MonsterState.Attack:
                 HandleAttack(isTargetClose);
                 break;
-            case MonsterState.Hit:
-                break;
-            case MonsterState.Die:
-                break;
         }
+    }
+
+    private void ReturnToPool()
+    {
+        transform.position = Vector3.down * 50;
+        m_navMeshAgent.enabled = false;
+        GameManager.Instance.Monster.MonsterPools[MonsterDataSO.MonsterEnName].Pool.Release(this);
     }
 
     /// <summary>
@@ -94,7 +107,7 @@ public class SceneMonster : MonoBehaviour
     {
         if (m_monster == null)
             m_monster = GetComponentInChildren<Monster>();
-        m_fenceTransform = GameObject.FindWithTag("Fence").transform;
+        m_fenceTransform = GameObject.FindWithTag("Fence")?.transform;
 
         if (m_fenceTransform == null)
         {
@@ -113,6 +126,8 @@ public class SceneMonster : MonoBehaviour
         m_monster.MonsterHealth = MonsterDataSO.MaxMonsterHealth;
         m_monster.MonsterSpeed = MonsterDataSO.MaxMonsterSpeed;
 
+        m_monsterState = MonsterState.Walk;
+
         m_monster.OnAttack += OnAttack;
         m_monster.OnDie += OnDie;
         m_monster.OnTakenDamaged += OnTakenDamaged;
@@ -128,7 +143,7 @@ public class SceneMonster : MonoBehaviour
         if (NavMesh.SamplePosition(transform.position, out var hit, 3f, NavMesh.AllAreas))
         {
             m_navMeshAgent.Warp(hit.position);
-            m_navMeshAgent.stoppingDistance = MonsterDataSO.MonsterAtkRange - 1f;
+            m_navMeshAgent.stoppingDistance = 3f;
             // m_navMeshAgent.Resume();
             StartCoroutine(UpdatePath());
 
@@ -148,11 +163,12 @@ public class SceneMonster : MonoBehaviour
     private bool IsTargetClose()
     {
         // 몬스터와 타겟 경계 간의 최소 거리 계산
-        if (m_targetTransform == null) return false;
+        if (m_targetTransform == null || m_targetCollider == null) return false;
 
         var closestPoint = m_targetCollider.ClosestPoint(transform.position);
 
         float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
+
         return distanceToBoundary <= m_navMeshAgent.stoppingDistance;
     }
 
@@ -212,6 +228,7 @@ public class SceneMonster : MonoBehaviour
         else
         {
             m_monsterAnimator.SetAttack(false);
+
             m_monsterState = MonsterState.Walk;
         }
     }
@@ -238,7 +255,7 @@ public class SceneMonster : MonoBehaviour
     /// <returns>타겟의 Transform을 반환</returns>
     private Transform FindTarget()
     {
-        Transform targetTransform;
+        var targetTransform = m_targetTransform;
 
         //# 플레이어가 Fence에 있으면 Fence를 향해 걸어감
         if (IsPlayerStayInFence())
@@ -249,7 +266,11 @@ public class SceneMonster : MonoBehaviour
                 GameManager.Instance.SetGameOver();
                 return null;
             }
-            targetTransform = m_fenceTransform.transform;
+
+            if (targetTransform != m_fenceTransform)
+                m_monsterState = MonsterState.Walk;
+
+            targetTransform = m_fenceTransform;
             return targetTransform;
         }
 
@@ -263,9 +284,15 @@ public class SceneMonster : MonoBehaviour
                 return null;
             }
 
-            targetTransform = m_fenceTransform.transform;
+            if (targetTransform != m_fenceTransform)
+                m_monsterState = MonsterState.Walk;
+
+            targetTransform = m_fenceTransform;
             return targetTransform;
         }
+
+        if (targetTransform != m_playerTransform)
+            m_monsterState = MonsterState.Walk;
 
         targetTransform = m_playerTransform;
 
