@@ -16,7 +16,7 @@ public class WaterTile : Tile
     [Header("Water")]
     private bool m_isWatering = false;
     [SerializeField] private float m_waterTimer = 0f;
-    [SerializeField] private float m_waterDuration =5f;
+    [SerializeField] private float m_waterDuration = 60f;
     public bool IsWatering() => m_isWatering;
     // public float GetWaterDuration() => m_waterDuration;
     public float GetRemainingWaterTime() => m_waterTimer;
@@ -50,7 +50,7 @@ public class WaterTile : Tile
     #region 상호작용 인터페이스 구현
     public override interactType GetInteractType() => interactType.PressE;
 
-    public override bool CanInteract(ToolType toolType) => 
+    public override bool CanInteract(ToolType toolType) =>
         m_isPlayerOnWaterTile && toolType == ToolType.Water;
 
     public override void OnInteract(ToolType toolType)
@@ -63,7 +63,7 @@ public class WaterTile : Tile
             InteractUiText.SetActive(false);
         }
     }
-    
+
     private void SetInteraction(bool status) => InteractUiText.SetActive(status);
 
     #endregion
@@ -105,6 +105,6 @@ public class WaterTile : Tile
         InteractUiText.SetActive(false);
         player?.ClearTrigger(this);
     }
-    
+
     #endregion
 }

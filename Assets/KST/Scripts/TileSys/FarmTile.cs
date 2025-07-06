@@ -53,7 +53,7 @@ public class FarmTile : Tile
     #region 상호작용 인터페이스 구현
     public override interactType GetInteractType() => interactType.PressE;
 
-    public override bool CanInteract(ToolType toolType) => 
+    public override bool CanInteract(ToolType toolType) =>
         m_isPlayerOnFarmTile && toolType == ToolType.Shovel;
 
     public override void OnInteract(ToolType toolType)
@@ -66,7 +66,7 @@ public class FarmTile : Tile
             InteractUiText.SetActive(false);
         }
     }
-    
+
     private void SetInteraction(bool status) => InteractUiText.SetActive(status);
 
     #endregion
@@ -110,6 +110,6 @@ public class FarmTile : Tile
         InteractUiText.SetActive(false);
         player?.ClearTrigger(this);
     }
-    
+
     #endregion
 }

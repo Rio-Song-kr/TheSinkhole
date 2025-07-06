@@ -105,7 +105,8 @@ public class TurretUI : Singleton<TurretUI>
                 Debug.Log($"isPressingE : {isPressingE}");
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
-                m_statusText.text = $"개척 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
+                m_statusText.text = $"설치 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
+                ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
 
                 if (pressTimer >= pressDuration)
                 {
@@ -159,6 +160,7 @@ public class TurretUI : Singleton<TurretUI>
         {
             m_statusText.text = "설치 완료! 배치하려면 [E]키를 누르세요";
             ProgressBarImg.fillAmount = 1f;
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CEF8F", Color.green);
 
             if (m_isIneractionKeyPressed)
             {
@@ -202,7 +204,7 @@ public class TurretUI : Singleton<TurretUI>
         if (!GameTimer.IsDay) return;
 
         currentTile = tile;
-        selectedTurret = null;
+        // selectedTurret = null;
         pressTimer = 0f;
         isPressingE = false;
         isBuiltOnce = tile.IsBuild();
@@ -342,6 +344,7 @@ public class TurretUI : Singleton<TurretUI>
         //초기화
         builtTimer = 0f;
         ProgressBarImg.fillAmount = 0f;
+        ProgressBarImg.color = ColorUtil.Hexcode("#865A5A", Color.red);
         m_statusText.text = $"설치 완료된 타일입니다.";
 
         // foreach (var btn in turretButtons)

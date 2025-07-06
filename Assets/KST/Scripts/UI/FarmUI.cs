@@ -15,6 +15,7 @@ public class FarmUI : Singleton<FarmUI>
     [SerializeField] private Image cropImg;
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
+    [SerializeField] private TMP_Text cropRequireTime;
     [SerializeField] private TMP_Text m_statusText;
     public Image ProgressBarImg;
 
@@ -68,7 +69,7 @@ public class FarmUI : Singleton<FarmUI>
             {
                 CancelPlanting();
             }
-                
+
             if (m_isIneractionKeyPressed)
             {
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.CantPlant);
@@ -117,11 +118,13 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile.IsGrowing())
         {
             m_statusText.text = $"재배중 {FormatingTime.FormatMinTime(remain)}";
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
             ProgressBarImg.fillAmount = 1f;
         }
         else
         {
             m_statusText.text = "재배 완료! 수확하려면 [E]키를 누르세요";
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CEF8F", Color.green);
             ProgressBarImg.fillAmount = 1f;
 
             if (m_isIneractionKeyPressed)
@@ -225,7 +228,8 @@ public class FarmUI : Singleton<FarmUI>
 
         cropImg.sprite = data.cropImg;
         cropName.text = data.cropName;
-        cropDesc.text = $"소요 시간 : {data.growTime}초 \n {data.cropDesc} \n 배고픔 : {data.cropEffect} %";
+        cropRequireTime.text = $"{data.growTime} Seconds";
+        cropDesc.text = $" ● 설명{data.cropDesc} \n ● 효과: {data.cropEffect}";
     }
 
     public void ScrollViewSetting()
@@ -253,7 +257,9 @@ public class FarmUI : Singleton<FarmUI>
 
         currentTile.HarvestingCrop();
         ProgressBarImg.fillAmount = 0f;
-        m_statusText.text = "수확 완료!";
+        ProgressBarImg.color = ColorUtil.Hexcode("#865A5A", Color.red);
+
+        m_statusText.text = "재배하기 [E]키를 5초 동안 눌러주세요";
 
         foreach (var btn in cropButtons)
             btn.interactable = true;
