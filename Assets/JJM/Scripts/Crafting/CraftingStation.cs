@@ -60,28 +60,28 @@ namespace CraftingSystem
                 // 이 제작대 타입에 맞는 레시피만 전달
                 var filtered = availableRecipes.FindAll(r => r.stationType == stationType);
 
-                //todo ItemRecipeManager에서 station id로 recipe 목록 읽어오기
-                var recipes = new List<CraftingRecipe>();
-
-                foreach (int itemId in GameManager.Instance.Recipe.StationIdRecipeList[stationType])
-                {
-                    int recipeId = GameManager.Instance.Recipe.ItemIdToRecipeId[itemId];
-                    var recipeDatas = GameManager.Instance.Recipe.RecipeIdData[recipeId];
-
-                    foreach (var recipeData in recipeDatas)
-                    {
-                        int resultId = GameManager.Instance.Recipe.ItemIdToRecipeId[recipeData.RecipeId];
-                        var resultItemEnName = GameManager.Instance.Item.ItemIdEnName[resultId];
-
-                        var recipe = ScriptableObject.CreateInstance<CraftingRecipe>();
-                        recipe.craftingTime = 5f;
-                        recipe.icon = GameManager.Instance.Item.ItemEnDataSO[resultItemEnName].Icon;
-
-                        //todo 기타 데이터 연결해야 함
-
-                        recipes.Add(recipe);
-                    }
-                }
+                // //todo ItemRecipeManager에서 station id로 recipe 목록 읽어오기
+                // var recipes = new List<CraftingRecipe>();
+                //
+                // foreach (int itemId in GameManager.Instance.Recipe.StationIdRecipeList[stationType])
+                // {
+                //     int recipeId = GameManager.Instance.Recipe.ItemIdToRecipeId[itemId];
+                //     var recipeDatas = GameManager.Instance.Recipe.RecipeIdData[recipeId];
+                //
+                //     foreach (var recipeData in recipeDatas)
+                //     {
+                //         int resultId = GameManager.Instance.Recipe.ItemIdToRecipeId[recipeData.RecipeId];
+                //         var resultItemEnName = GameManager.Instance.Item.ItemIdEnName[resultId];
+                //
+                //         var recipe = ScriptableObject.CreateInstance<CraftingRecipe>();
+                //         recipe.craftingTime = 5f;
+                //         recipe.icon = GameManager.Instance.Item.ItemEnDataSO[resultItemEnName].Icon;
+                //
+                //         //todo 기타 데이터 연결해야 함
+                //
+                //         recipes.Add(recipe);
+                //     }
+                // }
 
                 //todo recipe 목록 -> CraftingRecipe 생성(List에 추가) 후 전달
                 resourcesPanelController.SetRecipeList(filtered); // ResultPanelController의 메서드 사용
