@@ -100,19 +100,15 @@ public class Inventory : MonoBehaviour, ISaveable
     /// <param name="selectedIndex">선택할 슬롯 인덱스</param>
     private void SelectQuickSlot(int selectedIndex)
     {
-        OnSelectedItemChanged?.Invoke(selectedIndex);
-
-        if (m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO == null) return;
+        if (m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO == null)
+        {
+            OnSelectedItemChanged?.Invoke(selectedIndex);
+            return;
+        }
 
         m_quickSlotItemData = m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO;
         m_selectedItemEnName = m_quickSlotItemData.ItemEnName;
         m_quickSlotItemType = m_quickSlotItemData.ItemType;
-
-        if (m_quickSlotItemData.ItemType != ItemType.ToolItem)
-        {
-            m_quickSlotItemToolType = ToolType.None;
-            return;
-        }
 
         switch (m_selectedItemEnName)
         {
@@ -128,7 +124,12 @@ public class Inventory : MonoBehaviour, ISaveable
             case ItemEnName.Pail:
                 m_quickSlotItemToolType = ToolType.Water;
                 break;
+            default:
+                m_quickSlotItemToolType = ToolType.None;
+                break;
         }
+
+        OnSelectedItemChanged?.Invoke(selectedIndex);
     }
 
     /// <summary>

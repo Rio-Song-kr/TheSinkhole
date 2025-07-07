@@ -1,14 +1,17 @@
 ﻿효과 고유 ID,효과명,효과명 영명,효과 타입,효과 적용 시 변동되는 스탯,효과 적용 시 발생하는 스탯 변동량 (%),게임 내에서 사용될 효과 설명란
 EffecId,EffectName,EffectEnName,StatusType,StatusId,StatusAmount(%),EffectText
 int,String,String,String,int,float,String
-35001,개척 시 배고픔 감소,ExploitationHungry,Hungry,3,-0.1,땅을 파내니 배가 고파오는 것 같다…
-35002,개척 시 갈증 감소,ExploitationThirst,Thirst,4,-0.05,땅을 파내니 목이 말라오는 것 같다…
 30001,붕대 체력 회복,BandageHP,Hp,1,0.25,붕대로 상처를 치료하자 피가 멎었다.
 30002,감자 배고픔 회복,PotatoHungry,Hungry,3,0.1,감자는 기본적인 식량 중 하나이다.
 30003,담배 정신력 회복,TobaccoMental,Mental,2,0.25,담배를 피우니 정신이 또렷해진다.
 35003,터렛 설치 배고픔 감소,TurretHungry,Hungry,3,-0.5,터렛을 설치하니 극심한 배고픔이 몰려온다.
+30004,작물 심기 정신력 회복,FarmingMental,Mental,2,0.15,농사를 하니 잡념에서 벗어났다.
+30005,물 섭취시 갈증 회복,DrinkThirst,Thirst,4,0.1,물을 마시니 갈증이 해소되는 듯하다.
+35001,개척 시 배고픔 감소,ExploitationHungry,Hungry,3,-0.1,땅을 파내니 배가 고파오는 것 같다…
+35002,개척 시 갈증 감소,ExploitationThirst,Thirst,4,-0.05,땅을 파내니 목이 말라오는 것 같다…
 35004,터렛 설치 갈증 감소,TurretThrist,Thirst,4,-0.25,터렛을 설치하니 목이 말라온다.
 35005,작물 심기 배고픔 감소,FarmingHungry,Hungry,3,-0.2,농사를 하니 배가 고파온다.
 35006,작물 심기 갈증 감소,FarmingThrist,Thirst,4,-0.1,농사를 하니 목이 말라온다.
-30004,작물 심기 정신력 회복,FarmingMental,Mental,2,0.15,농사를 하니 잡념에서 벗어났다.
-30005,물 섭취시 갈증 회복,DrinkThirst,Thirst,4,0.1,물을 마시니 갈증이 해소되는 듯하다.
+35007,배고픔 자연 감소,NaturalHungry,3,-0.15,현실 시간 1분마다 감소
+35008,갈증 자연 감소,NaturalThirst,4,-0.2,현실 시간 1분마다 감소
+35009,정신력 자연 감소,NaturalMental,2,-0.1,현실 시간 1분마다 감소

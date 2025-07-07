@@ -10,5 +10,6 @@ public enum InteractionType
     Shelter,
     Farm,
     Turret,
-    Water
+    Water,
+    ConsumableItem
 }
