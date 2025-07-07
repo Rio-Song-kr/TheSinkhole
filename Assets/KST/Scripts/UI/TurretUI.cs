@@ -30,7 +30,7 @@ public class TurretUI : Singleton<TurretUI>
 
     private float pressTimer = 0f;
     private float pressDuration = 5f;
-    private bool isPressingE = false;
+    // private bool isPressingE = false;
     //스크롤뷰
     [SerializeField] private GameObject turretBtnPrefab;
     [SerializeField] private Transform scrollViewContentPos; //스크롤뷰 컨텐츠 위치
@@ -101,8 +101,8 @@ public class TurretUI : Singleton<TurretUI>
                     return;
                 }
 
-                isPressingE = true;
-                Debug.Log($"isPressingE : {isPressingE}");
+                // isPressingE = true;
+                // Debug.Log($"isPressingE : {isPressingE}");
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
                 m_statusText.text = $"설치 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
@@ -111,7 +111,7 @@ public class TurretUI : Singleton<TurretUI>
                 if (pressTimer >= pressDuration)
                 {
                     pressTimer = 0f;
-                    isPressingE = false;
+                    // isPressingE = false;
 
                     if (!GameTimer.IsDay) return; // 낮이 아닐 경우
 
@@ -175,7 +175,7 @@ public class TurretUI : Singleton<TurretUI>
 
         pressTimer = 0f;
         ProgressBarImg.fillAmount = 0f;
-        isPressingE = false;
+        // isPressingE = false;
         m_statusText.text = $"제작하려면 [E]키를 {pressDuration}초 동안 눌러주세요. ";
     }
     public void SetTile(TurretTile tile)
@@ -206,7 +206,7 @@ public class TurretUI : Singleton<TurretUI>
         currentTile = tile;
         // selectedTurret = null;
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
         isBuiltOnce = tile.IsBuild();
 
         TurretUIGO.SetActive(true);

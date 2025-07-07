@@ -17,9 +17,11 @@ MonoBehaviour:
   TurretImg: {fileID: 21300000, guid: c7d46f6cad7224f19944e6471833be75, type: 3}
   TurretName: "\uD130\uB81B 1"
   TurretDesc: "\uD130\uB81B 1\uC5D0\uB300\uD55C \uC124\uBA85"
-  buildingTime: 1
+  buildingTime: 30
   RequireItems:
-  - ItemName: 0
-    RequireCount: 0
-  distance: 1
-  Atk: 1
+  - ItemName: 5
+    RequireCount: 12
+  - ItemName: 3
+    RequireCount: 17
+  distance: 10
+  Atk: 10
