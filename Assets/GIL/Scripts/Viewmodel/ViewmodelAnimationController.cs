@@ -40,16 +40,20 @@ public class ViewmodelAnimationController : MonoBehaviour
     {
         velocity = controller.velocity;
         velocity.y = 0f;
+        if (GameManager.Instance.IsCursorLocked == false)
+        {
+            SetIdle();
+        }
         if (velocity.magnitude < 0.1f)
         {
             SetIdle();
         }
-        else if (velocity.magnitude < 3.5f)
+        else if (velocity.magnitude < 3.5f && GameManager.Instance.IsCursorLocked == true)
         {
             SetWalking();
 
         }
-        else if (velocity.magnitude > 3.5f)
+        else if (velocity.magnitude > 3.5f && GameManager.Instance.IsCursorLocked == true)
         {
             SetSprinting();
         }
