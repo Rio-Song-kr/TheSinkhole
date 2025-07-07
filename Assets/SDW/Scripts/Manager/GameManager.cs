@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public EffectManager Effect { get; private set; }
 
+    /// <summary>
+    /// Recipe 데이터를 관리하는 매니저
+    /// </summary>
+    public ItemRecipeManager Recipe { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     /// <summary>
@@ -93,6 +98,7 @@ public class GameManager : MonoBehaviour
         Shelter = GetComponent<ShelterManager>();
         Action = GetComponent<ActionManager>();
         Effect = GetComponent<EffectManager>();
+        Recipe = GetComponent<ItemRecipeManager>();
     }
 
     private void Start()

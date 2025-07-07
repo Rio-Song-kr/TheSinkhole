@@ -14,11 +14,11 @@ namespace CraftingSystem
         private CraftingRecipe recipe;
         private RecipePanelController panelController;
 
-        // ¹öÆ°¿¡ ·¹½ÃÇÇ Á¤º¸¿Í ÆÐ³Î ÄÁÆ®·Ñ·¯¸¦ ¼¼ÆÃ
+        // ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         public void Init(CraftingRecipe recipe, RecipePanelController panel)
         {
             this.recipe = recipe;
-            this.panelController = panel;
+            panelController = panel;
             recipeNameText.text = recipe.result.item.name;
 
             selectButton.onClick.RemoveAllListeners();
@@ -28,6 +28,11 @@ namespace CraftingSystem
         private void OnClickSelect()
         {
             panelController.SetRecipe(recipe);
+        }
+
+        private void OnDisable()
+        {
+            panelController.CloseRecipeUI();
         }
     }
 }
