@@ -69,7 +69,7 @@ public class ActionManager : MonoBehaviour
     }
 
     /// <summary>
-    /// CSV에서 읽어온 데이터를 ActionConsumedItemFileData구조체에 맞게 변환
+    /// CSV에서 읽어온 데이터를 ActionConsumedItemFileData 구조체에 맞게 변환
     /// </summary>
     /// <param name="lines">CSV 파일에서 읽어온 각 줄 데이터</param>
     /// <returns>각 열별로 구분된 ActionConsumedItemFileData</returns>
