@@ -63,7 +63,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
         if (!CanInteract(toolType)) return;
         if (Interaction.Instance.IsKeyPressed())
             if (!ExploitUI.Instance.IsOpen)
-                ExploitUI.Instance.OpenUI(this, toolType,tileState);
+                ExploitUI.Instance.OpenUI(this, toolType, tileState);
     }
 
     public void StartDevelop(float duration, Action onComplete)
@@ -179,6 +179,10 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
             case ToolType.Pick:
                 SetFrontier();
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Frontier);
+                if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50505, out var effect))
+                {
+                    GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
+                }
                 break;
             case ToolType.Shovel:
                 SetFarmable();

@@ -137,7 +137,7 @@ public class TurretUI : Singleton<TurretUI>
         }
     }
 
-     private void BuildingProgress()
+    private void BuildingProgress()
     {
         var turret = currentTile.GetBuiltTurret();
         DisplayTurretDetail(turret);
@@ -270,6 +270,11 @@ public class TurretUI : Singleton<TurretUI>
         {
             btn.interactable = false
             ;
+        }
+
+        if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50502, out var effect))
+        {
+            GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
         }
     }
     public void DisplayTurretDetail(TurretSo data)
