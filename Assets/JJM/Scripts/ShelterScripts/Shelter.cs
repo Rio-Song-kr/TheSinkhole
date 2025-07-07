@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shelter : MonoBehaviour, IDamageable
 {
@@ -10,6 +11,7 @@ public class Shelter : MonoBehaviour, IDamageable
     public int MaxDurability;
     public string ShelterName;
 
+    public Image durabilityImage;
     // public Shelter shelterObject; //쉘터 오브젝트
 
     private void Start()
@@ -22,7 +24,7 @@ public class Shelter : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        // ColorChange();
+        ColorChange();
     }
     //인터페이스 구현
     public void TakenDamage(int damage)
@@ -49,18 +51,18 @@ public class Shelter : MonoBehaviour, IDamageable
 
     public void ColorChange()
     {
-        //if(currentDurability >= maxDurability * 0.7)
-        //{
-        //    shelterObject.GetComponent<Renderer>().material.color = Color.green; //녹색
-        //}
-        //else if (currentDurability<= maxDurability * 0.7 && currentDurability >= maxDurability * 0.4)
-        //{
-        //    shelterObject.GetComponent<Renderer>().material.color = Color.yellow; //노란색
-        //}
-        //else if (currentDurability < maxDurability * 0.4)
-        //{
-        //    shelterObject.GetComponent<Renderer>().material.color = Color.red; //빨간색
-        //}
+        if (Durability >= MaxDurability * 0.7)
+        {
+            durabilityImage.GetComponent<Renderer>().material.color = Color.green; //녹색
+        }
+        else if (Durability <= MaxDurability * 0.7 && Durability >= MaxDurability * 0.4)
+        {
+            durabilityImage.GetComponent<Renderer>().material.color = Color.yellow; //노란색
+        }
+        else if (Durability < MaxDurability * 0.4)
+        {
+            durabilityImage.GetComponent<Renderer>().material.color = Color.red; //빨간색
+        }
     }
 
     private void OnShelterDestroyed()
