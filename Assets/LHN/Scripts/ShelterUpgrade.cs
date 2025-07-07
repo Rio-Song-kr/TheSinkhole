@@ -16,6 +16,11 @@ public class ShelterUpgrade : MonoBehaviour
 
     private UpgradeableObject m_upgradeableObject;
 
+
+    public ShelterUpgradeUI ShelterUpgradeUI;
+
+
+
     private void Awake()
     {
         m_inventory = GetComponent<Inventory>();
@@ -70,6 +75,10 @@ public class ShelterUpgrade : MonoBehaviour
         m_materials = new Dictionary<ItemEnName, List<int>>();
 
         //todo UI Open해야 함
+
+        ShelterUpgradeUI.gameObject.SetActive(true);
+        ShelterUpgradeUI.Show(m_materials, this);
+
 
 
         //todo m_upgradableObject에 관한 고민 필요
