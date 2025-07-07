@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,11 +71,14 @@ public class ShelterUpgradeUI : MonoBehaviour
             {
                 break;
             }
-            var name = keyValue.Key.ToString();
+            var enName = keyValue.Key;
             var have = keyValue.Value[0]; // 현재 재료 보유량
             var need = keyValue.Value[1]; // 업그레이드에 필요한 재료량
 
-            slots[i].Set(name, have, need); // 슬롯에 재료 정보 설정
+            var itemData = GameManager.Instance.Item.ItemEnDataSO[enName];
+
+            slots[i].Set(itemData.Icon, itemData.ItemEnName.ToString(), have, need); // 슬롯에 재료 정보 설정
+            slots[i].gameObject.SetActive(true);
             if (have < need) // 보유량이 필요한 양보다 적으면 업그레이드 불가능
             {
                 canUpgrade = false;
