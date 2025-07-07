@@ -62,7 +62,7 @@ public class ViewmodelManager : MonoBehaviour
         }
         catch (NullReferenceException n)
         {
-            ActivateSelectedToolOnly(3);
+            ActivateSelectedToolOnly(4);
             isAttakable = false;
             return;
         }
@@ -80,8 +80,12 @@ public class ViewmodelManager : MonoBehaviour
                 ActivateSelectedToolOnly(2);
                 isAttakable = true;
                 break;
-            default:
+            case 20308:
                 ActivateSelectedToolOnly(3);
+                isAttakable = false;
+                break;
+            default:
+                ActivateSelectedToolOnly(4);
                 isAttakable = false;
                 break;
         }
