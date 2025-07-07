@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Globalization;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 public class GameTimer : MonoBehaviour
 {
@@ -19,12 +21,15 @@ public class GameTimer : MonoBehaviour
     public static int Day;
     public static bool IsDay = true;
 
+    private float m_RealtimeCount = 0;
+
     private void Start()
     {
         // 게임 시작 시점 기록
         realStartTime = DateTime.Now;
         m_icon.sprite = m_daySprite;
     }
+
 
     private DateTime beforeTime = new DateTime(1, 1, 1, 6, 0, 0);
 
@@ -33,6 +38,7 @@ public class GameTimer : MonoBehaviour
         var now = DateTime.Now;
         var realElapsed = now - realStartTime;
         double gameSeconds = realElapsed.TotalSeconds * GameMultiplier;
+        m_RealtimeCount += Time.deltaTime;
 
         // 기준이 되는 6시부터 흐른 게임 시간 생성
         var gameTime = new DateTime(1, 1, 1, 6, 0, 0).AddSeconds(gameSeconds);
@@ -56,6 +62,12 @@ public class GameTimer : MonoBehaviour
             if (m_icon.sprite != m_nightSprite)
                 m_icon.sprite = m_nightSprite;
             IsDay = false;
+        }
+
+        if (m_RealtimeCount >= 60f)
+        {
+            PlayerStatus.Instance.OnRealTimeEffect();
+            m_RealtimeCount = 0;
         }
 
         gameTimeText.text = $"DAY {count:D2}       {gameTimeFormatted}";

@@ -155,7 +155,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     /// <param name="value">변화할 정신력의 퍼센트 float값</param>
     public void SetMentality(float value)
     {
-        float deltaValue = MaxHealth * value;
+        float deltaValue = MaxMentality * value;
         CurMentality += deltaValue;
         CurMentality = Mathf.Clamp(CurMentality, 0f, MaxMentality);
         // 정신력이 0이 될 경우 발생할 로직
@@ -292,18 +292,19 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public void OnInteractionKeyPressed() => HandleItemEffect();
 
-    private void OnRealTimeEffect()
+    public void OnRealTimeEffect()
     {
         //# 배고픔
         var hungerEffect = GameManager.Instance.Effect.EffectIdData[35007];
+        
         SetHunger(hungerEffect.StatusAmount);
 
         //# 갈증
         var thirstyEffect = GameManager.Instance.Effect.EffectIdData[35008];
-        SetHunger(thirstyEffect.StatusAmount);
+        SetThirst(thirstyEffect.StatusAmount);
 
         //# 멘탈
         var mentalityEffect = GameManager.Instance.Effect.EffectIdData[35009];
-        SetHunger(mentalityEffect.StatusAmount);
+        SetMentality(mentalityEffect.StatusAmount);
     }
 }
