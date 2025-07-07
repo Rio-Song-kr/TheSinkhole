@@ -16,12 +16,12 @@ public class ItemRecipeManager : MonoBehaviour
     /// </summary>
     public Dictionary<int, List<ItemRecipeFileData>> RecipeIdData => m_recipeIdData;
 
-    private Dictionary<int, HashSet<int>> m_stationIdRecipeList;
+    private Dictionary<CraftingStationType, HashSet<int>> m_stationIdRecipeList;
 
     /// <summary>
     /// Station Id별 데이터
     /// </summary>
-    public Dictionary<int, HashSet<int>> StationIdRecipeList => m_stationIdRecipeList;
+    public Dictionary<CraftingStationType, HashSet<int>> StationIdRecipeList => m_stationIdRecipeList;
 
     private Dictionary<int, int> m_itemIdToRecipeId;
 
@@ -33,7 +33,7 @@ public class ItemRecipeManager : MonoBehaviour
     private void Awake()
     {
         m_recipeIdData = new Dictionary<int, List<ItemRecipeFileData>>();
-        m_stationIdRecipeList = new Dictionary<int, HashSet<int>>();
+        m_stationIdRecipeList = new Dictionary<CraftingStationType, HashSet<int>>();
 
         ItemRecipeInit();
 
@@ -42,31 +42,35 @@ public class ItemRecipeManager : MonoBehaviour
 
         foreach (var itemRecipe in itemRecipeList)
         {
-            if (!m_stationIdRecipeList.ContainsKey(itemRecipe.StationId))
-                m_stationIdRecipeList[itemRecipe.StationId] = new HashSet<int>();
+            var stationType = CraftingStationType.Processing;
+            if (itemRecipe.StationId == 20801) stationType = CraftingStationType.Processing;
+            else if (itemRecipe.StationId == 20802) stationType = CraftingStationType.Consume;
+            if (!m_stationIdRecipeList.ContainsKey(stationType))
+                m_stationIdRecipeList[stationType] = new HashSet<int>();
 
             if (!m_recipeIdData.ContainsKey(itemRecipe.RecipeId))
                 m_recipeIdData[itemRecipe.RecipeId] = new List<ItemRecipeFileData>();
 
-            m_stationIdRecipeList[itemRecipe.StationId].Add(itemRecipe.RecipeId);
+            m_stationIdRecipeList[stationType].Add(itemRecipe.RecipeId);
             m_recipeIdData[itemRecipe.RecipeId].Add(itemRecipe);
         }
     }
 
     /// <summary>
-    /// 만들 아이템의 ID와 고유 레시피 ID를 연결
+    /// 만들 고유 레시피 ID와 아이템의 ID를 연결
     /// 현재 수량은 1초, 제작 소요 시간은 5초 고정
     /// </summary>
     private void ItemRecipeInit()
     {
         m_itemIdToRecipeId = new Dictionary<int, int>();
-        m_itemIdToRecipeId[20109] = 20701;
-        m_itemIdToRecipeId[20110] = 20702;
-        m_itemIdToRecipeId[20112] = 20703;
-        m_itemIdToRecipeId[20301] = 20704;
-        m_itemIdToRecipeId[20114] = 20705;
-        m_itemIdToRecipeId[20305] = 20706;
-        m_itemIdToRecipeId[20302] = 20707;
+
+        m_itemIdToRecipeId[20701] = 20109;
+        m_itemIdToRecipeId[20702] = 20110;
+        m_itemIdToRecipeId[20703] = 20112;
+        m_itemIdToRecipeId[20704] = 20301;
+        m_itemIdToRecipeId[20705] = 20114;
+        m_itemIdToRecipeId[20706] = 20305;
+        m_itemIdToRecipeId[20707] = 20302;
     }
 
     /// <summary>
