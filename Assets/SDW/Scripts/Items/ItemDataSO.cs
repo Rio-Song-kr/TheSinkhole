@@ -26,10 +26,4 @@ public class ItemDataSO : ScriptableObject
         if (ItemMaxOwn < 1) ItemMaxOwn = 1;
         if (string.IsNullOrEmpty(ItemData.ItemName)) ItemData.ItemName = name;
     }
-
-    public Item CreateItem()
-    {
-        var item = new Item(this);
-        return item;
-    }
 }
