@@ -16,7 +16,8 @@ public class ShelterUpgrade : MonoBehaviour
 
     private UpgradeableObject m_upgradeableObject;
 
-   
+    public ShelterUpgradeUI ShelterUpgradeUI;
+
 
     private void Awake()
     {
@@ -72,13 +73,14 @@ public class ShelterUpgrade : MonoBehaviour
         m_materials = new Dictionary<ItemEnName, List<int>>();
 
         //todo UI Open해야 함
-        
-        
-        
-    //todo m_upgradableObject에 관한 고민 필요
-    //todo UI에서 업그레이드 아이템 이름, 보유 수량, 필요 수량을 가져오는 예시
-    //# Test
-    var testDict = GetMaterials();
+        ShelterUpgradeUI.gameObject.SetActive(true);
+        ShelterUpgradeUI.Show(m_materials, this);
+
+
+        //todo m_upgradableObject에 관한 고민 필요
+        //todo UI에서 업그레이드 아이템 이름, 보유 수량, 필요 수량을 가져오는 예시
+        //# Test
+        var testDict = GetMaterials();
         foreach (var test in testDict)
         {
             //todo test.Value 는 List임(0 - 현재 보유 수량, 1 - 필요 수량)
