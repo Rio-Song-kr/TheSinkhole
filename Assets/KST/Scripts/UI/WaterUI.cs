@@ -19,7 +19,7 @@ public class WaterUI : Singleton<WaterUI>
 
     private float pressTimer = 0f;
     private float pressDuration = 5f;
-    private bool isPressingE = false;
+    // private bool isPressingE = false;
 
     private static bool m_isIneractionKeyPressed;
     private static bool m_isEscapeKeyPressed;
@@ -99,7 +99,7 @@ public class WaterUI : Singleton<WaterUI>
 
         if (m_isIneractionKeyPressed)
         {
-            isPressingE = true;
+            // isPressingE = true;
             pressTimer += Time.deltaTime;
             ProgressBarImg.fillAmount = pressTimer / pressDuration;
             m_statusText.text = "급수 준비 중. . .";
@@ -121,7 +121,7 @@ public class WaterUI : Singleton<WaterUI>
 
         currentTile = tile;
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
 
         waterUIGO.SetActive(true);
         GameManager.Instance.SetCursorUnlock();
@@ -147,7 +147,7 @@ public class WaterUI : Singleton<WaterUI>
     {
         currentTile.StartWatering();
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
 
         m_statusText.text = "급수 시작됨";
         ProgressBarImg.fillAmount = 1f;
@@ -158,7 +158,7 @@ public class WaterUI : Singleton<WaterUI>
     {
         //상태 전부 초기화
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
         ProgressBarImg.fillAmount = 0f;
         m_statusText.text = "[E]키를 눌러서 급수하세요.";
     }
@@ -178,7 +178,7 @@ public class WaterUI : Singleton<WaterUI>
         ProgressBarImg.fillAmount = 0f;
         m_statusText.text = "[E]키를 눌러서 급수하세요.";
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
     }
 
 

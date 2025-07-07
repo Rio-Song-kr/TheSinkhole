@@ -100,7 +100,7 @@ public class ActionManager : MonoBehaviour
         m_actionIdEffect[50502].Add(35003);
         m_actionIdEffect[50502].Add(35004);
 
-        m_actionIdEffect[50501] = new List<int>();
+        m_actionIdEffect[50301] = new List<int>();
         m_actionIdEffect[50301].Add(35005);
         m_actionIdEffect[50301].Add(35006);
         m_actionIdEffect[50301].Add(30004);

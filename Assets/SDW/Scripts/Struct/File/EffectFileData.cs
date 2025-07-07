@@ -20,7 +20,7 @@ public struct EffectFileData
         EffectName = fields[1];
         EffectEnName = fields[2];
 
-        if (!Enum.TryParse<StatusType>(fields[4], true, out var statusType))
+        if (!Enum.TryParse<StatusType>(fields[3], true, out var statusType))
             statusType = StatusType.None; // 기본값 설정
         Type = statusType;
         StatusId = int.Parse(fields[4]);
