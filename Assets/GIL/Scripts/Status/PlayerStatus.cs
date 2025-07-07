@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
@@ -27,6 +28,10 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     private bool isDehydrated;
     private StarvationDebuff starvationDebuff;
     private DehydrationDebuff dehydrationDebuff;
+
+    private Inventory m_inventory;
+    private InteractionUIManager m_uiManager;
+    private bool m_isConsumableItem;
 
     // 갈증
     [Header("Thirst")]
@@ -69,6 +74,12 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
         starvationDebuff = new StarvationDebuff(this, moveSpeedDebuffStat, actionSpeedDebuffStat);
         dehydrationDebuff = new DehydrationDebuff(this);
+
+        m_inventory = GetComponent<Inventory>();
+        m_uiManager = GetComponent<InteractionUIManager>();
+
+        Inventory.OnSelectedItemChanged += (param) => OnSelectedItemChanged();
+        GameManager.Instance.Action.OnActionEffect += OnActionEffect;
     }
 
     /// <summary>
@@ -144,7 +155,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     /// <param name="value">변화할 정신력의 퍼센트 float값</param>
     public void SetMentality(float value)
     {
-        float deltaValue = MaxHealth * value;
+        float deltaValue = MaxMentality * value;
         CurMentality += deltaValue;
         CurMentality = Mathf.Clamp(CurMentality, 0f, MaxMentality);
         // 정신력이 0이 될 경우 발생할 로직
@@ -216,5 +227,84 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(0.5f);
         panel.SetActive(false);
         m_panelCoroutine = null;
+    }
+
+    /// <summary>
+    /// SelectItem이 ConsumableItem일 때 할 효과
+    /// </summary>
+    private void OnSelectedItemChanged()
+    {
+        //# 소비 가능한 아이템이 아닌 경우 return
+        if (m_inventory.GetQuickSlotItemType() != ItemType.ConsumableItem)
+        {
+            m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
+            m_isConsumableItem = false;
+            return;
+        }
+
+        m_uiManager.SetInteractionUI(
+            InteractionType.ConsumableItem, true, "아이템을 사용하려면 [E]를 눌러주세요", false
+        );
+
+        m_isConsumableItem = true;
+    }
+
+    private void HandleItemEffect()
+    {
+        if (!m_isConsumableItem) return;
+
+        //# 소비 가능한 아이템인 경우, ItemDataSO를 가져옴
+        var itemData = m_inventory.GetQuickSlotItemData();
+        var itemEffect = itemData.ItemData.ItemEffect;
+
+        HandleEffect(itemEffect);
+
+        m_inventory.RemoveItemAmounts(itemData.ItemEnName, 1);
+        m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
+        m_isConsumableItem = false;
+    }
+    private void HandleEffect(EffectFileData effect)
+    {
+        switch (effect.Type)
+        {
+            case StatusType.Hp:
+                SetHealth(effect.StatusAmount);
+                break;
+            case StatusType.Hungry:
+                SetHunger(effect.StatusAmount);
+                break;
+            case StatusType.Mentality:
+                SetMentality(effect.StatusAmount);
+                break;
+            case StatusType.Thirst:
+                SetThirst(effect.StatusAmount);
+                break;
+        }
+    }
+
+    private void OnActionEffect(List<int> effectIds)
+    {
+        foreach (int effectId in effectIds)
+        {
+            HandleEffect(GameManager.Instance.Effect.EffectIdData[effectId]);
+        }
+    }
+
+    public void OnInteractionKeyPressed() => HandleItemEffect();
+
+    public void OnRealTimeEffect()
+    {
+        //# 배고픔
+        var hungerEffect = GameManager.Instance.Effect.EffectIdData[35007];
+        
+        SetHunger(hungerEffect.StatusAmount);
+
+        //# 갈증
+        var thirstyEffect = GameManager.Instance.Effect.EffectIdData[35008];
+        SetThirst(thirstyEffect.StatusAmount);
+
+        //# 멘탈
+        var mentalityEffect = GameManager.Instance.Effect.EffectIdData[35009];
+        SetMentality(mentalityEffect.StatusAmount);
     }
 }

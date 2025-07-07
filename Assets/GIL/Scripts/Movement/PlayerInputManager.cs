@@ -8,6 +8,7 @@ public class PlayerInputManager : MonoBehaviour
     private PlayerInput playerInput;
     private PlayerInput.OnFootActions onFoot;
 
+    private PlayerStatus m_status;
     private PlayerMotor motor;
     private PlayerLook look;
     private PlayerAttack attack;
@@ -28,6 +29,7 @@ public class PlayerInputManager : MonoBehaviour
         attack = GetComponent<PlayerAttack>();
         interact = GetComponent<Interaction>();
         m_shelterUpgrade = GetComponent<ShelterUpgrade>();
+        m_status = GetComponent<PlayerStatus>();
 
         onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
@@ -57,6 +59,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => m_shelterUpgrade.OnInteraction();
+        onFoot.Interaction.started += ctx => m_status.OnInteractionKeyPressed();
 
         onFoot.LMBClick.started += ctx => attack.Attack();
         onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();
