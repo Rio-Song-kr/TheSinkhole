@@ -37,7 +37,7 @@ public class FarmUI : Singleton<FarmUI>
 
     private float pressTimer = 0f;
     private float pressDuration = 5f;
-    private bool isPressingE = false;
+    // private bool isPressingE = false;
 
     //인벤토리
     [SerializeField] private Inventory playerInven;
@@ -91,7 +91,7 @@ public class FarmUI : Singleton<FarmUI>
                     m_statusText.text = "재배에 필요한 재료가 부족합니다.";
                     return;
                 }
-                isPressingE = true;
+                // isPressingE = true;
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
                 m_statusText.text = "작물 재배 중. . .";
@@ -142,7 +142,7 @@ public class FarmUI : Singleton<FarmUI>
         currentTile = tile;
         selectedCrop = null;
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
 
         foreach (var btn in cropButtons)
             btn.interactable = true;
@@ -202,7 +202,7 @@ public class FarmUI : Singleton<FarmUI>
 
         currentTile.StartPlanting(crop);
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
 
         m_statusText.text = "재배 시작됨";
         ProgressBarImg.fillAmount = 1f;
@@ -215,7 +215,7 @@ public class FarmUI : Singleton<FarmUI>
     {
         //상태 전부 초기화
         pressTimer = 0f;
-        isPressingE = false;
+        // isPressingE = false;
         ProgressBarImg.fillAmount = 0f;
         m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요.";
     }
