@@ -16,7 +16,9 @@ public class ShelterUpgrade : MonoBehaviour
 
     private UpgradeableObject m_upgradeableObject;
 
+
     public ShelterUpgradeUI ShelterUpgradeUI;
+
 
 
     private void Awake()
@@ -37,7 +39,7 @@ public class ShelterUpgrade : MonoBehaviour
 
         if (hitObject == null)
         {
-            m_uiManager.SetInteractionUI(InteractionType.Shelter, false);
+            // m_uiManager.SetInteractionUI(InteractionType.Shelter, false);
             return;
         }
 
@@ -73,8 +75,10 @@ public class ShelterUpgrade : MonoBehaviour
         m_materials = new Dictionary<ItemEnName, List<int>>();
 
         //todo UI Open해야 함
+
         ShelterUpgradeUI.gameObject.SetActive(true);
         ShelterUpgradeUI.Show(m_materials, this);
+
 
 
         //todo m_upgradableObject에 관한 고민 필요
@@ -89,7 +93,6 @@ public class ShelterUpgrade : MonoBehaviour
             //GameManager.Instance.Item.ItemEnDataSO[test.Key].Icon;
         }
     }
-    
 
     //todo UI 연동 필요함 - UI에서 아이템 이름과 보유 수량, 필요 수량을 표시, presenter에서 업그레이드 가능 여부 판단
     /// <summary>
@@ -128,20 +131,11 @@ public class ShelterUpgrade : MonoBehaviour
     public void OnInteraction() => m_interactionKeyClicked = true;
 
     // 현재 쉘터 레벨 반환
-    public int GetCurrentLevel()
-    {
-        return m_upgradeableObject.Level;
-    }
+    public int GetCurrentLevel() => m_upgradeableObject.Level;
 
     // 현재 내구도 반환
-    public int GetCurrentDurability()
-    {
-        return m_upgradeableObject.Durability;
-    }
+    public int GetCurrentDurability() => m_upgradeableObject.Durability;
 
     // 최대 내구도 반환
-    public int GetMaxDurability()
-    {
-        return m_upgradeableObject.MaxDurability;
-    }
+    public int GetMaxDurability() => m_upgradeableObject.MaxDurability;
 }
