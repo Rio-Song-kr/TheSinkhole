@@ -105,7 +105,6 @@ public class Inventory : MonoBehaviour, ISaveable
         if (m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO == null) return;
 
         m_quickSlotItemData = m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO;
-
         m_selectedItemEnName = m_quickSlotItemData.ItemEnName;
         m_quickSlotItemType = m_quickSlotItemData.ItemType;
 
@@ -148,13 +147,13 @@ public class Inventory : MonoBehaviour, ISaveable
     /// 현재 선택된 아이템의 ItemType을 반환
     /// </summary>
     /// <returns>현재 선택된 아이템의 ItemType을 반환</returns>
-    public ItemType GetItemItemType() => m_quickSlotItemType;
+    public ItemType GetQuickSlotItemType() => m_quickSlotItemType;
 
     /// <summary>
     /// 현재 선택된 아이템의 ItemDataSO를 반환
     /// </summary>
     /// <returns>현재 선택된 아이템의 ItemDataSO를 반환</returns>
-    public ItemDataSO GetItemItemData() => m_quickSlotItemData;
+    public ItemDataSO GetQuickSlotItemData() => m_quickSlotItemData;
 
     /// <summary>
     /// ItemEnName 아이템이 총 몇 개 있는지 반환

@@ -73,7 +73,9 @@ public class ItemManager : MonoBehaviour
             newItemDataSO.ItemType = itemType;
             newItemDataSO.ItemMaxOwn = item.ItemMaxOwn;
             newItemDataSO.ItemText = item.ItemText;
-            newItemDataSO.ItemData.ItemEffect = GameManager.Instance.Effect.EffectIdData[item.EffectId];
+
+            if (item.EffectId != -1)
+                newItemDataSO.ItemData.ItemEffect = GameManager.Instance.Effect.EffectIdData[item.EffectId];
 
             m_itemPrefabDatabaseSO.OnSetPrefab(ref newItemDataSO);
 

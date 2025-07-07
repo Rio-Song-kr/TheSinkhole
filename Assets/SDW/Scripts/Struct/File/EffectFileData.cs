@@ -9,6 +9,7 @@ public struct EffectFileData
     public int EffectId;
     public string EffectName;
     public string EffectEnName;
+    public StatusType Type;
     public int StatusId;
     public float StatusAmount;
     public string EffectText;
@@ -18,8 +19,12 @@ public struct EffectFileData
         EffectId = int.Parse(fields[0]);
         EffectName = fields[1];
         EffectEnName = fields[2];
-        StatusId = int.Parse(fields[3]);
-        StatusAmount = float.Parse(fields[4]);
-        EffectText = fields[5];
+
+        if (!Enum.TryParse<StatusType>(fields[4], true, out var statusType))
+            statusType = StatusType.None; // 기본값 설정
+        Type = statusType;
+        StatusId = int.Parse(fields[4]);
+        StatusAmount = float.Parse(fields[5]);
+        EffectText = fields[6];
     }
 }

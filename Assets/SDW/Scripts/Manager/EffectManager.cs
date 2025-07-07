@@ -14,9 +14,9 @@ public class EffectManager : MonoBehaviour
     /// <summary>
     /// Effect id별 데이터를 반환
     /// </summary>
-    public Dictionary<int, EffectFileData> EffectIdData;
+    public Dictionary<int, EffectFileData> EffectIdData => m_effectIdData;
 
-    private void OnEnable()
+    private void Awake()
     {
         m_effectIdData = new Dictionary<int, EffectFileData>();
 

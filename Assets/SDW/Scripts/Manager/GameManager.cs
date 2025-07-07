@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour
         Tile = GetComponent<TileManager>();
         Shelter = GetComponent<ShelterManager>();
         Action = GetComponent<ActionManager>();
+        Effect = GetComponent<EffectManager>();
     }
 
     private void Start()
