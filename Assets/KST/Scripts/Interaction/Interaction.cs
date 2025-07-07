@@ -114,6 +114,7 @@ public class Interaction : Singleton<Interaction>
     private void ClearInteractionTile()
     {
         m_uiManager.ClearInteractionUI(InteractionType.Tile);
+        m_uiManager.ClearInteractionUI(InteractionType.Shelter);
         ClearPreviousOutline();
 
         if (m_interactionTile != null)

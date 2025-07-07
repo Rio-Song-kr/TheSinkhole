@@ -25,7 +25,6 @@ public class PickUpInteraction : MonoBehaviour
         {
             var currentType = GetCurrentInteractionType();
             m_uiManager.ClearInteractionUI(currentType);
-            m_uiManager.ClearInteractionUI(currentType);
 
             //# Outline Off
             OutlineOff();

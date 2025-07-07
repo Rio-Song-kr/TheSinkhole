@@ -1,6 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using EPOOutline;
 using UnityEngine;
 
 namespace CraftingSystem
@@ -23,73 +22,69 @@ namespace CraftingSystem
         // 레시피 패널 컨트롤러(UI) 참조
         public ResultPanelController resourcesPanelController;
 
-        private bool isPlayerInRange = false; // 플레이어가 범위 내에 있는지
+        private bool canInteraction = false; // 플레이어가 범위 내에 있는지
         private static bool m_isInteractionKeyPressed = false;
+        private Outlinable m_outline;
 
-        private void Update()
+        private void Awake()
         {
-            // 플레이어가 범위 내에 있고 E키를 누르면 UI 오픈
-            if (isPlayerInRange && m_isInteractionKeyPressed)
-            {
-                GameManager.Instance.SetCursorUnlock();
-                OpenStationUI();
-            }
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Debug.Log("플레이어가 제작소 범위에 들어옴");
-                isPlayerInRange = true;
-            }
+            m_outline = GetComponent<Outlinable>();
+            m_outline.enabled = false;
         }
 
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Debug.Log("플레이어가 제작소 범위에서 나감");
-                isPlayerInRange = false;
-            }
-        }
         // UI 오픈
         public void OpenStationUI()
         {
             if (resourcesPanelController != null)
             {
                 // 이 제작대 타입에 맞는 레시피만 전달
-                var filtered = availableRecipes.FindAll(r => r.stationType == stationType);
+                // var filtered = availableRecipes.FindAll(r => r.stationType == stationType);
 
                 // //todo ItemRecipeManager에서 station id로 recipe 목록 읽어오기
-                // var recipes = new List<CraftingRecipe>();
-                //
-                // foreach (int itemId in GameManager.Instance.Recipe.StationIdRecipeList[stationType])
-                // {
-                //     int recipeId = GameManager.Instance.Recipe.ItemIdToRecipeId[itemId];
-                //     var recipeDatas = GameManager.Instance.Recipe.RecipeIdData[recipeId];
-                //
-                //     foreach (var recipeData in recipeDatas)
-                //     {
-                //         int resultId = GameManager.Instance.Recipe.ItemIdToRecipeId[recipeData.RecipeId];
-                //         var resultItemEnName = GameManager.Instance.Item.ItemIdEnName[resultId];
-                //
-                //         var recipe = ScriptableObject.CreateInstance<CraftingRecipe>();
-                //         recipe.craftingTime = 5f;
-                //         recipe.icon = GameManager.Instance.Item.ItemEnDataSO[resultItemEnName].Icon;
-                //
-                //         //todo 기타 데이터 연결해야 함
-                //
-                //         recipes.Add(recipe);
-                //     }
-                // }
+                var recipes = new List<CraftingRecipe>();
+
+                foreach (int recipeID in GameManager.Instance.Recipe.StationIdRecipeList[stationType])
+                {
+                    //# 해당 Recipe id에 포함된 모든 레시피 목록을 불러옴
+                    var recipeDatas = GameManager.Instance.Recipe.RecipeIdData[recipeID];
+
+                    var recipe = ScriptableObject.CreateInstance<CraftingRecipe>();
+
+                    var craftItem = new CraftingItemInfo();
+
+                    int resultId = GameManager.Instance.Recipe.RecipeIdToItemId[recipeID];
+                    var resultItemEnName = GameManager.Instance.Item.ItemIdEnName[resultId];
+                    recipe.icon = GameManager.Instance.Item.ItemEnDataSO[resultItemEnName].Icon;
+
+                    //# result 연결
+                    craftItem.item = GameManager.Instance.Item.ItemEnDataSO[resultItemEnName];
+                    craftItem.count = 1;
+                    recipe.result = craftItem;
+                    recipe.craftingTime = 5f;
+
+                    recipe.ingredients = new List<CraftingItemInfo>();
+
+                    //# 각 레시피 목록 데이터를 하나씩 순회하면서 Icon과 Result 연결
+                    foreach (var ingredientData in recipeDatas)
+                    {
+                        var ingredient = new CraftingItemInfo();
+                        int ingredientItemId = ingredientData.MaterialId;
+                        var ingredientItemEnName = GameManager.Instance.Item.ItemIdEnName[ingredientItemId];
+
+                        ingredient.item = GameManager.Instance.Item.ItemEnDataSO[ingredientItemEnName];
+                        ingredient.count = ingredientData.MaterialQuantity;
+
+                        recipe.ingredients.Add(ingredient);
+                    }
+                    recipes.Add(recipe);
+                }
 
                 //todo recipe 목록 -> CraftingRecipe 생성(List에 추가) 후 전달
-                resourcesPanelController.SetRecipeList(filtered); // ResultPanelController의 메서드 사용
+                resourcesPanelController.SetRecipeList(recipes); // ResultPanelController의 메서드 사용
                 resourcesPanelController.gameObject.SetActive(true); // UI 활성화
             }
         }
 
-        public static void OnInteractionKeyPressed() => m_isInteractionKeyPressed = true;
-        public static void OnInteractionKeyReleased() => m_isInteractionKeyPressed = false;
+        public void SetOutline(bool isEnable) => m_outline.enabled = isEnable;
     }
 }

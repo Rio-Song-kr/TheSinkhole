@@ -16,7 +16,7 @@ namespace CraftingSystem
         {
             Debug.Log($"Set 호출: {item?.name}, {ownedCount}/{needCount}");
             iconImage.sprite = item.Icon;
-            nameText.text = item.name;
+            nameText.text = item.ItemData.ItemName;
             countText.text = $"{ownedCount}/{needCount}";
 
             // 색상 변경: 부족하면 빨간색, 충분하면 흰색

@@ -84,7 +84,8 @@ public class InventorySystem
 
         foreach (var slot in m_inventorySlots)
         {
-            if (slot.ItemDataSO == item) inventorySlot.Add(slot);
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == item.ItemEnName) inventorySlot.Add(slot);
         }
 
         return inventorySlot.Count > 0;

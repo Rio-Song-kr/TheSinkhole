@@ -19,16 +19,16 @@ public class ItemRecipeManager : MonoBehaviour
     private Dictionary<CraftingStationType, HashSet<int>> m_stationIdRecipeList;
 
     /// <summary>
-    /// Station Id별 데이터
+    /// Station 타입별 레시피 Id
     /// </summary>
     public Dictionary<CraftingStationType, HashSet<int>> StationIdRecipeList => m_stationIdRecipeList;
 
-    private Dictionary<int, int> m_itemIdToRecipeId;
+    private Dictionary<int, int> m_recipeIdToItemId;
 
     /// <summary>
     /// 만들어지는 Item Id와 Recipe Id 매칭
     /// </summary>
-    public Dictionary<int, int> ItemIdToRecipeId;
+    public Dictionary<int, int> RecipeIdToItemId => m_recipeIdToItemId;
 
     private void Awake()
     {
@@ -62,15 +62,15 @@ public class ItemRecipeManager : MonoBehaviour
     /// </summary>
     private void ItemRecipeInit()
     {
-        m_itemIdToRecipeId = new Dictionary<int, int>();
+        m_recipeIdToItemId = new Dictionary<int, int>();
 
-        m_itemIdToRecipeId[20701] = 20109;
-        m_itemIdToRecipeId[20702] = 20110;
-        m_itemIdToRecipeId[20703] = 20112;
-        m_itemIdToRecipeId[20704] = 20301;
-        m_itemIdToRecipeId[20705] = 20114;
-        m_itemIdToRecipeId[20706] = 20305;
-        m_itemIdToRecipeId[20707] = 20302;
+        m_recipeIdToItemId[20701] = 20109;
+        m_recipeIdToItemId[20702] = 20110;
+        m_recipeIdToItemId[20703] = 20112;
+        m_recipeIdToItemId[20704] = 20301;
+        m_recipeIdToItemId[20705] = 20114;
+        m_recipeIdToItemId[20706] = 20305;
+        m_recipeIdToItemId[20707] = 20302;
     }
 
     /// <summary>

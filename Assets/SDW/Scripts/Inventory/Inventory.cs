@@ -226,13 +226,13 @@ public class Inventory : MonoBehaviour, ISaveable
                 if (slot.ItemCount >= amount)
                 {
                     slot.RemoveItem(amount);
-                    m_quickSlotInventorySystem.OnSlotChanged(slot);
+                    m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
                     break;
                 }
                 //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
                 amount -= slot.ItemCount;
                 slot.RemoveItem(slot.ItemCount);
-                m_quickSlotInventorySystem.OnSlotChanged(slot);
+                m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
             }
         }
         if (amount == 0) return true;
@@ -246,13 +246,13 @@ public class Inventory : MonoBehaviour, ISaveable
                 if (slot.ItemCount >= amount)
                 {
                     slot.RemoveItem(amount);
-                    m_dynamicInventorySystem.OnSlotChanged(slot);
+                    m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
                     break;
                 }
                 //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
                 amount -= slot.ItemCount;
                 slot.RemoveItem(slot.ItemCount);
-                m_dynamicInventorySystem.OnSlotChanged(slot);
+                m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
             }
         }
 
