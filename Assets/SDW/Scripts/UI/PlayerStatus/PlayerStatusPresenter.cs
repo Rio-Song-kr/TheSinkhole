@@ -30,7 +30,7 @@ public class PlayerStatusPresenter : MonoBehaviour
 
     private void UpdateHungerOverlay()
     {
-        float fillAmount = m_playerStatus.CurHunger / m_playerStatus.MaxHealth;
+        float fillAmount = m_playerStatus.CurHunger / m_playerStatus.MaxHunger;
         if (fillAmount == m_playerStatusView.GetHungerOverlayFillAmount()) return;
 
         m_playerStatusView.SetHungerOverlayFillAmount(fillAmount);
