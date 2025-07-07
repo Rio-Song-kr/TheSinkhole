@@ -31,6 +31,29 @@ namespace CraftingSystem
         public CraftingManager craftingManager;
 
         private CraftingRecipe currentRecipe;
+        private List<IngredientSlotUI> m_ingredientLists = new List<IngredientSlotUI>();
+
+        public static bool NeedUpdateUI = false;
+
+        private void Update()
+        {
+            if (NeedUpdateUI != true) return;
+
+            NeedUpdateUI = false;
+
+            var inventory = craftingManager.playerInventory;
+            var ing = currentRecipe.ingredients;
+
+            bool allEnough = true;
+            bool allExact = true;
+
+            for (int i = 0; i < ing.Count; i++)
+            {
+                allEnough = CheckEnough(ing[i], allEnough, ref allExact, i);
+            }
+
+            CanCrafting(currentRecipe, inventory, allEnough, allExact);
+        }
 
         public void CloseRecipeUI() => gameObject.SetActive(false);
 
@@ -44,7 +67,7 @@ namespace CraftingSystem
 
             // 결과 아이템 정보 표시
             resultItemImage.sprite = recipe.result.item.Icon;
-            resultItemName.text = recipe.result.item.name;
+            resultItemName.text = recipe.result.item.ItemData.ItemName;
             itemDescription.text = recipe.result.item.ItemText;
 
             // 재료 텍스트(간단)
@@ -56,65 +79,32 @@ namespace CraftingSystem
                 Destroy(child.gameObject);
             }
 
-            // 재료 슬롯 생성
-            //foreach (var ing in recipe.ingredients)
-            //{
-            //    Debug.Log($"Instantiate IngredientPanel: {ing.item?.name}, {ing.count}");
-
-            //    int owned = 0;
-            //    // 인벤토리에서 해당 아이템의 소지량 계산
-            //    if (craftingManager.playerInventory != null &&
-            //        craftingManager.playerInventory.DynamicInventorySystem != null)
-            //    {
-            //        if (craftingManager.playerInventory.DynamicInventorySystem.FindItemSlots(ing.item, out var slots))
-            //        {
-            //            foreach (var slot in slots)
-            //                owned += slot.ItemCount;
-            //        }
-            //    }
-
-            //    var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
-            //    var slotUI = go.GetComponent<IngredientSlotUI>();
-            //    if (slotUI != null)
-            //        slotUI.Set(ing.item, ing.count, owned);
-
-            //}
-            var inventory = craftingManager.playerInventory;
-            var invSys = inventory.DynamicInventorySystem;
-
             bool allEnough = true;
             bool allExact = true;
 
             foreach (var ing in recipe.ingredients)
             {
-                int owned = 0;
-                if (invSys.FindItemSlots(ing.item, out var slots))
-                {
-                    foreach (var slot in slots)
-                    {
-                        owned += slot.ItemCount;
-                    }
-                }
-
-                // 재료 슬롯 UI 생성 및 색상 처리
-                var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
-                var slotUI = go.GetComponent<IngredientSlotUI>();
-                if (slotUI != null)
-                {
-                    // 보유 == 필요만 흰색, 그 외(작거나 많으면) 빨간색
-                    slotUI.Set(ing.item, ing.count, owned);
-                }
-
-                if (owned < ing.count)
-                    allEnough = false;
-                if (owned != ing.count)
-                    allExact = false;
+                allEnough = CheckEnough(ing, allEnough, ref allExact);
             }
 
+            CanCrafting(recipe, craftingManager.playerInventory, allEnough, allExact);
+
+
+            // 버튼 텍스트
+            craftingButtonText.text = "Crafting";
+
+            // 버튼 이벤트 연결
+            craftingButton.onClick.RemoveAllListeners();
+            craftingButton.onClick.AddListener(() => { craftingManager.TryCraftWithDelay(recipe); });
+        }
+
+        private void CanCrafting(CraftingRecipe recipe, Inventory inventory, bool allEnough, bool allExact)
+        {
             // 결과 아이템이 인벤토리에 이미 있는지 확인
-            bool hasResultItem = invSys.FindItemSlots(recipe.result.item, out var resultSlots) && resultSlots.Count > 0;
+            bool hasResultItem = inventory.GetItemAmounts(recipe.result.item.ItemEnName) > 0;
+
             // 인벤토리에 빈 슬롯이 있는지 확인
-            bool hasEmptySlot = invSys.HasEmptySlot();
+            bool hasEmptySlot = inventory.GetRemainingSlots() > 0;
 
             // 최종 제작 가능 조건
             bool canCraft;
@@ -130,14 +120,38 @@ namespace CraftingSystem
                 canCraft = allExact;
             }
             craftingButton.interactable = canCraft && !craftingManager.IsCrafting;
+        }
 
+        private bool CheckEnough(CraftingItemInfo ing, bool allEnough, ref bool allExact, int index = -1)
+        {
+            var inventory = craftingManager.playerInventory;
+            int owned = inventory.GetItemAmounts(ing.item.ItemEnName);
 
-            // 버튼 텍스트
-            craftingButtonText.text = "Crafting";
+            // 재료 슬롯 UI 생성 및 색상 처리
+            IngredientSlotUI slotUI;
+            if (index == -1)
+            {
+                var go = Instantiate(ingredientSlotPrefab, ingredientContentParent);
 
-            // 버튼 이벤트 연결
-            craftingButton.onClick.RemoveAllListeners();
-            craftingButton.onClick.AddListener(() => { craftingManager.TryCraftWithDelay(recipe); });
+                m_ingredientLists.Add(go.GetComponent<IngredientSlotUI>());
+
+                slotUI = go.GetComponent<IngredientSlotUI>();
+            }
+            else
+            {
+                slotUI = m_ingredientLists[index];
+            }
+            if (slotUI != null)
+            {
+                // 보유 == 필요만 흰색, 그 외(작거나 많으면) 빨간색
+                slotUI.Set(ing.item, ing.count, owned);
+            }
+
+            if (owned < ing.count)
+                allEnough = false;
+            if (owned != ing.count)
+                allExact = false;
+            return allEnough;
         }
 
         public IEnumerator CraftingButtonCountdownCoroutine(float time)

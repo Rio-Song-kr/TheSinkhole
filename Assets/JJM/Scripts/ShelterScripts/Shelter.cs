@@ -53,15 +53,17 @@ public class Shelter : MonoBehaviour, IDamageable
     {
         if (Durability >= MaxDurability * 0.7)
         {
-            durabilityImage.GetComponent<Renderer>().material.color = Color.green; //³ì»ö
+            // durabilityImage.GetComponent<Renderer>().material.color = Color.green; //³ì»ö
+            durabilityImage.GetComponent<Image>().color = Color.green; //³ì»ö
         }
         else if (Durability <= MaxDurability * 0.7 && Durability >= MaxDurability * 0.4)
         {
-            durabilityImage.GetComponent<Renderer>().material.color = Color.yellow; //³ë¶õ»ö
+            // durabilityImage.GetComponent<Renderer>().material.color = Color.yellow; //³ë¶õ»ö
+            durabilityImage.GetComponent<Image>().color = Color.yellow; //³ë¶õ»ö
         }
         else if (Durability < MaxDurability * 0.4)
         {
-            durabilityImage.GetComponent<Renderer>().material.color = Color.red; //»¡°£»ö
+            durabilityImage.GetComponent<Image>().color = Color.red; //»¡°£»ö
         }
     }
 

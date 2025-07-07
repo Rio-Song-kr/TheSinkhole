@@ -10,6 +10,7 @@ namespace CraftingSystem
     {
         public TMP_Text recipeNameText;
         public Button selectButton;
+        public Image m_itemImage;
 
         private CraftingRecipe recipe;
         private RecipePanelController panelController;
@@ -19,7 +20,8 @@ namespace CraftingSystem
         {
             this.recipe = recipe;
             panelController = panel;
-            recipeNameText.text = recipe.result.item.name;
+            recipeNameText.text = recipe.result.item.ItemData.ItemName;
+            m_itemImage.sprite = recipe.icon;
 
             selectButton.onClick.RemoveAllListeners();
             selectButton.onClick.AddListener(OnClickSelect);
