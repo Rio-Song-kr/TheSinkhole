@@ -63,7 +63,7 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
         if (!CanInteract(toolType)) return;
         if (Interaction.Instance.IsKeyPressed())
             if (!ExploitUI.Instance.IsOpen)
-                ExploitUI.Instance.OpenUI(this, toolType);
+                ExploitUI.Instance.OpenUI(this, toolType,tileState);
     }
 
     public void StartDevelop(float duration, Action onComplete)
