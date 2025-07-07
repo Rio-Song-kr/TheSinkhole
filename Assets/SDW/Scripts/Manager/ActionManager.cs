@@ -28,12 +28,14 @@ public class ActionManager : MonoBehaviour
         string[] actionConsumedLines = LoadCSV.LoadFromCsv("ActionConsumedItem");
         var actionConsumedList = ReadDataFromLines(actionConsumedLines);
 
+        var developSO = ScriptableObject.CreateInstance<DevelopSO>();
+
         foreach (var actionConsumed in actionConsumedList)
         {
-            var developSO = new DevelopSO();
-
             if (!m_actionIdData.ContainsKey(actionConsumed.ActionId))
             {
+                //# ActionId가 없을 경우에만 새로 생성
+                developSO = ScriptableObject.CreateInstance<DevelopSO>();
                 developSO.RequireItems = new List<RequireItemData>();
             }
             developSO.DevelopDesc = actionConsumed.Description;

@@ -34,7 +34,9 @@ public class Inventory : MonoBehaviour, ISaveable
     public static Action<int> OnSelectedItemChanged;
 
     private ItemEnName m_selectedItemEnName;
-    private ToolType m_toolType = ToolType.None;
+    private ToolType m_quickSlotItemToolType = ToolType.None;
+    private ItemType m_quickSlotItemType = ItemType.None;
+    private ItemDataSO m_quickSlotItemData;
 
     /// <summary>
     /// 저장을 위한 Id 케ㅡ
@@ -95,36 +97,36 @@ public class Inventory : MonoBehaviour, ISaveable
     /// 지정된 인덱스의 퀵슬롯을 선택
     /// 영문 이름과 Tool type관련 처리
     /// </summary>
-    /// <param name="slotIndex">선택할 슬롯 인덱스</param>
-    private void SelectQuickSlot(int m_selectedIndex)
+    /// <param name="selectedIndex">선택할 슬롯 인덱스</param>
+    private void SelectQuickSlot(int selectedIndex)
     {
-        OnSelectedItemChanged?.Invoke(m_selectedIndex);
+        OnSelectedItemChanged?.Invoke(selectedIndex);
 
-        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO == null) return;
+        if (m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO == null) return;
 
-        m_selectedItemEnName = m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemEnName;
-        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemType != ItemType.ToolItem)
+        m_quickSlotItemData = m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO;
+        m_selectedItemEnName = m_quickSlotItemData.ItemEnName;
+        m_quickSlotItemType = m_quickSlotItemData.ItemType;
+
+        if (m_quickSlotItemData.ItemType != ItemType.ToolItem)
         {
-            m_toolType = ToolType.None;
+            m_quickSlotItemToolType = ToolType.None;
             return;
         }
 
         switch (m_selectedItemEnName)
         {
             case ItemEnName.Hammer:
-                m_toolType = ToolType.Hammer;
+                m_quickSlotItemToolType = ToolType.Hammer;
                 break;
             case ItemEnName.Shovel:
-                m_toolType = ToolType.Shovel;
+                m_quickSlotItemToolType = ToolType.Shovel;
                 break;
             case ItemEnName.Pick:
-                m_toolType = ToolType.Pick;
+                m_quickSlotItemToolType = ToolType.Pick;
                 break;
             case ItemEnName.Pail:
-                m_toolType = ToolType.Water;
-                break;
-            default:
-                m_toolType = ToolType.None;
+                m_quickSlotItemToolType = ToolType.Water;
                 break;
         }
     }
@@ -139,7 +141,19 @@ public class Inventory : MonoBehaviour, ISaveable
     /// 현재 선택된 아이템의 ToolType을 반환
     /// </summary>
     /// <returns>현재 선택된 아이템의 ToolType을 반환</returns>
-    public ToolType GetItemToolType() => m_toolType;
+    public ToolType GetItemToolType() => m_quickSlotItemToolType;
+
+    /// <summary>
+    /// 현재 선택된 아이템의 ItemType을 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ItemType을 반환</returns>
+    public ItemType GetQuickSlotItemType() => m_quickSlotItemType;
+
+    /// <summary>
+    /// 현재 선택된 아이템의 ItemDataSO를 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ItemDataSO를 반환</returns>
+    public ItemDataSO GetQuickSlotItemData() => m_quickSlotItemData;
 
     /// <summary>
     /// ItemEnName 아이템이 총 몇 개 있는지 반환
@@ -220,7 +234,6 @@ public class Inventory : MonoBehaviour, ISaveable
                 m_quickSlotInventorySystem.OnSlotChanged(slot);
             }
         }
-        Debug.Log(amount);
         if (amount == 0) return true;
 
         foreach (var slot in m_dynamicInventorySystem.InventorySlots)
@@ -241,7 +254,6 @@ public class Inventory : MonoBehaviour, ISaveable
                 m_dynamicInventorySystem.OnSlotChanged(slot);
             }
         }
-        Debug.Log(amount);
 
         return true;
     }
@@ -371,7 +383,7 @@ public class Inventory : MonoBehaviour, ISaveable
         QuickSlotInventorySystem = m_quickSlotInventorySystem,
         DynamicInventorySystem = m_dynamicInventorySystem,
         SelectedItemEnName = m_selectedItemEnName,
-        ToolType = m_toolType
+        ToolType = m_quickSlotItemToolType
     };
 
     /// <summary>
@@ -385,7 +397,7 @@ public class Inventory : MonoBehaviour, ISaveable
         m_quickSlotInventorySystem = inventoryData.QuickSlotInventorySystem;
         m_dynamicInventorySystem = inventoryData.DynamicInventorySystem;
         m_selectedItemEnName = inventoryData.SelectedItemEnName;
-        m_toolType = inventoryData.ToolType;
+        m_quickSlotItemToolType = inventoryData.ToolType;
     }
 
     /// <summary>

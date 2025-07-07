@@ -4,24 +4,27 @@
 /// CSV에서 Effect 데이터를 읽어오기 위한 Struct
 /// </summary>
 [Serializable]
-public struct EffectFiledData
+public struct EffectFileData
 {
     public int EffectId;
     public string EffectName;
     public string EffectEnName;
+    public StatusType Type;
     public int StatusId;
     public float StatusAmount;
-    public float EffectTime;
     public string EffectText;
 
-    public EffectFiledData(string[] fields)
+    public EffectFileData(string[] fields)
     {
         EffectId = int.Parse(fields[0]);
         EffectName = fields[1];
         EffectEnName = fields[2];
-        StatusId = int.Parse(fields[3]);
-        StatusAmount = float.Parse(fields[4]);
-        EffectTime = float.Parse(fields[5]);
+
+        if (!Enum.TryParse<StatusType>(fields[4], true, out var statusType))
+            statusType = StatusType.None; // 기본값 설정
+        Type = statusType;
+        StatusId = int.Parse(fields[4]);
+        StatusAmount = float.Parse(fields[5]);
         EffectText = fields[6];
     }
 }
