@@ -17,6 +17,7 @@ public class CropBtn : MonoBehaviour
     public void Init(CropDataSO cropDataSO)
     {
         m_cropDataSO = cropDataSO;
+        cropDataSO.cropImg = GameManager.Instance.Item.ItemEnDataSO[cropDataSO.harvestItemSo].Icon;
         m_image.sprite = cropDataSO.cropImg;
     }
 

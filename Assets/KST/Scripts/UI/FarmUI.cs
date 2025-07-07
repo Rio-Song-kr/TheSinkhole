@@ -209,6 +209,10 @@ public class FarmUI : Singleton<FarmUI>
 
         foreach (var btn in cropButtons)
             btn.interactable = false;
+        if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50301, out var effect))
+                {
+                    GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
+                }
     }
 
     private void CancelPlanting()
@@ -226,10 +230,12 @@ public class FarmUI : Singleton<FarmUI>
         if (data == null) return;
         DetailGO.SetActive(true);
 
+        data.cropImg = GameManager.Instance.Item.ItemEnDataSO[data.harvestItemSo].Icon;
         cropImg.sprite = data.cropImg;
         cropName.text = data.cropName;
         cropRequireTime.text = $"{data.growTime} Seconds";
-        cropDesc.text = $" ● 설명{data.cropDesc} \n ● 효과: {data.cropEffect}";
+        // cropDesc.text = $" ● 설명{data.cropDesc} \n ● 효과: {data.cropEffect}";
+        cropDesc.text = $" ● 설명\n{data.cropDesc} \n";
     }
 
     public void ScrollViewSetting()

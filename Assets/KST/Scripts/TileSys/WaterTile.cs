@@ -15,7 +15,7 @@ public class WaterTile : Tile
     [Header("Water")]
     private bool m_isWatering = false;
     [SerializeField] private float m_waterTimer = 0f;
-    [SerializeField] private float m_waterDuration = 60f;
+    [SerializeField] private float m_waterDuration = 180f;
     public bool IsWatering() => m_isWatering;
     // public float GetWaterDuration() => m_waterDuration;
     public float GetRemainingWaterTime() => m_waterTimer;
