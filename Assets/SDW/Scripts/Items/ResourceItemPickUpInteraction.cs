@@ -51,7 +51,11 @@ public class ResourceItemPickUpInteraction : PickUpInteraction
         m_uiManager.SetInteractionUI(InteractionType.ResourceItem, true, "아이템 획득은 [E] 키를 눌러주세요.", false);
 
         var sceneItem = m_interaction.Hit.collider.gameObject.GetComponent<SceneItem>();
+        
+        if (sceneItem != m_prevSceneItem)
+            OutlineOff();
 
+        m_prevSceneItem = sceneItem;
         //# Outline On
         sceneItem.SetOutline(true);
 

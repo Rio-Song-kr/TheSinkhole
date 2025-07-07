@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
+using EPOOutline;
 using UnityEngine;
 
 namespace CraftingSystem
@@ -24,35 +22,16 @@ namespace CraftingSystem
         // 레시피 패널 컨트롤러(UI) 참조
         public ResultPanelController resourcesPanelController;
 
-        private bool isPlayerInRange = false; // 플레이어가 범위 내에 있는지
+        private bool canInteraction = false; // 플레이어가 범위 내에 있는지
         private static bool m_isInteractionKeyPressed = false;
+        private Outlinable m_outline;
 
-        private void Update()
+        private void Awake()
         {
-            // 플레이어가 범위 내에 있고 E키를 누르면 UI 오픈
-            if (isPlayerInRange && m_isInteractionKeyPressed)
-            {
-                GameManager.Instance.SetCursorUnlock();
-                OpenStationUI();
-            }
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Debug.Log("플레이어가 제작소 범위에 들어옴");
-                isPlayerInRange = true;
-            }
+            m_outline = GetComponent<Outlinable>();
+            m_outline.enabled = false;
         }
 
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Debug.Log("플레이어가 제작소 범위에서 나감");
-                isPlayerInRange = false;
-            }
-        }
         // UI 오픈
         public void OpenStationUI()
         {
@@ -106,7 +85,6 @@ namespace CraftingSystem
             }
         }
 
-        public static void OnInteractionKeyPressed() => m_isInteractionKeyPressed = true;
-        public static void OnInteractionKeyReleased() => m_isInteractionKeyPressed = false;
+        public void SetOutline(bool isEnable) => m_outline.enabled = isEnable;
     }
 }

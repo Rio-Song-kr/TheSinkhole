@@ -13,8 +13,9 @@ namespace CraftingSystem
         public RecipePanelController recipePanelController; // 상세 패널
 
         public CraftingRecipe[] recipes; // 전체 레시피 목록
+        private static bool m_isUICloseKeyPressed;
 
-        void Start()
+        private void Start()
         {
             if (resultButtonPrefab == null) Debug.LogError("resultButtonPrefab이 null입니다!");
             if (contentParent == null) Debug.LogError("contentParent가 null입니다!");
@@ -63,11 +64,23 @@ namespace CraftingSystem
                 btn.onClick.AddListener(() => recipePanelController.SetRecipe(recipe));
             }*/
         }
+
+        private void Update()
+        {
+            if (!m_isUICloseKeyPressed) return;
+            m_isUICloseKeyPressed = false;
+
+            GameManager.Instance.SetCursorLock();
+            gameObject.SetActive(false);
+        }
+
         public void SetRecipeList(List<CraftingRecipe> recipes)
         {
             // 기존 버튼 삭제
             foreach (Transform child in contentParent)
+            {
                 Destroy(child.gameObject);
+            }
 
             // 레시피 버튼 생성
             foreach (var recipe in recipes)
@@ -78,5 +91,8 @@ namespace CraftingSystem
                     btn.Init(recipe, recipePanelController);
             }
         }
+
+        public static void OnUICloseKeyPressed() => m_isUICloseKeyPressed = true;
+        public static void OnUICloseKeyReleased() => m_isUICloseKeyPressed = false;
     }
 }

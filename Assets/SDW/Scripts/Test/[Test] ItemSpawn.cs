@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class TestItemSpawn : MonoBehaviour
@@ -16,6 +17,7 @@ public class TestItemSpawn : MonoBehaviour
         // }
 
         m_position += Vector3.right * 2f;
+
 
         var shovel = GameManager.Instance.Item.ItemPools[ItemEnName.Shovel].Pool.Get();
         shovel.transform.parent = transform;
@@ -41,10 +43,51 @@ public class TestItemSpawn : MonoBehaviour
         m_position -= Vector3.forward * 2f;
         pail.transform.position = m_position;
 
-        var water = GameManager.Instance.Item.ItemPools[ItemEnName.Water].Pool.Get();
-        water.transform.parent = transform;
-        water.ItemAmount = 1;
+
+        var flareGun = GameManager.Instance.Item.ItemPools[ItemEnName.FlareGun].Pool.Get();
+        flareGun.transform.parent = transform;
+        flareGun.ItemAmount = 1;
         m_position -= Vector3.forward * 2f;
-        water.transform.position = m_position;
+        flareGun.transform.position = m_position;
+
+        var emptyFlareGun = GameManager.Instance.Item.ItemPools[ItemEnName.EmptyFlareGun].Pool.Get();
+        emptyFlareGun.transform.parent = transform;
+        emptyFlareGun.ItemAmount = 1;
+        m_position -= Vector3.forward * 2f;
+        emptyFlareGun.transform.position = m_position;
+
+        var flareGunBullets = GameManager.Instance.Item.ItemPools[ItemEnName.FlareGunBullets].Pool.Get();
+        flareGunBullets.transform.parent = transform;
+        flareGunBullets.ItemAmount = 1;
+        m_position -= Vector3.forward * 2f;
+        flareGunBullets.transform.position = m_position;
+
+
+        m_position = Vector3.left * 2 + Vector3.forward * 20;
+        foreach (ItemEnName enName in Enum.GetValues(typeof(ItemEnName)))
+        {
+            switch (enName)
+            {
+                case ItemEnName.None:
+                case ItemEnName.Shovel:
+                case ItemEnName.Hammer:
+                case ItemEnName.Pick:
+                case ItemEnName.Pail:
+                case ItemEnName.FlareGun:
+                case ItemEnName.EmptyFlareGun:
+                case ItemEnName.FlareGunBullets:
+                    continue;
+            }
+
+            var item = GameManager.Instance.Item.ItemPools[enName].Pool.Get();
+            item.transform.parent = transform;
+
+            if (enName == ItemEnName.Tobacco)
+                item.ItemAmount = 10;
+            else
+                item.ItemAmount = 99;
+            m_position -= Vector3.forward * 1f;
+            item.transform.position = m_position;
+        }
     }
 }

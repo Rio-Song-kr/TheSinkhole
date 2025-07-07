@@ -16,6 +16,7 @@ public class PlayerInputManager : MonoBehaviour
     private Interaction interact;
     private Inventory m_inventory;
     private ShelterUpgrade m_shelterUpgrade;
+    private CraftingStationInteraction m_crafting;
     public bool isSprinting;
 
     private float lookDelaytimer = 0.5f;
@@ -31,6 +32,7 @@ public class PlayerInputManager : MonoBehaviour
         interact = GetComponent<Interaction>();
         m_shelterUpgrade = GetComponent<ShelterUpgrade>();
         m_status = GetComponent<PlayerStatus>();
+        m_crafting = GetComponent<CraftingStationInteraction>();
 
         onFoot.Jump.started += ctx => motor.Jump();
         onFoot.Sprint.started += ctx => motor.ActiveSprint();
@@ -44,7 +46,10 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.UIOpenClose.started += ctx => ExploitUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => WaterUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => TurretUI.OnCloseKeyPressed();
-        onFoot.UIOpenClose.started += ctx => CommonUI.CloseButton.OnUICloseKeyPressed();
+        onFoot.UIOpenClose.started += ctx => ShelterUpgradeUI.OnUICloseKeyPressed();
+        onFoot.UIOpenClose.canceled += ctx => ShelterUpgradeUI.OnUICloseKeyReleased();
+        onFoot.UIOpenClose.started += ctx => ResultPanelController.OnUICloseKeyPressed();
+        onFoot.UIOpenClose.canceled += ctx => ResultPanelController.OnUICloseKeyReleased();
         onFoot.InventoryNumpad.started += m_inventory.OnNumpadKeyPressed;
         onFoot.InventoryPartial.started += ctx => InventoryDragHandler.OnPartialKeyPressed();
         onFoot.InventoryPartial.canceled += ctx => InventoryDragHandler.OnPartialKeyReleased();
@@ -60,10 +65,11 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.canceled += ctx => WaterUI.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => interact.OnInteractionKeyPressed();
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
-        onFoot.Interaction.started += ctx => m_shelterUpgrade.OnInteraction();
+        onFoot.Interaction.started += ctx => m_shelterUpgrade.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => m_shelterUpgrade.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => m_status.OnInteractionKeyPressed();
-        onFoot.Interaction.started += ctx => CraftingStation.OnInteractionKeyPressed();
-        onFoot.Interaction.canceled += ctx => CraftingStation.OnInteractionKeyReleased();
+        onFoot.Interaction.started += ctx => m_crafting.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => m_crafting.OnInteractionKeyReleased();
 
         onFoot.LMBClick.started += ctx => attack.Attack();
         onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();

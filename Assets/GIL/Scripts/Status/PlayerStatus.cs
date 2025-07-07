@@ -260,8 +260,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         HandleEffect(itemEffect);
 
         m_inventory.RemoveItemAmounts(itemData.ItemEnName, 1);
-        m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
-        m_isConsumableItem = false;
+        // m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
+        // m_isConsumableItem = false;
     }
     private void HandleEffect(EffectFileData effect)
     {
@@ -273,7 +273,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
             case StatusType.Hungry:
                 SetHunger(effect.StatusAmount);
                 break;
-            case StatusType.Mentality:
+            case StatusType.Mental:
                 SetMentality(effect.StatusAmount);
                 break;
             case StatusType.Thirst:
@@ -296,7 +296,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     {
         //# 배고픔
         var hungerEffect = GameManager.Instance.Effect.EffectIdData[35007];
-        
+
         SetHunger(hungerEffect.StatusAmount);
 
         //# 갈증

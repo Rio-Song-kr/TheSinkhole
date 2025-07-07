@@ -5,7 +5,7 @@ public enum StatusType
 {
     None,
     Hp,
-    Mentality,
+    Mental,
     Hungry,
     Thirst
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using EPOOutline;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,12 @@ public class Shelter : MonoBehaviour, IDamageable
     public int Durability;
     public int MaxDurability;
     public string ShelterName;
+    public GameObject WoodFence;
+    public GameObject MetalFence;
 
     public Image durabilityImage;
     // public Shelter shelterObject; //쉘터 오브젝트
+    private Outlinable m_outline;
 
     private void Start()
     {
@@ -20,12 +24,15 @@ public class Shelter : MonoBehaviour, IDamageable
         Durability = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterDurability;
         MaxDurability = Durability;
         ShelterName = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterName;
+        m_outline = GetComponent<Outlinable>();
+        m_outline.enabled = false;
     }
 
     private void Update()
     {
         ColorChange();
     }
+
     //인터페이스 구현
     public void TakenDamage(int damage)
     {
@@ -44,9 +51,17 @@ public class Shelter : MonoBehaviour, IDamageable
         int currentMaxDurability = MaxDurability;
 
         Level++;
-        MaxDurability = GameManager.Instance.Shelter.ShelterLevelData[Level].ShelterDurability;
+        LevelId = GameManager.Instance.Shelter.ShelterLevelToId[Level];
+        MaxDurability = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterDurability;
         Durability = Durability + (MaxDurability - currentMaxDurability);
-        ShelterName = GameManager.Instance.Shelter.ShelterLevelData[Level].ShelterName;
+        ShelterName = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterName;
+
+        //todo Remove Item
+        if (Level == 2)
+        {
+            WoodFence.SetActive(false);
+            MetalFence.SetActive(true);
+        }
     }
 
     public void ColorChange()
@@ -76,4 +91,6 @@ public class Shelter : MonoBehaviour, IDamageable
         //gameObject.SetActive(false);
         GameManager.Instance.SetGameOver();
     }
+
+    public void SetOutline(bool isEnable) => m_outline.enabled = isEnable;
 }

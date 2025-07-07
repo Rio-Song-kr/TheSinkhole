@@ -14,12 +14,11 @@ public class ShelterUpgrade : MonoBehaviour
 
     private Dictionary<ItemEnName, List<int>> m_materials;
 
-    private UpgradeableObject m_upgradeableObject;
-
+    private Shelter m_upgradeableObject;
 
     public ShelterUpgradeUI ShelterUpgradeUI;
 
-
+    private Shelter m_prevShelter = null;
 
     private void Awake()
     {
@@ -32,24 +31,31 @@ public class ShelterUpgrade : MonoBehaviour
 
     private void Update()
     {
+        if (!MouseInteraction()) return;
+
         //# 낮이 아니라면 return;
         if (!GameTimer.IsDay) return;
 
         var hitObject = m_interaction.Hit.collider;
 
-        if (hitObject == null)
-        {
-            // m_uiManager.SetInteractionUI(InteractionType.Shelter, false);
-            return;
-        }
+        if (hitObject == null) return;
 
-        if (!m_interaction.Hit.collider.CompareTag("Fence"))
+        if (!hitObject.CompareTag("Fence"))
         {
             m_uiManager.ClearInteractionUI(InteractionType.Shelter);
 
             m_interactionKeyClicked = false;
+            OutlineOff();
             return;
         }
+
+        // 업그레이드 가능한 컴포넌트가 있는지 확인
+        m_upgradeableObject = hitObject.transform.parent.GetComponent<Shelter>();
+        m_prevShelter = m_upgradeableObject;
+
+        if (m_upgradeableObject.Level == 2) return;
+
+        m_upgradeableObject.SetOutline(true);
 
         if (m_interaction.CurrentTool != ToolType.Hammer)
         {
@@ -67,31 +73,33 @@ public class ShelterUpgrade : MonoBehaviour
         if (!m_interactionKeyClicked) return;
         m_interactionKeyClicked = false;
 
-        // 업그레이드 가능한 컴포넌트가 있는지 확인
-        m_upgradeableObject = m_interaction.Hit.collider.GetComponent<UpgradeableObject>();
 
         if (m_upgradeableObject == null) return;
 
         m_materials = new Dictionary<ItemEnName, List<int>>();
+        m_materials = GetMaterials();
 
-        //todo UI Open해야 함
+        m_uiManager.ClearInteractionUI(InteractionType.Shelter);
+        GameManager.Instance.SetCursorUnlock();
+
 
         ShelterUpgradeUI.gameObject.SetActive(true);
         ShelterUpgradeUI.Show(m_materials, this);
+    }
 
-
-
-        //todo m_upgradableObject에 관한 고민 필요
-        //todo UI에서 업그레이드 아이템 이름, 보유 수량, 필요 수량을 가져오는 예시
-        //# Test
-        var testDict = GetMaterials();
-        foreach (var test in testDict)
+    private bool MouseInteraction()
+    {
+        if (!m_interaction.IsDetected || !GameManager.Instance.IsCursorLocked)
         {
-            //todo test.Value 는 List임(0 - 현재 보유 수량, 1 - 필요 수량)
-            Debug.Log($"{test.Key}, {test.Value}");
-            //todo 아이템 아이콘을 가져오는 예시
-            //GameManager.Instance.Item.ItemEnDataSO[test.Key].Icon;
+            var currentType = GetCurrentInteractionType();
+            m_uiManager.ClearInteractionUI(currentType);
+
+            //# Outline Off
+            OutlineOff();
+            return false;
         }
+
+        return true;
     }
 
     //todo UI 연동 필요함 - UI에서 아이템 이름과 보유 수량, 필요 수량을 표시, presenter에서 업그레이드 가능 여부 판단
@@ -124,11 +132,12 @@ public class ShelterUpgrade : MonoBehaviour
 
         foreach (var item in m_materials)
         {
-            m_inventory.RemoveItemAmounts(item.Key, item.Value[0]);
+            m_inventory.RemoveItemAmounts(item.Key, item.Value[1]);
         }
     }
 
-    public void OnInteraction() => m_interactionKeyClicked = true;
+    public void OnInteractionKeyPressed() => m_interactionKeyClicked = true;
+    public void OnInteractionKeyReleased() => m_interactionKeyClicked = false;
 
     // 현재 쉘터 레벨 반환
     public int GetCurrentLevel() => m_upgradeableObject.Level;
@@ -138,4 +147,13 @@ public class ShelterUpgrade : MonoBehaviour
 
     // 최대 내구도 반환
     public int GetMaxDurability() => m_upgradeableObject.MaxDurability;
+
+    private void OutlineOff()
+    {
+        if (m_prevShelter != null)
+            m_prevShelter.SetOutline(false);
+        m_prevShelter = null;
+    }
+
+    private InteractionType GetCurrentInteractionType() => InteractionType.Shelter;
 }

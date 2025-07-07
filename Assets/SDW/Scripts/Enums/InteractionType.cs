@@ -11,5 +11,6 @@ public enum InteractionType
     Farm,
     Turret,
     Water,
-    ConsumableItem
+    ConsumableItem,
+    Crafting
 }

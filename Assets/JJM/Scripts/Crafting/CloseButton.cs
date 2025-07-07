@@ -12,23 +12,11 @@ namespace CommonUI
         [Header("닫을 대상(비워두면 부모 Canvas/Panel 자동 탐색)")]
         public GameObject targetToClose;
 
-        private static bool m_isUICloseKeyPressed = false;
-
         private void Awake()
         {
             // 버튼 컴포넌트 가져오기
             var btn = GetComponent<Button>();
             btn.onClick.AddListener(CloseTarget);
-        }
-
-        private void Update()
-        {
-            if (m_isUICloseKeyPressed)
-            {
-                m_isUICloseKeyPressed = false;
-                // GameManager.Instance.SetCursorLock();
-                CloseTarget();
-            }
         }
 
         private void CloseTarget()
@@ -53,11 +41,6 @@ namespace CommonUI
                 }
             }
             GameManager.Instance.SetCursorLock();
-        }
-
-        public static void OnUICloseKeyPressed()
-        {
-            m_isUICloseKeyPressed = true;
         }
     }
 }

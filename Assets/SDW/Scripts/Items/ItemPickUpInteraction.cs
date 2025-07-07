@@ -17,7 +17,8 @@ public class ItemPickUpInteraction : PickUpInteraction
 
         var hitCollider = m_interaction.Hit.collider;
 
-        if (hitCollider == null) return;
+        if (hitCollider == null)
+            return;
         var hitObject = hitCollider.gameObject;
 
         if (hitObject == null) return;
@@ -46,9 +47,13 @@ public class ItemPickUpInteraction : PickUpInteraction
 
 
         var sceneItem = m_interaction.Hit.collider.gameObject.GetComponent<SceneItem>();
+        
+        if (sceneItem != m_prevSceneItem)
+            OutlineOff();
+        
+        m_prevSceneItem = sceneItem;
         //# Outline On
         sceneItem.SetOutline(true);
-        m_prevSceneItem = sceneItem;
 
         if (!m_isInteractionKeyPressed) return;
 
