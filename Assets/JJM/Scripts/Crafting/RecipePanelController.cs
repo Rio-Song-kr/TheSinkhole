@@ -12,14 +12,14 @@ namespace CraftingSystem
         public Image resultItemImage;
         public TMP_Text resultItemName;
         // 재료 슬롯 생성 및 세팅 예시
-        
+
         public TMP_Text itemDescription;
         public TMP_Text ingredientText;
         public Button craftingButton;
         public TMP_Text craftingButtonText;
 
         [Header("RecipeSelectButton 연결")]
-        public GameObject recipeButtonPrefab;// 레시피 버튼 프리팹
+        public GameObject recipeButtonPrefab; // 레시피 버튼 프리팹
 
         [Header("재료 스크롤뷰 Content")]
         public Transform ingredientContentParent; // Content 오브젝트
@@ -31,6 +31,8 @@ namespace CraftingSystem
         public CraftingManager craftingManager;
 
         private CraftingRecipe currentRecipe;
+
+        public void CloseRecipeUI() => gameObject.SetActive(false);
 
         // 레시피 정보로 UI 갱신
         public void SetRecipe(CraftingRecipe recipe)
@@ -50,7 +52,9 @@ namespace CraftingSystem
 
             // 기존 재료 슬롯 삭제
             foreach (Transform child in ingredientContentParent)
+            {
                 Destroy(child.gameObject);
+            }
 
             // 재료 슬롯 생성
             //foreach (var ing in recipe.ingredients)
@@ -87,7 +91,9 @@ namespace CraftingSystem
                 if (invSys.FindItemSlots(ing.item, out var slots))
                 {
                     foreach (var slot in slots)
+                    {
                         owned += slot.ItemCount;
+                    }
                 }
 
                 // 재료 슬롯 UI 생성 및 색상 처리
@@ -131,10 +137,7 @@ namespace CraftingSystem
 
             // 버튼 이벤트 연결
             craftingButton.onClick.RemoveAllListeners();
-            craftingButton.onClick.AddListener(() =>
-            {
-                craftingManager.TryCraftWithDelay(recipe);
-            });
+            craftingButton.onClick.AddListener(() => { craftingManager.TryCraftWithDelay(recipe); });
         }
 
         public IEnumerator CraftingButtonCountdownCoroutine(float time)
@@ -153,11 +156,7 @@ namespace CraftingSystem
             craftingButtonText.text = originalText; // 원래 텍스트로 복구
         }
 
-
-        public CraftingRecipe GetCurrentRecipe()
-        {
-            return currentRecipe;
-        }
+        public CraftingRecipe GetCurrentRecipe() => currentRecipe;
         public void HidePanel()
         {
             gameObject.SetActive(false);

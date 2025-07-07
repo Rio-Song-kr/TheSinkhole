@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CraftingSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,6 +44,7 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.UIOpenClose.started += ctx => ExploitUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => WaterUI.OnCloseKeyPressed();
         onFoot.UIOpenClose.started += ctx => TurretUI.OnCloseKeyPressed();
+        onFoot.UIOpenClose.started += ctx => CommonUI.CloseButton.OnUICloseKeyPressed();
         onFoot.InventoryNumpad.started += m_inventory.OnNumpadKeyPressed;
         onFoot.InventoryPartial.started += ctx => InventoryDragHandler.OnPartialKeyPressed();
         onFoot.InventoryPartial.canceled += ctx => InventoryDragHandler.OnPartialKeyReleased();
@@ -60,6 +62,8 @@ public class PlayerInputManager : MonoBehaviour
         onFoot.Interaction.canceled += ctx => interact.OnInteractionKeyReleased();
         onFoot.Interaction.started += ctx => m_shelterUpgrade.OnInteraction();
         onFoot.Interaction.started += ctx => m_status.OnInteractionKeyPressed();
+        onFoot.Interaction.started += ctx => CraftingStation.OnInteractionKeyPressed();
+        onFoot.Interaction.canceled += ctx => CraftingStation.OnInteractionKeyReleased();
 
         onFoot.LMBClick.started += ctx => attack.Attack();
         onFoot.LMBClick.started += ctx => interact.OnMouseButtonPressed();
