@@ -35,7 +35,7 @@ public class ItemManager : MonoBehaviour
     {
         if (m_itemPrefabDatabaseSO.Equals(null))
         {
-            Debug.Log("Item Database SO가 연결되지 않았습니다.");
+            Debug.LogError("Item Database SO가 연결되지 않았습니다.");
             return;
         }
 
@@ -74,6 +74,9 @@ public class ItemManager : MonoBehaviour
             newItemDataSO.ItemMaxOwn = item.ItemMaxOwn;
             newItemDataSO.ItemText = item.ItemText;
 
+            if (item.EffectId != -1)
+                newItemDataSO.ItemData.ItemEffect = GameManager.Instance.Effect.EffectIdData[item.EffectId];
+
             m_itemPrefabDatabaseSO.OnSetPrefab(ref newItemDataSO);
 
             //todo 데이터 초기화 및 모델, Icon 등 연결
@@ -107,7 +110,6 @@ public class ItemManager : MonoBehaviour
     {
         var dataList = new List<ItemFileData>();
 
-        // for (int i = 0; i < lines.Length; i++)
         foreach (string line in lines)
         {
             string[] fields = line.Split(',');

@@ -12,28 +12,42 @@ public class ActionManager : MonoBehaviour
     private Dictionary<int, DevelopSO> m_actionIdData;
 
     /// <summary>
-    /// Action id별 데이터를 반환
+    /// Action id별 데이터
     /// </summary>
     public Dictionary<int, DevelopSO> ActionIdData => m_actionIdData;
 
+    //# ActionID, EffectIds
+    private Dictionary<int, List<int>> m_actionIdEffect;
+
     /// <summary>
-    /// Action에 따라 Effect ID 전달(EffectID가 없으면 -1)
+    /// Action id별 효과 데이터
     /// </summary>
-    public Action<int> OnActionEffect;
+    public Dictionary<int, List<int>> ActionIdEffect => m_actionIdEffect;
+
+    /// <summary>
+    /// Action에 따라 Effect ID(리스트) 전달(EffectID가 없으면 null)
+    /// </summary>
+    public Action<List<int>> OnActionEffect;
 
     private void OnEnable()
     {
+        //# Invoke 예시
+        // GameManager.Instance.Action.OnActionEffect?.Invoke(m_actionIdEffect[ActionId]);
+
         m_actionIdData = new Dictionary<int, DevelopSO>();
+        ActionEffectInit();
 
         string[] actionConsumedLines = LoadCSV.LoadFromCsv("ActionConsumedItem");
         var actionConsumedList = ReadDataFromLines(actionConsumedLines);
 
+        var developSO = ScriptableObject.CreateInstance<DevelopSO>();
+
         foreach (var actionConsumed in actionConsumedList)
         {
-            var developSO = new DevelopSO();
-
             if (!m_actionIdData.ContainsKey(actionConsumed.ActionId))
             {
+                //# ActionId가 없을 경우에만 새로 생성
+                developSO = ScriptableObject.CreateInstance<DevelopSO>();
                 developSO.RequireItems = new List<RequireItemData>();
             }
             developSO.DevelopDesc = actionConsumed.Description;
@@ -76,5 +90,23 @@ public class ActionManager : MonoBehaviour
         }
 
         return dataList;
+    }
+
+    private void ActionEffectInit()
+    {
+        m_actionIdEffect = new Dictionary<int, List<int>>();
+
+        m_actionIdEffect[50502] = new List<int>();
+        m_actionIdEffect[50502].Add(35003);
+        m_actionIdEffect[50502].Add(35004);
+
+        m_actionIdEffect[50501] = new List<int>();
+        m_actionIdEffect[50301].Add(35005);
+        m_actionIdEffect[50301].Add(35006);
+        m_actionIdEffect[50301].Add(30004);
+
+        m_actionIdEffect[50505] = new List<int>();
+        m_actionIdEffect[50505].Add(35001);
+        m_actionIdEffect[50505].Add(35002);
     }
 }
