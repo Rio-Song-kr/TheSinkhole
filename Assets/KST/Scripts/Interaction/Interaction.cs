@@ -3,11 +3,10 @@ using TMPro;
 using EPOOutline;
 using UnityEngine;
 
-public class Interaction : MonoBehaviour
+public class Interaction : Singleton<Interaction>
 {
     public ToolType CurrentTool = ToolType.None;
     [SerializeField] private Transform m_rayTransform; //레이 쏘는 위치(캐릭터의 카메라.)
-    [SerializeField] private GameObject m_crosshairObject;
     public float InteractionDistance = 2.3f; //적당한 거리로 세팅바람.(상호작용 가능한 적당한 레이 길이 필요.)
 
     //트리거로 들어온 대상에 따라 나눔
@@ -18,15 +17,19 @@ public class Interaction : MonoBehaviour
     private bool m_isIneractionKeyPressed;
 
     [SerializeField] private Inventory m_inventory;
-    [SerializeField] private GameObject m_itemPickUpTextObject;
-    [SerializeField] private TextMeshProUGUI m_itemPickUpText;
     [NonSerialized] public RaycastHit Hit;
     [NonSerialized] public bool IsDetected;
     private Outlinable m_outlinable;
     private Tile m_interactionTile = null;
 
-    private void Awake() => m_inventory = GetComponent<Inventory>();
+    private InteractionUIManager m_uiManager;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        m_inventory = GetComponent<Inventory>();
+        m_uiManager = GetComponent<InteractionUIManager>();
+    }
     private void Update()
     {
         IsDetected = GetRaycastHit();
@@ -39,7 +42,7 @@ public class Interaction : MonoBehaviour
         //todo 낮, 밤 관련된 스크립트 추가 - 낮이면 Tile, 밤이면 공격
         // if (!m_isMouseButtonClicked) return;
 
-        if (GameManager.Instance.IsDay) DayAction(); // 타일 개척
+        if (GameTimer.IsDay) DayAction(); // 타일 개척
         else NightAction(); // Attack
     }
     private void DayAction()
@@ -51,7 +54,10 @@ public class Interaction : MonoBehaviour
             if (m_outlinable != null && Hit.collider.gameObject.GetInstanceID() != m_outlinable.gameObject.GetInstanceID())
                 ClearInteractionTile();
 
+            if (!GameManager.Instance.IsCursorLocked) return;
+
             var tileState = Hit.collider.GetComponent<Tile>().tileState;
+
             SetOutline();
 
             if (CurrentTool == ToolType.None)
@@ -60,27 +66,34 @@ public class Interaction : MonoBehaviour
                 return;
             }
 
+            if (CurrentTool == ToolType.Pick && tileState == TileState.PlainTile)
+                m_uiManager.SetInteractionUI(InteractionType.Tile, true, "개척하려면 [E] 키를 눌러주세요.", false);
 
-            if (CurrentTool == ToolType.Pick && tileState == TileState.None)
-                SetTextObject(true, "개척하려면 [E] 키를 눌러주세요.");
+            else if (tileState == TileState.PlainTile && CurrentTool != ToolType.Pick)
+            {
+                m_uiManager.SetInteractionUI(InteractionType.Tile, true, "개척을 위해 도구가 필요합니다.", false);
+            }
             else if (tileState == TileState.Frontier)
             {
                 HandleFrontierTile();
             }
-            else if (tileState != TileState.None && tileState != TileState.Frontier)
+            else if (tileState != TileState.PlainTile && tileState != TileState.Frontier)
             {
-                SetTextObject(false);
+                m_uiManager.ClearInteractionUI(InteractionType.Tile);
                 m_interactionTile = Hit.collider.gameObject.GetComponent<Tile>();
                 m_interactionTile.OnTileInteractionStay(this);
             }
 
-            SetCrosshairObject(false);
+            // SetCrosshairObject(false);
 
             if (toolInteractable.GetInteractType() == interactType.MouseClick &&
                 toolInteractable.CanInteract(CurrentTool))
             {
                 if (m_isIneractionKeyPressed)
+                {
+                    m_uiManager.ClearInteractionUI(InteractionType.Tile);
                     toolInteractable.OnInteract(CurrentTool);
+                }
             }
             else
             {
@@ -96,15 +109,13 @@ public class Interaction : MonoBehaviour
         else
         {
             ClearInteractionTile();
-
-            if (GameManager.Instance.IsCursorLocked)
-                SetCrosshairObject(true);
         }
     }
     private void ClearInteractionTile()
     {
-        SetTextObject(false);
-        ClearPreviouseOutline();
+        m_uiManager.ClearInteractionUI(InteractionType.Tile);
+        m_uiManager.ClearInteractionUI(InteractionType.Shelter);
+        ClearPreviousOutline();
 
         if (m_interactionTile != null)
         {
@@ -114,20 +125,17 @@ public class Interaction : MonoBehaviour
     }
     private void HandleFrontierTile()
     {
-        switch (CurrentTool)
+        if (!ExploitUI.Instance.IsOpen)
         {
-            case ToolType.Hammer:
-                SetTextObject(true, "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            case ToolType.Shovel:
-                SetTextObject(true, "경작지 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            case ToolType.Water:
-                SetTextObject(true, "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.");
-                break;
-            default:
-                SetTextObject(true, "시설 설치을 설치하려면 도구가 필요합니다.");
-                break;
+            string message = CurrentTool switch
+            {
+                ToolType.Hammer => "방어시설 타일로 변환하려면 [E] 키를 눌러주세요.",
+                ToolType.Shovel => "경작지 타일로 변환하려면 [E] 키를 눌러주세요.",
+                ToolType.Water => "급수시설 타일로 변환하려면 [E] 키를 눌러주세요.",
+                _ => "시설 설치을 설치하려면 도구가 필요합니다."
+            };
+
+            m_uiManager.SetInteractionUI(InteractionType.Tile, true, message, false);
         }
     }
     private void SetOutline()
@@ -135,17 +143,20 @@ public class Interaction : MonoBehaviour
         if (m_outlinable == null)
         {
             m_outlinable = Hit.collider.GetComponent<Outlinable>();
-            m_outlinable.enabled = true;
         }
+        m_outlinable.enabled = true;
     }
     private void DisplayTilePopup(TileState tileState)
     {
         switch (tileState)
         {
-            case TileState.None: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
+            case TileState.PlainTile: // 미 개척지. 다른 행동은 불능이며, 곡괭이를 통해서만 개척지로 변경 가능.
                 GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NoneTile);
                 break;
-            case TileState.Farmable:
+            case TileState.Frontier:
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedTool);
+                break;
+            case TileState.FarmTile:
                 if (CurrentTool != ToolType.Shovel)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedFarmable);
                 break;
@@ -153,13 +164,13 @@ public class Interaction : MonoBehaviour
                 if (CurrentTool != ToolType.Hammer)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedHammer);
                 break;
-            case TileState.WaterArea:
+            case TileState.WaterTile:
                 if (CurrentTool != ToolType.Water)
                     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.NeedWater);
                 break;
         }
     }
-    private void ClearPreviouseOutline()
+    private void ClearPreviousOutline()
     {
         if (m_outlinable != null)
         {
@@ -230,16 +241,9 @@ public class Interaction : MonoBehaviour
             m_currentTargetTriggerTool = null;
     }
 
-    public void SetTextObject(bool isActive, string text = "")
-    {
-        m_itemPickUpTextObject.SetActive(isActive);
-        m_itemPickUpText.text = text;
-    }
-
-    public void SetCrosshairObject(bool isActive) => m_crosshairObject.SetActive(isActive);
-
     public void OnMouseButtonPressed() => m_isMouseButtonClicked = true;
     public void OnMouseButtonReleased() => m_isMouseButtonClicked = false;
     public void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;
+    public bool IsKeyPressed() => m_isIneractionKeyPressed = true;
     public void OnInteractionKeyReleased() => m_isIneractionKeyPressed = false;
 }

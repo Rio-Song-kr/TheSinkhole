@@ -63,7 +63,7 @@ public class TestTurretTile : MonoBehaviour
             // TowerBuildUI.OnTextInteractClose?.Invoke();
             // TowerBuildUI.InvokeClose();
             // TowerZoneEvent.OnTowerExit?.Invoke();
-            TurretZoneEvent.InvokeExit();
+            // TurretZoneEvent.InvokeExit();
         }
     }
 
@@ -78,7 +78,7 @@ public class TestTurretTile : MonoBehaviour
 
         CanBuildTurret = false;
         // TowerZoneEvent.OnTowerExit?.Invoke();
-        TurretZoneEvent.InvokeExit();
+        // TurretZoneEvent.InvokeExit();
 
     }
 

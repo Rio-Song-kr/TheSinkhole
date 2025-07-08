@@ -7,6 +7,7 @@ public enum PopupType
     Destroyed,
     NotDestroyed,
     NoneTile,
+    NeedTool,
     NeedFarmable,
     NeedHammer,
     NeedWater,
@@ -15,5 +16,9 @@ public enum PopupType
     DefenceArea,
     Water,
     Full,
-    ChangingState
+    ChangingState,
+    CantPlant,
+    CantExploit,
+    CantInteract,
+    CantBuildTurret
 }

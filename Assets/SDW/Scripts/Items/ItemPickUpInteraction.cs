@@ -1,62 +1,71 @@
 using UnityEngine;
 
-public class ItemPickUpInteraction : MonoBehaviour
+public class ItemPickUpInteraction : PickUpInteraction
 {
-    private static bool m_isInteractionKeyPressed;
-    private SceneItem m_prevSceneItem = null;
-    private Interaction m_interaction;
-
-    private void Awake() => m_interaction = GetComponent<Interaction>();
-
     private void Update()
     {
-        MouseInteraction();
+        if (!MouseInteraction()) return;
+
+        GetItem();
     }
 
-    private void MouseInteraction()
+    protected override InteractionType GetCurrentInteractionType() => InteractionType.Item;
+
+    private void GetItem()
     {
-        if (!m_interaction.IsDetected || !GameManager.Instance.IsCursorLocked)
+        if (!GameManager.Instance.IsCursorLocked) return;
+
+        var hitCollider = m_interaction.Hit.collider;
+
+        if (hitCollider == null)
+            return;
+        var hitObject = hitCollider.gameObject;
+
+        if (hitObject == null) return;
+
+        if (!hitObject.CompareTag("Item"))
         {
-            m_interaction.SetTextObject(false);
-
-            if (GameManager.Instance.IsCursorLocked)
-                m_interaction.SetCrosshairObject(true);
-
-            //# Outline Off
-            if (m_prevSceneItem != null)
-                m_prevSceneItem.SetOutline(false);
-            m_prevSceneItem = null;
+            m_uiManager.ClearInteractionUI(InteractionType.Item);
+            OutlineOff();
             return;
         }
 
-        if (!m_interaction.Hit.collider.gameObject.CompareTag("Item")) return;
+        //# 이전에 활성화된 outline이 있으면서, 현재 바라보는 아이템과 다른 경우
+        if (m_prevSceneItem != null && hitObject.GetComponent<SceneItem>().GetInstanceID() != m_prevSceneItem.GetInstanceID())
+        {
+            // m_uiManager.ClearInteractionUI(InteractionType.Item);
+            OutlineOff();
+            return;
+        }
 
         HandleItems();
     }
 
     private void HandleItems()
     {
-        m_interaction.SetTextObject(true, "아이템 획득은 [E] 키를 눌러주세요.");
-        m_interaction.SetCrosshairObject(false);
+        m_uiManager.SetInteractionUI(InteractionType.Item, true, "아이템 획득은 [E] 키를 눌러주세요.", false);
+
 
         var sceneItem = m_interaction.Hit.collider.gameObject.GetComponent<SceneItem>();
+        
+        if (sceneItem != m_prevSceneItem)
+            OutlineOff();
+        
+        m_prevSceneItem = sceneItem;
         //# Outline On
         sceneItem.SetOutline(true);
-        m_prevSceneItem = sceneItem;
 
         if (!m_isInteractionKeyPressed) return;
 
-        var inventory = GetComponent<Inventory>();
-        if (!inventory) return;
-
-        int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
+        int remainingAmount = m_inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
 
         //# 모든 아이템이 성공적으로 추가됨
         if (remainingAmount == 0)
         {
+            sceneItem.SetOutline(false);
             GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
             GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
-            m_interaction.SetTextObject(false);
+            // m_interaction.SetTextObject(false);
         }
         else if (remainingAmount < sceneItem.ItemAmount)
         {
@@ -72,7 +81,4 @@ public class ItemPickUpInteraction : MonoBehaviour
             GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
         }
     }
-
-    public static void OnInteractionKeyPressed() => m_isInteractionKeyPressed = true;
-    public static void OnInteractionKeyReleased() => m_isInteractionKeyPressed = false;
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +7,7 @@ using UnityEngine.Events;
 /// 인벤토리 로직 및 데이터 관리
 /// Inventory와 관련된 모델(데이터 계층) 역할
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class InventorySystem
 {
     [SerializeField] private List<InventorySlot> m_inventorySlots;
@@ -83,7 +84,8 @@ public class InventorySystem
 
         foreach (var slot in m_inventorySlots)
         {
-            if (slot.ItemDataSO == item) inventorySlot.Add(slot);
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == item.ItemEnName) inventorySlot.Add(slot);
         }
 
         return inventorySlot.Count > 0;

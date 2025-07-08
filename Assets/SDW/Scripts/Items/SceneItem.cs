@@ -2,12 +2,13 @@ using EPOOutline;
 using UnityEngine;
 
 /// <summary>
-/// 씬에 배치된 아이템을 관리하는 클래스
+/// 씬에 배치될 아이템을 관리하는 클래스
 /// 아이템 데이터, 수량, 픽업 거리 등을 설정하고 콜라이더 크기를 조정
 /// </summary>
 public class SceneItem : MonoBehaviour
 {
     [Header("Item Settings")]
+    public ItemEnName ItemEnName;
     public ItemDataSO ItemDataSO;
     public int ItemAmount = 1;
 
@@ -21,6 +22,11 @@ public class SceneItem : MonoBehaviour
 
     private void Start()
     {
+        if (ItemDataSO == null && ItemEnName != ItemEnName.None)
+        {
+            ItemDataSO = GameManager.Instance.Item.ItemEnDataSO[ItemEnName];
+        }
+
         m_outline = GetComponentInChildren<Outlinable>();
         m_outline.enabled = false;
     }

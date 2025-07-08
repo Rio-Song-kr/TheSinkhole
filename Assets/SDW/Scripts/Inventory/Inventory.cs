@@ -10,13 +10,19 @@ using UnityEngine.InputSystem;
 /// Inventory와 관련된 모델(데이터 계층) 역할
 /// </summary>
 [Serializable]
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, ISaveable
 {
+    [Header("Save Settings")]
+    [SerializeField] private string m_saveID;
+    [SerializeField] private ObjectType m_objectType;
+
     //# 비고 : 현재는 dynamicInventorySlot이라 사용하고 있지만, 추후 상자가 추가될 시 상자와 백팩은 변수명은 분리하여 구분
+    [Header("Set Slot Size")]
     [SerializeField] private int m_dynamicInventorySlotSize;
     [SerializeField] private int m_quickSlotSize;
 
     //# 하단의 Quick Slot용 Inventory System
+    [Header("Inventory System")]
     [SerializeField] private InventorySystem m_quickSlotInventorySystem;
     public InventorySystem QuickSlotInventorySystem => m_quickSlotInventorySystem;
 
@@ -27,18 +33,30 @@ public class Inventory : MonoBehaviour
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
     public static Action<int> OnSelectedItemChanged;
 
-    //todo 인벤토리의 남은 슬롯 수 관련해서 체크하도록 해야 함
-    public int RemainingSlots;
-
     private ItemEnName m_selectedItemEnName;
-    private ToolType m_toolType = ToolType.None;
-    private int m_itemAmounts = 0;
+    private ToolType m_quickSlotItemToolType = ToolType.None;
+    private ItemType m_quickSlotItemType = ItemType.None;
+    private ItemDataSO m_quickSlotItemData;
 
     /// <summary>
+    /// 저장을 위한 Id 케ㅡ
     /// 인벤토리 시스템들을 size 만큼 초기화
     /// </summary>
     private void Awake()
     {
+        if (m_objectType == ObjectType.SceneStatic)
+        {
+            if (string.IsNullOrEmpty(m_saveID))
+            {
+                Debug.LogError($"{gameObject.name}의 Save ID가 설정되지 않았습니다.");
+                return;
+            }
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(m_saveID))
+                m_saveID = Guid.NewGuid().ToString();
+        }
         m_quickSlotInventorySystem = new InventorySystem(m_quickSlotSize);
         m_dynamicInventorySystem = new InventorySystem(m_dynamicInventorySlotSize);
     }
@@ -79,38 +97,39 @@ public class Inventory : MonoBehaviour
     /// 지정된 인덱스의 퀵슬롯을 선택
     /// 영문 이름과 Tool type관련 처리
     /// </summary>
-    /// <param name="slotIndex">선택할 슬롯 인덱스</param>
-    private void SelectQuickSlot(int m_selectedIndex)
+    /// <param name="selectedIndex">선택할 슬롯 인덱스</param>
+    private void SelectQuickSlot(int selectedIndex)
     {
-        OnSelectedItemChanged?.Invoke(m_selectedIndex);
-
-        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO == null) return;
-
-        m_selectedItemEnName = m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemEnName;
-        if (m_quickSlotInventorySystem.InventorySlots[m_selectedIndex].ItemDataSO.ItemType != ItemType.ToolItem)
+        if (m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO == null)
         {
-            m_toolType = ToolType.None;
+            OnSelectedItemChanged?.Invoke(selectedIndex);
             return;
         }
+
+        m_quickSlotItemData = m_quickSlotInventorySystem.InventorySlots[selectedIndex].ItemDataSO;
+        m_selectedItemEnName = m_quickSlotItemData.ItemEnName;
+        m_quickSlotItemType = m_quickSlotItemData.ItemType;
 
         switch (m_selectedItemEnName)
         {
             case ItemEnName.Hammer:
-                m_toolType = ToolType.Hammer;
+                m_quickSlotItemToolType = ToolType.Hammer;
                 break;
             case ItemEnName.Shovel:
-                m_toolType = ToolType.Shovel;
+                m_quickSlotItemToolType = ToolType.Shovel;
                 break;
             case ItemEnName.Pick:
-                m_toolType = ToolType.Pick;
+                m_quickSlotItemToolType = ToolType.Pick;
                 break;
-            case ItemEnName.Water:
-                m_toolType = ToolType.Water;
+            case ItemEnName.Pail:
+                m_quickSlotItemToolType = ToolType.Water;
                 break;
             default:
-                m_toolType = ToolType.None;
+                m_quickSlotItemToolType = ToolType.None;
                 break;
         }
+
+        OnSelectedItemChanged?.Invoke(selectedIndex);
     }
 
     /// <summary>
@@ -123,11 +142,122 @@ public class Inventory : MonoBehaviour
     /// 현재 선택된 아이템의 ToolType을 반환
     /// </summary>
     /// <returns>현재 선택된 아이템의 ToolType을 반환</returns>
-    public ToolType GetItemToolType() => m_toolType;
+    public ToolType GetItemToolType() => m_quickSlotItemToolType;
 
-    public int GetItemAmounts(ItemEnName itemEnName) =>
-        //todo 아이템의 영문이름과 같은 이름을 가진 아이템의 총 수량을 반환)
-        m_itemAmounts;
+    /// <summary>
+    /// 현재 선택된 아이템의 ItemType을 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ItemType을 반환</returns>
+    public ItemType GetQuickSlotItemType() => m_quickSlotItemType;
+
+    /// <summary>
+    /// 현재 선택된 아이템의 ItemDataSO를 반환
+    /// </summary>
+    /// <returns>현재 선택된 아이템의 ItemDataSO를 반환</returns>
+    public ItemDataSO GetQuickSlotItemData() => m_quickSlotItemData;
+
+    /// <summary>
+    /// ItemEnName 아이템이 총 몇 개 있는지 반환
+    /// </summary>
+    /// <param name="itemEnName">찾을 아이템의 영어 이름</param>
+    /// <returns>찾은 아이템의 수를 반환</returns>
+    public int GetItemAmounts(ItemEnName itemEnName)
+    {
+        int itemAmounts = 0;
+
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName) itemAmounts += slot.ItemCount;
+        }
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName) itemAmounts += slot.ItemCount;
+        }
+
+        return itemAmounts;
+    }
+
+    /// <summary>
+    /// 비어있는 Slot의 수를 반환
+    /// </summary>
+    /// <returns>비어있는 Slot의 수</returns>
+    public int GetRemainingSlots()
+    {
+        int slotAmounts = 0;
+
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null)
+                slotAmounts++;
+        }
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null)
+                slotAmounts++;
+        }
+
+        return slotAmounts;
+    }
+
+    /// <summary>
+    /// 특정 아이템을 제거
+    /// </summary>
+    /// <param name="itemEnName">제거하려는 아이템 영어 이름</param>
+    /// <param name="amount">제거하려는 아이템의 수</param>
+    /// <returns>제거가 완료되면 true, 완료하지 못하면 false를 반환</returns>
+    public bool RemoveItemAmounts(ItemEnName itemEnName, int amount)
+    {
+        //todo 인벤토리 순회하면서 개수 채크
+        int remainingAmounts = GetItemAmounts(itemEnName);
+
+        if (amount > remainingAmounts) return false;
+
+        //# 1. 아이템 수가 충분한 경우, 그냥 슬롯 하나에서 처리
+        foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            {
+                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
+                if (slot.ItemCount >= amount)
+                {
+                    slot.RemoveItem(amount);
+                    m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
+                    break;
+                }
+                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
+                amount -= slot.ItemCount;
+                slot.RemoveItem(slot.ItemCount);
+                m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
+            }
+        }
+        if (amount == 0) return true;
+
+        foreach (var slot in m_dynamicInventorySystem.InventorySlots)
+        {
+            if (slot.ItemDataSO == null) continue;
+            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            {
+                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
+                if (slot.ItemCount >= amount)
+                {
+                    slot.RemoveItem(amount);
+                    m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
+                    break;
+                }
+                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
+                amount -= slot.ItemCount;
+                slot.RemoveItem(slot.ItemCount);
+                m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
+            }
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// 마인크래프트 스타일의 아이템 추가 방식
@@ -160,10 +290,7 @@ public class Inventory : MonoBehaviour
         }
 
         //# 빈 슬롯에 추가 (QuickSlot 우선)
-        if (remainingAmount > 0)
-        {
-            remainingAmount = AddToEmptySlots(itemData, remainingAmount);
-        }
+        if (remainingAmount > 0) remainingAmount = AddToEmptySlots(itemData, remainingAmount);
 
         return remainingAmount;
     }
@@ -243,4 +370,50 @@ public class Inventory : MonoBehaviour
 
         return remainingAmount;
     }
+
+    public string GetUniqueID() => m_saveID;
+
+    /// <summary>
+    /// Save를 위한 데이터를 읽어오기 위한 메서드(프로토타입)
+    /// </summary>
+    /// <returns>InventorySaveData를 반환</returns>
+    public object GetSaveData() => new InventorySaveData
+    {
+        SaveID = m_saveID,
+        Type = m_objectType,
+        QuickSlotInventorySystem = m_quickSlotInventorySystem,
+        DynamicInventorySystem = m_dynamicInventorySystem,
+        SelectedItemEnName = m_selectedItemEnName,
+        ToolType = m_quickSlotItemToolType
+    };
+
+    /// <summary>
+    /// 저장된 데이터로부터 Inventory 데이터를 할당(프로토타입)
+    /// </summary>
+    /// <param name="data">Inventory에 할당하기 위한 데이터</param>
+    public void LoadSaveDta(object data)
+    {
+        var inventoryData = (InventorySaveData)data;
+        m_objectType = inventoryData.Type;
+        m_quickSlotInventorySystem = inventoryData.QuickSlotInventorySystem;
+        m_dynamicInventorySystem = inventoryData.DynamicInventorySystem;
+        m_selectedItemEnName = inventoryData.SelectedItemEnName;
+        m_quickSlotItemToolType = inventoryData.ToolType;
+    }
+
+    /// <summary>
+    /// Save/Load 시 Scene 기본 생성 Object의 ID를 생성하기 위한 메서드
+    /// </summary>
+#if UNITY_EDITOR
+    [ContextMenu("Generate Scene ID")]
+    public void GenerateSceneID()
+    {
+        if (m_objectType == ObjectType.SceneStatic)
+        {
+            m_saveID = Guid.NewGuid().ToString();
+            UnityEditor.EditorUtility.SetDirty(this);
+            Debug.Log($"Scene ID 생성: {m_saveID}");
+        }
+    }
+#endif
 }

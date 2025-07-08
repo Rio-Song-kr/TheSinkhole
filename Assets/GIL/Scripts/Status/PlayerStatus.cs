@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-
-
-public class PlayerStatus : MonoBehaviour
+using UnityEngine.SceneManagement;
+public class PlayerStatus : MonoBehaviour, IDamageable
 {
     public static PlayerStatus Instance { get; set; }
     [Tooltip("값을 변화하고 싶을 땐 PlayerStatus.Instance.Set스텟명(변화량 퍼센트) 사용")]
@@ -15,27 +16,37 @@ public class PlayerStatus : MonoBehaviour
     // Cur스탯 : 현재 스탯들 <- Set스탯을 사용할 경우 이것들이 변화함.
     // 체력
     public float MaxHealth;
-    public float CurHealth { get; private set; }
+
+    [field: SerializeField] public float CurHealth { get; private set; }
     // 배고픔
     [Header("Hunger")]
     public float MaxHunger;
-    public float CurHunger { get; private set; }
-    [SerializeField] float moveSpeedDebuffStat = 0.5f;
-    [SerializeField] float actionSpeedDebuffStat = 2f;
+    [field: SerializeField] public float CurHunger { get; private set; }
+    [SerializeField] private float moveSpeedDebuffStat = 0.5f;
+    [SerializeField] private float actionSpeedDebuffStat = 2f;
     [Header("Debuff")]
     public bool isStarving;
     private bool isDehydrated;
     private StarvationDebuff starvationDebuff;
     private DehydrationDebuff dehydrationDebuff;
 
+    private Inventory m_inventory;
+    private InteractionUIManager m_uiManager;
+    private bool m_isConsumableItem;
+
     // 갈증
     [Header("Thirst")]
     public float MaxThirst;
-    public float CurThirst { get; private set; }
+
+    [field: SerializeField] public float CurThirst { get; private set; }
     // 정신력
     [Header("Mentality")]
     public float MaxMentality;
-    public float CurMentality { get; private set; }
+
+    [field: SerializeField] public float CurMentality { get; private set; }
+
+    [field: SerializeField] public int AttackPower { get; private set; }
+
     [Header("Speed")]
     // 이동속도
     // TODO: 추후에 이동 구현 시 이동속도 관련 코드에다가 옮길지 고민하기.
@@ -47,6 +58,13 @@ public class PlayerStatus : MonoBehaviour
     // 공격속도
     // 추후에 공격등을 할 때 배율로 사용할 예정.
     public float AtkSpeed = 1;
+
+    [Header("Scene Loader")]
+    [SerializeField] private float m_flareTime = 3f;
+    [SerializeField] private string m_sceneName = "OutroScene";
+
+    public GameObject panel;
+    private Coroutine m_panelCoroutine;
 
     // 싱글톤 검정
     private void Awake() => Init();
@@ -61,6 +79,12 @@ public class PlayerStatus : MonoBehaviour
 
         starvationDebuff = new StarvationDebuff(this, moveSpeedDebuffStat, actionSpeedDebuffStat);
         dehydrationDebuff = new DehydrationDebuff(this);
+
+        m_inventory = GetComponent<Inventory>();
+        m_uiManager = GetComponent<InteractionUIManager>();
+
+        Inventory.OnSelectedItemChanged += (param) => OnSelectedItemChanged();
+        GameManager.Instance.Action.OnActionEffect += OnActionEffect;
     }
 
     /// <summary>
@@ -136,7 +160,7 @@ public class PlayerStatus : MonoBehaviour
     /// <param name="value">변화할 정신력의 퍼센트 float값</param>
     public void SetMentality(float value)
     {
-        float deltaValue = MaxHealth * value;
+        float deltaValue = MaxMentality * value;
         CurMentality += deltaValue;
         CurMentality = Mathf.Clamp(CurMentality, 0f, MaxMentality);
         // 정신력이 0이 될 경우 발생할 로직
@@ -148,6 +172,7 @@ public class PlayerStatus : MonoBehaviour
     // 플레이어 사망시 처리되는 로직들
     public void PlayerDeath()
     {
+        GameManager.Instance.SetGameOver();
         Debug.Log("플레이어 사망!");
     }
 
@@ -170,7 +195,8 @@ public class PlayerStatus : MonoBehaviour
     // 플레이어의 현재 스텟들을 전부 출력하는 로직
     public void PrintAllCurStatus()
     {
-        Debug.Log($"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}, 이동속도: {CurPlayerMoveSpeed}, 행동속도: {ActionSpeed}");
+        Debug.Log(
+            $"체력: {CurHealth}, 배고픔: {CurHunger}, 갈증: {CurThirst}, 정신력: {CurMentality}, 이동속도: {CurPlayerMoveSpeed}, 행동속도: {ActionSpeed}");
     }
     // 허기 디버프, 이동속도가 반으로 감소하고, 행동속도가 2배 증가하는
     private void Init()
@@ -183,5 +209,121 @@ public class PlayerStatus : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    /// <summary>
+    /// 정수형 데미지를 최대 체력의 비율로 전환하여 비율만큼 깎음
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakenDamage(int damage)
+    {
+        // damage가 최대 체력의 몇 퍼센트인지 계산
+        // 그만큼 SetHealth를 한다.
+        panel.SetActive(true);
+
+        if (m_panelCoroutine == null)
+            m_panelCoroutine = StartCoroutine(OnDisableHitPanel());
+        float percent = damage / MaxHealth;
+        SetHealth(-percent);
+    }
+
+    private IEnumerator OnDisableHitPanel()
+    {
+        yield return new WaitForSeconds(0.5f);
+        panel.SetActive(false);
+        m_panelCoroutine = null;
+    }
+
+    /// <summary>
+    /// SelectItem이 ConsumableItem일 때 할 효과
+    /// </summary>
+    private void OnSelectedItemChanged()
+    {
+        //# 소비 가능한 아이템이 아닌 경우 return
+        if (m_inventory.GetQuickSlotItemType() != ItemType.ConsumableItem)
+        {
+            m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
+            m_isConsumableItem = false;
+            return;
+        }
+
+        m_uiManager.SetInteractionUI(
+            InteractionType.ConsumableItem, true, "아이템을 사용하려면 [E]를 눌러주세요", false
+        );
+
+        m_isConsumableItem = true;
+    }
+
+    private void HandleItemEffect()
+    {
+        if (!m_isConsumableItem) return;
+
+        //# 소비 가능한 아이템인 경우, ItemDataSO를 가져옴
+        var itemData = m_inventory.GetQuickSlotItemData();
+        var itemEffect = itemData.ItemData.ItemEffect;
+
+        if (itemData.ItemData.ItemId == 20302)
+        {
+            StartCoroutine(LoadOutroScene());
+        }
+        else
+        {
+            HandleEffect(itemEffect);
+        }
+
+        m_inventory.RemoveItemAmounts(itemData.ItemEnName, 1);
+        // m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
+        // m_isConsumableItem = false;
+    }
+
+    private IEnumerator LoadOutroScene()
+    {
+        yield return new WaitForSeconds(m_flareTime);
+        SceneManager.LoadScene(m_sceneName);
+    }
+
+    private void HandleEffect(EffectFileData effect)
+    {
+        switch (effect.Type)
+        {
+            case StatusType.Hp:
+                SetHealth(effect.StatusAmount);
+                break;
+            case StatusType.Hungry:
+                SetHunger(effect.StatusAmount);
+                break;
+            case StatusType.Mental:
+                SetMentality(effect.StatusAmount);
+                break;
+            case StatusType.Thirst:
+                SetThirst(effect.StatusAmount);
+                break;
+        }
+    }
+
+    private void OnActionEffect(List<int> effectIds)
+    {
+        foreach (int effectId in effectIds)
+        {
+            HandleEffect(GameManager.Instance.Effect.EffectIdData[effectId]);
+        }
+    }
+
+    public void OnInteractionKeyPressed() => HandleItemEffect();
+
+    public void OnRealTimeEffect()
+    {
+        //# 배고픔
+        var hungerEffect = GameManager.Instance.Effect.EffectIdData[35007];
+
+        SetHunger(hungerEffect.StatusAmount);
+
+        //# 갈증
+        var thirstyEffect = GameManager.Instance.Effect.EffectIdData[35008];
+        SetThirst(thirstyEffect.StatusAmount);
+
+        //# 멘탈
+        var mentalityEffect = GameManager.Instance.Effect.EffectIdData[35009];
+        SetMentality(mentalityEffect.StatusAmount);
     }
 }

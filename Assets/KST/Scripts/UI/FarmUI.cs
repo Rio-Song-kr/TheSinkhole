@@ -3,206 +3,245 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Util;
 
 public class FarmUI : Singleton<FarmUI>
 {
-    [Header("Crop")]
-    [SerializeField] private CropDataSO selectedCrop;
-    public CropDataSO[] CropList;
-
     [Header("UI")]
     public GameObject FarmUIGO;
     public bool GetActiveself() => FarmUIGO.activeSelf;
 
-    //작물 Detail
     public GameObject DetailGO;
     [SerializeField] private Image cropImg;
     [SerializeField] private TMP_Text cropName;
     [SerializeField] private TMP_Text cropDesc;
+    [SerializeField] private TMP_Text cropRequireTime;
     [SerializeField] private TMP_Text m_statusText;
     public Image ProgressBarImg;
-    public Button[] cropButtons;
 
-    private float pressTimer = 0f;
-    private float pressDuration = 5f;
-    private bool isPressingE = false;
-    //스크롤뷰
+    [Header("ScrollView")]
     [SerializeField] private GameObject cropBtnPrefab;
     [SerializeField] private Transform scrollViewContentPos; //스크롤뷰 컨텐츠 위치
+    public Button[] cropButtons;
 
-    //오픈 관련 이벤트 처리
-    public event Action<bool> OnIsUIOpen;
+    public CropDataSO[] CropList;
 
     [Header("Tile")]
-    [SerializeField] private FarmTile currentTile;
-    [SerializeField] private float growTimer = 0f;
+    private FarmTile currentTile;
+    private CropDataSO selectedCrop;
 
     private static bool m_isIneractionKeyPressed;
     private static bool m_isEscapeKeyPressed;
+
+    public event Action<bool> OnIsUIOpen;
+
+    private float pressTimer = 0f;
+    private float pressDuration = 5f;
+    // private bool isPressingE = false;
+
+    //인벤토리
+    [SerializeField] private Inventory playerInven;
 
     private void Start()
     {
         ScrollViewSetting();
         m_statusText.text = "";
         ProgressBarImg.fillAmount = 0f;
+        FarmUIGO.SetActive(false);
     }
 
     private void Update()
     {
-        // if (!FarmUIGO.activeSelf || currentTile == null) return;//FarmUI가 비활성화 돼 있다면 무시.
-        if (currentTile == null) return; //FarmUI가 비활성화 돼 있다면 무시.
+        if (currentTile == null) return;
 
         if (m_isEscapeKeyPressed && !m_isIneractionKeyPressed)
         {
             CloseUI();
             return;
         }
+        if (!GameTimer.IsDay)
+        {
+            if (currentTile.IsPlanted())
+            {
+                PlantingProgress();
+            }
+            else if (pressTimer > 0f)
+            {
+                CancelPlanting();
+            }
+
+            if (m_isIneractionKeyPressed)
+            {
+                GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.CantPlant);
+            }
+            return;
+        }
 
         if (currentTile.IsPlanted())
         {
-            var growingCrop = currentTile.GetGrownCrop();
-
-            if (growingCrop == selectedCrop)
+            PlantingProgress();
+        }
+        else if (selectedCrop != null)
+        {
+            //재배 가능한 상태
+            if (m_isIneractionKeyPressed)
             {
-                growTimer -= Time.deltaTime;
-                m_statusText.text = $"재배중 {growTimer}";
-                if (growTimer < 0f)
+                if (!HasRequiredItems(selectedCrop))
                 {
-                    growTimer = 0f;
-                    m_statusText.text = $"재배 완료! 수확하려면 [E]키를 누르세요";
-                    if (m_isIneractionKeyPressed)
-                    {
-                        Harvest();
-                    }
+                    m_statusText.text = "재배에 필요한 재료가 부족합니다.";
+                    return;
+                }
+                // isPressingE = true;
+                pressTimer += Time.deltaTime;
+                ProgressBarImg.fillAmount = pressTimer / pressDuration;
+                m_statusText.text = $"작물 재배 중. . . {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
+
+                if (pressTimer >= pressDuration)
+                {
+                    StartGrowing(selectedCrop);
                 }
             }
-            else
+            else if (pressTimer > 0f)
             {
-                m_statusText.text = "해당 작물은 현재 재배할 수 없습니다.";
-            }
-            return;
-        }
-
-        if (selectedCrop == null) return;
-
-        //재배 가능한 상태
-        if (m_isIneractionKeyPressed)
-        {
-            isPressingE = true;
-            pressTimer += Time.deltaTime;
-            ProgressBarImg.fillAmount = pressTimer / pressDuration;
-            m_statusText.text = $"작물 재배 중. . .";
-
-            if (pressTimer >= pressDuration)
-            {
-                StartGrowing(selectedCrop);
+                CancelPlanting();
             }
         }
-        else if (pressTimer > 0f)
-        {
-            CancelPlanting();
-        }
     }
-    private void CancelPlanting()
-    {
-        //상태 전부 초기화
 
-        pressTimer = 0f;
-        ProgressBarImg.fillAmount = 0f;
-        isPressingE = false;
-        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-    }
-    public void SetTile(FarmTile tile)
+    private void PlantingProgress()
     {
-        currentTile = tile;
-        //해당 타일이 이미 재배중이라면 해당 작물 표시
-        if (tile.IsPlanted())
+        var crop = currentTile.GetGrownCrop();
+        DisplayCropDetail(crop);
+
+        float remain = currentTile.GetRemainingGrowTime();
+
+        if (currentTile.IsGrowing())
         {
-            DisplayCropDetail(tile.GetGrownCrop());
+            m_statusText.text = $"재배중 {FormatingTime.FormatMinTime(remain)}";
+            // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.white);
+            ProgressBarImg.fillAmount = 1f;
         }
         else
         {
-            if (selectedCrop != null)
+            m_statusText.text = "재배 완료! 수확하려면 [E]키를 누르세요";
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CEF8F", Color.green);
+            ProgressBarImg.fillAmount = 1f;
+
+            if (m_isIneractionKeyPressed)
             {
-                DisplayCropDetail(selectedCrop);
-                m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-                ProgressBarImg.fillAmount = 0f;
+                Harvest();
+                Debug.Log("수확");
             }
         }
     }
-    #region UI Open/Close
-    public void OpenUI()
+
+    public void OpenUI(FarmTile tile)
     {
-        GameManager.Instance.SetCursorUnlock();
-        Debug.Log("농사 UI open");
+        if (!GameTimer.IsDay) return;
+
+        currentTile = tile;
+        selectedCrop = null;
+        pressTimer = 0f;
+        // isPressingE = false;
+
+        foreach (var btn in cropButtons)
+        {
+            btn.interactable = true;
+        }
+
         FarmUIGO.SetActive(true);
+        GameManager.Instance.SetCursorUnlock();
         OnIsUIOpen?.Invoke(true);
-        if (selectedCrop == null)
-        {
-            m_statusText.text = "";
-            ProgressBarImg.fillAmount = 0f;
-            DetailGO.SetActive(false);
-            return;
-        }
 
-        DisplayCropDetail(selectedCrop);
+        m_isIneractionKeyPressed = false;
 
-
-        if (currentTile != null && !currentTile.IsPlanted())
-        {
-            m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            ProgressBarImg.fillAmount = 0f;
-        }
+        m_statusText.text = "작물을 선택해주세요.";
+        ProgressBarImg.fillAmount = 0f;
+        DetailGO.SetActive(false);
     }
+
     public void CloseUI()
     {
+        currentTile = null;
         FarmUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
-        m_isEscapeKeyPressed = false;
         GameManager.Instance.SetCursorLock();
+        m_isEscapeKeyPressed = false;
     }
-    #endregion
 
-    //작물 선택
     public void SelectCrop(CropDataSO crop)
     {
         //재배 중일 경우 다른 작물 선택 불가하도록
-        if (currentTile != null && currentTile.IsPlanted())
+        if (currentTile == null || currentTile.IsPlanted())
         {
-            if (currentTile.GetGrownCrop() != crop) return;
+            if (currentTile != null && currentTile.GetGrownCrop() != crop)
+                return;
         }
+
         selectedCrop = crop;
         DisplayCropDetail(crop);
-
-        if (currentTile != null && !currentTile.IsPlanted())
-        {
-            m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
-            ProgressBarImg.fillAmount = 0f;
-        }
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요.";
+        ProgressBarImg.fillAmount = 0f;
     }
-    //재배 시작
-    private void StartGrowing(CropDataSO selectedCrop)
-    {
-        currentTile.StartPlanting(selectedCrop);
-        growTimer = selectedCrop.growTime;
 
-        m_statusText.text = $"재배중 {growTimer}";
+    //재배 시작
+    private void StartGrowing(CropDataSO crop)
+    {
+        if (!GameTimer.IsDay) return; //낮이 아니면 리턴
+
+        if (!HasRequiredItems(crop))
+        {
+            m_statusText.text = "재료가 부족합니다.";
+            return;
+        }
+
+        if (!ConsumeRequiredItems(crop))
+        {
+            Debug.LogWarning("아이템 소모 오류");
+            return;
+        }
+
+        currentTile.StartPlanting(crop);
+        pressTimer = 0f;
+        // isPressingE = false;
+
+        m_statusText.text = "재배 시작됨";
         ProgressBarImg.fillAmount = 1f;
+
         foreach (var btn in cropButtons)
         {
             btn.interactable = false;
         }
+        if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50301, out var effect))
+        {
+            GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
+        }
     }
-    //작물 설명 display
-    public void DisplayCropDetail(CropDataSO data)
+
+    private void CancelPlanting()
     {
+        //상태 전부 초기화
+        pressTimer = 0f;
+        // isPressingE = false;
+        ProgressBarImg.fillAmount = 0f;
+        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요.";
+    }
+
+    //작물 설명 display
+    private void DisplayCropDetail(CropDataSO data)
+    {
+        if (data == null) return;
         DetailGO.SetActive(true);
 
+        data.cropImg = GameManager.Instance.Item.ItemEnDataSO[data.harvestItemSo].Icon;
         cropImg.sprite = data.cropImg;
         cropName.text = data.cropName;
-        // cropDesc.text = $"Time Required : {data.growTime} \n {data.cropDesc} \n Hungry : {data.cropEffect} %";
-        cropDesc.text = $"소요 시간 : {data.growTime}초 \n {data.cropDesc} \n 배고픔 : {data.cropEffect} %";
+        cropRequireTime.text = $"{data.growTime} Seconds";
+        // cropDesc.text = $" ● 설명{data.cropDesc} \n ● 효과: {data.cropEffect}";
+        cropDesc.text = $" ● 설명\n{data.cropDesc} \n";
     }
+
     public void ScrollViewSetting()
     {
         var btnList = new List<Button>();
@@ -220,71 +259,90 @@ public class FarmUI : Singleton<FarmUI>
         cropButtons = btnList.ToArray();
     }
 
-    //수확
     private void Harvest()
     {
-        Debug.Log("수확 시스템 ON");
+        if (!GameTimer.IsDay) return; //낮이 아니면
 
-        bool isAddInven =AddInvetory();
-        if (!isAddInven) return;
-        Debug.Log("성공");
+        if (!AddInventory()) return; // 인벤에 예외 발생시.
 
-
-        //타일 재배 조건 초기화
         currentTile.HarvestingCrop();
-
-        //초기화
-        InitTileSetting();
-    }
-
-    private void InitTileSetting()
-    {
-        growTimer = 0f;
-        selectedCrop = null;
         ProgressBarImg.fillAmount = 0f;
-        m_statusText.text = $"재배하기 [E]키를 {pressDuration}초 동안 눌러주세요. ";
+        ProgressBarImg.color = ColorUtil.Hexcode("#865A5A", Color.red);
 
-
-        cropImg.sprite = null;
-        cropName.text = "";
-        cropDesc.text = "";
+        m_statusText.text = "재배하기 [E]키를 5초 동안 눌러주세요";
 
         foreach (var btn in cropButtons)
         {
             btn.interactable = true;
         }
+
+        selectedCrop = null;
+        DetailGO.SetActive(false);
+    }
+    //재료 아이템 체크
+    private bool HasRequiredItems(CropDataSO crop)
+    {
+        foreach (var req in crop.RequireItems)
+        {
+            if (req.ItemName == ItemEnName.None) continue;
+
+            int currentCount = playerInven.GetItemAmounts(req.ItemName);
+            if (currentCount < req.RequireCount) return false;
+        }
+        return true;
     }
 
-    private bool AddInvetory()
+    private bool ConsumeRequiredItems(CropDataSO crop)
     {
-        // var sceneItem = other.gameObject.GetComponent<SceneItem>();
+        foreach (var req in crop.RequireItems)
+        {
+            if (req.ItemName == ItemEnName.None) continue;
 
-        // var inventory = GetComponent<Inventory>();
-        // if (!inventory) return false;
-
-        // int remainingAmount = inventory.AddItemSmart(sceneItem.ItemDataSO, sceneItem.ItemAmount);
-
-        // //# 모든 아이템이 성공적으로 추가됨
-        // if (remainingAmount == 0)
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, sceneItem.ItemDataSO, sceneItem.ItemAmount);
-        //     GameManager.Instance.Item.ItemPools[sceneItem.ItemDataSO.ItemEnName].Pool.Release(sceneItem);
-        // }
-        // else if (remainingAmount < sceneItem.ItemAmount)
-        // {
-        //     //@ 일부만 추가됨 - 남은 수량으로 업데이트
-        //     sceneItem.ItemAmount = remainingAmount;
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-
-        //     //todo 아이템이 부분적으로 추가되었음을 시각적으로 표시
-        //     //@ 예: 이펙트 재생, 사운드 등
-        // }
-        // else
-        // {
-        //     GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
-        // }
+            bool result = playerInven.RemoveItemAmounts(req.ItemName, req.RequireCount);
+            if (!result)
+            {
+                m_statusText.text = "아이템 소모 실패";
+                return false;
+            }
+        }
         return true;
+    }
 
+    private bool AddInventory()
+    {
+        if (selectedCrop == null || selectedCrop.harvestItemSo == ItemEnName.None)
+        {
+            Debug.LogWarning("수확할 작물이 없습니다.");
+            return false;
+        }
+        // var item = selectedCrop.harvestItemSo;
+        if (!GameManager.Instance.Item.ItemEnDataSO.TryGetValue(selectedCrop.harvestItemSo, out var item))
+        {
+            return false;
+        }
+
+        //1. 슬롯 검사
+        int requireSlots = 1; // CropDataSo의 자료형이 harvestItemSo가 아닌 RequireItemData[]으로 선언된다면 해당 배열 개수로 받아오면 됨.
+
+        if (playerInven.GetRemainingSlots() < requireSlots)
+        {
+            m_statusText.text = "인벤토리에 슬롯이 부족합니다.";
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+            return false;
+        }
+
+        //2. 아이템 추가
+        int remain = playerInven.AddItemSmart(item, selectedCrop.harvestItemAmounts);
+        if (remain > 0)
+        {
+            m_statusText.text = "인벤토리에 공간이 부족합니다.";
+            GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Full);
+            return false;
+        }
+
+        //3. 수확
+        GameManager.Instance.UI.Popup.DisplayPopupView(PopupType.Acquired, item, selectedCrop.harvestItemAmounts);
+        return true;
     }
 
     public static void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;

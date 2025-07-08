@@ -19,7 +19,7 @@ public class PoolManager<T> where T : MonoBehaviour
     /// <param name="defaultCapacity">기본 용량</param>
     /// <param name="maxSize">최대 크기</param>
     /// <param name="transform">(선택) 부모 Transform</param>
-    public PoolManager(T prefab, int defaultCapacity = 5, int maxSize = 10, Transform transform = null)
+    public PoolManager(T prefab, int defaultCapacity = 10, int maxSize = 20, Transform transform = null)
     {
         _pool = new ObjectPool<T>
         (
