@@ -119,7 +119,7 @@ public class FarmUI : Singleton<FarmUI>
         {
             m_statusText.text = $"재배중 {FormatingTime.FormatMinTime(remain)}";
             // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
-            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.white);
+            ProgressBarImg.color = ColorUtil.Hexcode("#F28787", Color.red);
             ProgressBarImg.fillAmount = 1f;
         }
         else

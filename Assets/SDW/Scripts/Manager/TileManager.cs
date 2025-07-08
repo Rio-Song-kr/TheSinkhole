@@ -83,11 +83,22 @@ public class TileManager : MonoBehaviour
                     else if (x >= -1 && x <= 1 && y == m_groundYArea.y + 1)
                         tileIndex = 5;
 
-                    var tile = Instantiate(m_buildableTile[tileIndex]);
-                    tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
-                    tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
-                    tile.transform.parent = parentTiles.transform;
-                    monsterPathTile = tile;
+                    if (tileIndex == 1)
+                    {
+                        var tile = Instantiate(m_groundTile);
+                        tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                        tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
+                        tile.transform.parent = parentTiles.transform;
+                        monsterPathTile = tile;
+                    }
+                    else
+                    {
+                        var tile = Instantiate(m_buildableTile[tileIndex]);
+                        tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                        tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
+                        tile.transform.parent = parentTiles.transform;
+                        monsterPathTile = tile;
+                    }
                 }
                 else
                 {

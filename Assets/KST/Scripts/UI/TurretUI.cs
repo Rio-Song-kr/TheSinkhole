@@ -8,7 +8,7 @@ using Util;
 public class TurretUI : Singleton<TurretUI>
 {
     [Header("Turret")]
-    [SerializeField] private TurretSo selectedTurret; 
+    [SerializeField] private TurretSo selectedTurret;
     public TurretSo[] TurretList;
 
     [Header("UI")]
@@ -43,7 +43,7 @@ public class TurretUI : Singleton<TurretUI>
     [Header("Inventory")]
     [SerializeField] private Inventory playerInven;
 
-    [SerializeField]private float pressTimer = 0f;
+    [SerializeField] private float pressTimer = 0f;
     private float pressDuration = 5f;
 
     private static bool m_isIneractionKeyPressed;
@@ -91,7 +91,7 @@ public class TurretUI : Singleton<TurretUI>
             pressTimer += Time.deltaTime;
             ProgressBarImg.fillAmount = pressTimer / pressDuration;
             m_statusText.text = $"설치 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
-            ProgressBarImg.color = Color.white;
+            ProgressBarImg.color = ColorUtil.Hexcode("#F28787", Color.red);
 
             if (pressTimer >= pressDuration)
             {
@@ -113,6 +113,7 @@ public class TurretUI : Singleton<TurretUI>
         else if (pressTimer > 0f)
         {
             CancelBuilding();
+            ProgressBarImg.color = Color.white;
         }
     }
 
@@ -126,7 +127,7 @@ public class TurretUI : Singleton<TurretUI>
         if (currentTile.IsInstalling())
         {
             m_statusText.text = $"설치중 {FormatingTime.FormatMinTime(remain)}";
-            ProgressBarImg.fillAmount = 1f;
+            ProgressBarImg.fillAmount = pressTimer / pressDuration;
         }
         else if (!currentTile.IsDeployed() && currentTile.IsBuild()) // 배치 전 상태
         {
@@ -152,7 +153,8 @@ public class TurretUI : Singleton<TurretUI>
         builtTimer = so.buildingTime;
 
         m_statusText.text = $"제작중 {builtTimer}";
-        ProgressBarImg.fillAmount = 1f;
+        // ProgressBarImg.fillAmount = 1f;
+        ProgressBarImg.fillAmount = pressTimer / pressDuration;
 
         if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50502, out var effect))
         {
@@ -282,7 +284,9 @@ public class TurretUI : Singleton<TurretUI>
         turretDesc.text = $"타워 상세정보 : {data.TurretDesc}초 \n 공격력: {data.Atk} \n 사거리 : {data.distance} %";
 
         foreach (Transform child in contentTransfrom)
+        {
             Destroy(child.gameObject);
+        }
 
         foreach (var req in data.RequireItems)
         {
@@ -303,7 +307,9 @@ public class TurretUI : Singleton<TurretUI>
     {
         var btnList = new List<Button>();
         foreach (Transform child in scrollViewContentPos)
+        {
             Destroy(child.gameObject);
+        }
 
         foreach (var turret in TurretList)
         {

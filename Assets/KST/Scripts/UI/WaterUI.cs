@@ -80,7 +80,7 @@ public class WaterUI : Singleton<WaterUI>
 
             m_statusText.text = $"급수중 {FormatingTime.FormatMinTime(remain)}";
             // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
-            ProgressBarImg.color = Color.white;
+            ProgressBarImg.color = ColorUtil.Hexcode("#F28787", Color.red);
             ProgressBarImg.fillAmount = 1f;
             return;
         }
