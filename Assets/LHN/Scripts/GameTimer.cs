@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using UnityEngine.EventSystems;
 using System.Collections;
+using Util;
 
 public class GameTimer : MonoBehaviour
 {
@@ -13,13 +14,18 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private Sprite m_daySprite;
     [SerializeField] private Sprite m_nightSprite;
 
-    private const double GameMultiplier = 3600.0 / 30.0;
+    // private const double GameMultiplier = 3600.0 / 30.0;
+    private const double GameMultiplier = 3600.0 / 5.0;
     private DateTime realStartTime;
     private int count = 1;
 
     public TextMeshProUGUI gameTimeText; // UI에 연결할 텍스트
     public static int Day;
     public static bool IsDay = true;
+
+    public Light m_light;
+    public Color m_dayColor;
+    public Color m_nightColor;
 
     private float m_RealtimeCount = 0;
 
@@ -29,7 +35,6 @@ public class GameTimer : MonoBehaviour
         realStartTime = DateTime.Now;
         m_icon.sprite = m_daySprite;
     }
-
 
     private DateTime beforeTime = new DateTime(1, 1, 1, 6, 0, 0);
 
@@ -56,12 +61,14 @@ public class GameTimer : MonoBehaviour
             if (m_icon.sprite != m_daySprite)
                 m_icon.sprite = m_daySprite;
             IsDay = true;
+            m_light.color = m_dayColor;
         }
         else if (gameTimeFormatted == "PM 06")
         {
             if (m_icon.sprite != m_nightSprite)
                 m_icon.sprite = m_nightSprite;
             IsDay = false;
+            m_light.color = m_nightColor;
         }
 
         if (m_RealtimeCount >= 60f)
