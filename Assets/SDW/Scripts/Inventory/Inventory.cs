@@ -32,7 +32,6 @@ public class Inventory : MonoBehaviour, ISaveable
 
     public static Action<InventorySystem, bool> OnDynamicDisplayRequest;
     public static Action<int> OnSelectedItemChanged;
-    public static Action OnItemRemoved;
 
     private ItemEnName m_selectedItemEnName;
     private ToolType m_quickSlotItemToolType = ToolType.None;
@@ -256,8 +255,6 @@ public class Inventory : MonoBehaviour, ISaveable
                 m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
             }
         }
-
-        OnItemRemoved?.Invoke();
 
         return true;
     }

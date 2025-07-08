@@ -26,7 +26,6 @@ public class ViewmodelManager : MonoBehaviour
         isAttakable = false;
         onFoot = playerInput.OnFoot;
         onFoot.InventoryNumpad.started += ShowQuickslotViewModel;
-        Inventory.OnItemRemoved += ShowQuickslotViewModel;
         onFoot.LMBClick.started += ctx => ShowAttackAnimation();
     }
 
@@ -47,7 +46,6 @@ public class ViewmodelManager : MonoBehaviour
         toolModels[index].SetActive(true);
     }
 
-    public void ShowQuickslotViewModel() => ShowQuickslotViewModel(new InputAction.CallbackContext());
 
     /// <summary>
     /// 퀵슬롯에 있는 아이템의 3D 모델링을 오른손에 보여주기
