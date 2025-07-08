@@ -62,30 +62,61 @@ public class ViewmodelManager : MonoBehaviour
         }
         catch (NullReferenceException n)
         {
-            ActivateSelectedToolOnly(4);
+            ActivateSelectedToolOnly(8);
             isAttakable = false;
             return;
         }
+        // 데이터 테이블 순서대로 배치(혼동 방지)
         switch (itemData.ItemId)
         {
-            case 20303:
+            // 물통
+            case 20104:
                 ActivateSelectedToolOnly(0);
-                isAttakable = true;
+                isAttakable = false;
                 break;
-            case 20304:
+            // 붕대
+            case 20301:
                 ActivateSelectedToolOnly(1);
-                isAttakable = true;
+                isAttakable = false;
                 break;
-            case 20307:
+            // 감자
+            case 20901:
                 ActivateSelectedToolOnly(2);
-                isAttakable = true;
+                isAttakable = false;
                 break;
-            case 20308:
+            // 삽
+            case 20303:
                 ActivateSelectedToolOnly(3);
                 isAttakable = false;
                 break;
-            default:
+            // 망치
+            case 20304:
                 ActivateSelectedToolOnly(4);
+                isAttakable = true;
+                break;
+            // 담배
+            case 20305:
+                ActivateSelectedToolOnly(5);
+                isAttakable = true;
+                break;
+            // 곡괭이
+            case 20307:
+                ActivateSelectedToolOnly(6);
+                isAttakable = true;
+                break;
+            // 양동이
+            case 20308:
+                ActivateSelectedToolOnly(7);
+                isAttakable = true;
+                break;
+            // 플레어 건
+            case 20302:
+                ActivateSelectedToolOnly(8);
+                isAttakable = false;
+                break;
+            // 그 외
+            default:
+                ActivateSelectedToolOnly(9);
                 isAttakable = false;
                 break;
         }
