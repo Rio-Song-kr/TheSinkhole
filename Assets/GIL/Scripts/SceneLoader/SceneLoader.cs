@@ -8,7 +8,7 @@ public class SceneLoader : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.anyKeyDown)
         {
             LoadScene(m_sceneName);
         }

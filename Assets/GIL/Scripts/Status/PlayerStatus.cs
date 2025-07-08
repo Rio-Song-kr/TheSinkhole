@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
     public static PlayerStatus Instance { get; set; }
@@ -57,6 +58,10 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     // 공격속도
     // 추후에 공격등을 할 때 배율로 사용할 예정.
     public float AtkSpeed = 1;
+
+    [Header("Scene Loader")]
+    [SerializeField] private float m_flareTime = 3f;
+    [SerializeField] private string m_sceneName = "OutroScene";
 
     public GameObject panel;
     private Coroutine m_panelCoroutine;
@@ -257,12 +262,26 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         var itemData = m_inventory.GetQuickSlotItemData();
         var itemEffect = itemData.ItemData.ItemEffect;
 
-        HandleEffect(itemEffect);
+        if (itemData.ItemData.ItemId == 20302)
+        {
+            StartCoroutine(LoadOutroScene());
+        }
+        else
+        {
+            HandleEffect(itemEffect);
+        }
 
         m_inventory.RemoveItemAmounts(itemData.ItemEnName, 1);
         // m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
         // m_isConsumableItem = false;
     }
+
+    private IEnumerator LoadOutroScene()
+    {
+        yield return new WaitForSeconds(m_flareTime);
+        SceneManager.LoadScene(m_sceneName);
+    }
+
     private void HandleEffect(EffectFileData effect)
     {
         switch (effect.Type)
