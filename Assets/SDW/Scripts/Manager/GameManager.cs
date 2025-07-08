@@ -1,6 +1,6 @@
 using UnityEngine;
-using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// 게임 전반을 관리하는 Singleton 매니저 클래스
@@ -67,8 +67,8 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver => m_isGameOver;
 
     [SerializeField] private GameObject m_gameOverCanvas;
-
     [SerializeField] private GameObject m_crosshairUI;
+    [SerializeField] private Button m_retryButton;
 
     //todo 추후 통합시 이용
     // public static void CreateInstance()
@@ -111,10 +111,14 @@ public class GameManager : MonoBehaviour
         int targetHeight = 1080;
 
         Screen.SetResolution(targetWidth, targetHeight, true);
+
+        // m_retryButton.onClick.AddListener(SceneReload);
     }
 
     private void Update()
     {
+        if (Input.GetMouseButtonDown(1))
+            SceneReload();
         if (!m_isGameOver) return;
 
         SetCursorUnlock();
@@ -141,6 +145,10 @@ public class GameManager : MonoBehaviour
 
     public void SetGameOver() => m_isGameOver = true;
 
-    public void SceneReload() => SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+    public void SceneReload()
+    {
+        // int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene("Scenes/IntroScene");
+    }
     public void Exit() => Application.Quit();
 }

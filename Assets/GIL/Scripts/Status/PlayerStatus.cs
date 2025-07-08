@@ -174,7 +174,6 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public void PlayerDeath()
     {
         GameManager.Instance.SetGameOver();
-        Debug.Log("플레이어 사망!");
     }
 
     /// <summary>
