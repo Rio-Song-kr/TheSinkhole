@@ -68,8 +68,8 @@ public class Inventory : MonoBehaviour, ISaveable
     {
         OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, !DynamicUIController.IsOpened);
 
-        if (DynamicUIController.IsOpened) GameManager.Instance.SetCursorUnlock();
-        else GameManager.Instance.SetCursorLock();
+        if (DynamicUIController.IsOpened) GameManager.Instance.UI.SetCursorUnlock();
+        else GameManager.Instance.UI.SetCursorLock();
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class Inventory : MonoBehaviour, ISaveable
     public void OnCloseKeyPressed()
     {
         OnDynamicDisplayRequest?.Invoke(m_dynamicInventorySystem, false);
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
     }
 
     /// <summary>

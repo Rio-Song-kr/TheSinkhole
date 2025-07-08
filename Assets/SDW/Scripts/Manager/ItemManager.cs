@@ -31,6 +31,7 @@ public class ItemManager : MonoBehaviour
     /// <summary>
     /// CSV 데이터를 로드하여 아이템 데이터베이스와 오브젝트 풀을 초기화
     /// </summary>
+    private void Awake() => GameManager.Instance.SetItemManager(this);
     private void OnEnable()
     {
         if (m_itemPrefabDatabaseSO.Equals(null))

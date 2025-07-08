@@ -14,7 +14,6 @@ namespace CraftingSystem
 
         public void Set(ItemDataSO item, int needCount, int ownedCount)
         {
-            Debug.Log($"Set »£√‚: {item?.name}, {ownedCount}/{needCount}");
             iconImage.sprite = item.Icon;
             nameText.text = item.ItemData.ItemName;
             countText.text = $"{ownedCount}/{needCount}";

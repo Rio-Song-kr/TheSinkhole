@@ -63,6 +63,8 @@ public class GameTimer : MonoBehaviour
                 m_icon.sprite = m_daySprite;
             IsDay = true;
             m_light.color = m_dayColor;
+
+            GameManager.Instance.Audio.PlayBGM(AudioClipName.A_Pioneer);
         }
         else if (gameTimeFormatted == "PM 06")
         {
@@ -70,6 +72,7 @@ public class GameTimer : MonoBehaviour
                 m_icon.sprite = m_nightSprite;
             IsDay = false;
             m_light.color = m_nightColor;
+            GameManager.Instance.Audio.PlayBGM(AudioClipName.F_Night);
         }
 
         if (m_RealtimeCount >= 60f)

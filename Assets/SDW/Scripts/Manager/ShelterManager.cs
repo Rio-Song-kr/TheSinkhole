@@ -30,6 +30,8 @@ public class ShelterManager : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.Instance.SetShelterManager(this);
+
         m_shelterLevelData = new Dictionary<int, ShelterLevelFileData>();
         m_shelterUpgradeData = new Dictionary<int, List<ShelterUpgradeFileData>>();
 

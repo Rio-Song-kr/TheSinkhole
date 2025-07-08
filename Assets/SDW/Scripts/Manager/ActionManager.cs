@@ -29,6 +29,8 @@ public class ActionManager : MonoBehaviour
     /// </summary>
     public Action<List<int>> OnActionEffect;
 
+    private void Awake() => GameManager.Instance.SetActionManager(this);
+
     private void OnEnable()
     {
         //# Invoke 예시

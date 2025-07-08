@@ -168,6 +168,7 @@ namespace CraftingSystem
             yield return new WaitForSeconds(1f);
 
             craftingButtonText.text = originalText; // 원래 텍스트로 복구
+            NeedUpdateUI = true;
         }
 
         public CraftingRecipe GetCurrentRecipe() => currentRecipe;

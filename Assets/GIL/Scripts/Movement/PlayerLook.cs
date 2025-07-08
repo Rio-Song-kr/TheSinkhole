@@ -11,7 +11,7 @@ public class PlayerLook : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
     }
 
     /// <summary>

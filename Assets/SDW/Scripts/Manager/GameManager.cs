@@ -1,6 +1,5 @@
+using System.Collections;
 using UnityEngine;
-using TMPro;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 게임 전반을 관리하는 Singleton 매니저 클래스
@@ -54,6 +53,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public ItemRecipeManager Recipe { get; private set; }
 
+    public AudioManager Audio { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     /// <summary>
@@ -66,20 +67,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool IsGameOver => m_isGameOver;
 
-    [SerializeField] private GameObject m_gameOverCanvas;
-
-    [SerializeField] private GameObject m_crosshairUI;
+    private bool m_isRun = false;
 
     //todo 추후 통합시 이용
-    // public static void CreateInstance()
-    // {
-    //     if (_instance == null)
-    //     {
-    //         var gameManagerPrefab = Resources.Load<GameManager>("GameManager");
-    //         _instance = Instantiate(gameManagerPrefab);
-    //         DontDestroyOnLoad(_instance);
-    //     }
-    // }
+    public static void CreateInstance()
+    {
+        if (m_instance == null)
+        {
+            var gameManagerPrefab = Resources.Load<GameManager>("GameManager");
+            m_instance = Instantiate(gameManagerPrefab);
+            DontDestroyOnLoad(m_instance);
+        }
+    }
 
     /// <summary>
     /// Singleton Instance를 구현하고 필요한 컴포넌트들을 초기화
@@ -94,15 +93,6 @@ public class GameManager : MonoBehaviour
 
         m_instance = this;
         DontDestroyOnLoad(gameObject);
-
-        UI = GetComponent<GlobalUIManager>();
-        Item = GetComponent<ItemManager>();
-        Monster = GetComponent<MonsterManager>();
-        Tile = GetComponent<TileManager>();
-        Shelter = GetComponent<ShelterManager>();
-        Action = GetComponent<ActionManager>();
-        Effect = GetComponent<EffectManager>();
-        Recipe = GetComponent<ItemRecipeManager>();
     }
 
     private void Start()
@@ -111,36 +101,37 @@ public class GameManager : MonoBehaviour
         int targetHeight = 1080;
 
         Screen.SetResolution(targetWidth, targetHeight, true);
+        Audio = GetComponent<AudioManager>();
+        Audio.PlayBGM(AudioClipName.Intro_Rain);
+
+        StartCoroutine(PlaySFX());
+    }
+
+    private IEnumerator PlaySFX()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Audio.PlaySFX(AudioClipName.M_Hole, Vector3.zero);
     }
 
     private void Update()
     {
         if (!m_isGameOver) return;
 
-        SetCursorUnlock();
-        m_gameOverCanvas.SetActive(true);
-    }
-
-    /// <summary>
-    /// UI가 Close 되거나 게임 시작이 CursorLockMode = Locked;
-    /// </summary>
-    public void SetCursorLock()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        m_crosshairUI.SetActive(true);
-    }
-
-    /// <summary>
-    /// UI가 Open될 때 CursorLockMode = Locked;
-    /// </summary>
-    public void SetCursorUnlock()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        m_crosshairUI.SetActive(false);
+        if (m_isRun) return;
+        m_isRun = true;
+        UI.SetCursorUnlock();
+        UI.EnableGameOverCanvas(true);
     }
 
     public void SetGameOver() => m_isGameOver = true;
 
-    public void SceneReload() => SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
-    public void Exit() => Application.Quit();
+    public void SetGlobalUIManager(GlobalUIManager globalUIManager) => UI = globalUIManager;
+    public void SetItemManager(ItemManager itemManager) => Item = itemManager;
+    public void SetMonsterManager(MonsterManager monsterManager) => Monster = monsterManager;
+    public void SetTileManager(TileManager tileManager) => Tile = tileManager;
+    public void SetShelterManager(ShelterManager shelterManager) => Shelter = shelterManager;
+    public void SetActionManager(ActionManager actionManager) => Action = actionManager;
+    public void SetEffectManager(EffectManager effectManager) => Effect = effectManager;
+    public void SetItemRecipeManager(ItemRecipeManager itemRecipeManager) => Recipe = itemRecipeManager;
 }
