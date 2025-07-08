@@ -87,7 +87,7 @@ public class ViewmodelManager : MonoBehaviour
             // 삽
             case 20303:
                 ActivateSelectedToolOnly(3);
-                isAttakable = false;
+                isAttakable = true;
                 break;
             // 망치
             case 20304:
@@ -97,7 +97,7 @@ public class ViewmodelManager : MonoBehaviour
             // 담배
             case 20305:
                 ActivateSelectedToolOnly(5);
-                isAttakable = true;
+                isAttakable = false;
                 break;
             // 곡괭이
             case 20307:
@@ -107,7 +107,7 @@ public class ViewmodelManager : MonoBehaviour
             // 양동이
             case 20308:
                 ActivateSelectedToolOnly(7);
-                isAttakable = true;
+                isAttakable = false;
                 break;
             // 플레어 건
             case 20302:
