@@ -103,7 +103,7 @@ public class WaterUI : Singleton<WaterUI>
             // isPressingE = true;
             pressTimer += Time.deltaTime;
             ProgressBarImg.fillAmount = pressTimer / pressDuration;
-            m_statusText.text = "급수 준비 중. . .";
+            m_statusText.text = $"급수 준비 중. . . {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
 
             if (pressTimer >= pressDuration)
             {

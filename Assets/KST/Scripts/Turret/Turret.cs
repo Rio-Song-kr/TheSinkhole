@@ -38,6 +38,7 @@ public class Turret : MonoBehaviour
     [SerializeField] private BulletParticle particlePrefab;
 
     [SerializeField] private AudioClip towerAttackSFX;
+    [SerializeField] private float testDamage;
 
     // public TriggerTurret towerZone;
 
@@ -78,12 +79,16 @@ public class Turret : MonoBehaviour
     {
         turretSo = so;
         Damge = new Stat<int>(turretSo.Atk);
+        testDamage = Damge.Value;
+        
 
         var trigger = GetComponentInChildren<TurretDectTrigger>();
         if (trigger != null)
         {
             trigger.SetDistance(turretSo.distance);
         }
+        Debug.Log($"공격력 {testDamage}");
+
     }
 
     private void RotateTurret()

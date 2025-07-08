@@ -59,10 +59,14 @@ public class TurretTile : Tile
     public override void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None) return;
-
-        TurretUI.Instance.OpenUI(this);
-        TurretUI.Instance.SetTile(this);
-        InteractionUI.ClearInteractionUI(InteractionType.Turret);
+        
+        if (GameManager.Instance.IsCursorLocked)
+        {
+            TurretUI.Instance.OpenUI(this);
+            TurretUI.Instance.SetTile(this);
+            InteractionUI.ClearInteractionUI(InteractionType.Turret);
+        }
+        
     }
     private void SetInteraction(bool status)
     {
