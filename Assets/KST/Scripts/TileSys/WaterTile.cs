@@ -66,7 +66,7 @@ public class WaterTile : Tile
     private void SetInteraction(bool status)
     {
         if (status)
-            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Water);
     }
@@ -98,7 +98,7 @@ public class WaterTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!WaterUI.Instance.GetActiveself() && currentTool == ToolType.Water)
-            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Water, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Water);
 

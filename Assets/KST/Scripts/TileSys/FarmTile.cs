@@ -68,7 +68,7 @@ public class FarmTile : Tile
     private void SetInteraction(bool status)
     {
         if (status)
-            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Farm);
     }
@@ -102,7 +102,7 @@ public class FarmTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Shovel)
-            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Farm, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Farm);
 
