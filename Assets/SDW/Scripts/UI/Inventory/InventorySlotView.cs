@@ -67,7 +67,8 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     {
         if (slot.ItemDataSO != null)
         {
-            m_itemSprite.sprite = slot.ItemDataSO.Icon;
+            if (m_slotType != SlotType.Trash)
+                m_itemSprite.sprite = slot.ItemDataSO.Icon;
             m_itemSprite.color = Color.white;
             if (m_slotType == SlotType.Normal)
                 m_itemCount.text = slot.ItemCount > 1 ? slot.ItemCount.ToString() : "";
@@ -83,8 +84,11 @@ public class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// </summary>
     public void ClearDisplay()
     {
-        m_itemSprite.sprite = null;
-        m_itemSprite.color = Color.clear;
+        if (m_slotType != SlotType.Trash)
+        {
+            m_itemSprite.sprite = null;
+            m_itemSprite.color = Color.clear;
+        }
         if (m_slotType == SlotType.Normal)
             m_itemCount.text = "";
     }
