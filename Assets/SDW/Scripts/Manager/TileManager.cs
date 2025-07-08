@@ -32,6 +32,8 @@ public class TileManager : MonoBehaviour
     //todo 울타리 - 출구 주변 3개 block은 개척이 가능한 tile로 변경되어야 함
     private void Awake()
     {
+        GameManager.Instance.SetTileManager(this);
+
         var parentTiles = new GameObject();
         parentTiles.name = "Tiles";
 
@@ -54,10 +56,6 @@ public class TileManager : MonoBehaviour
                 groundTile.transform.parent = planeTile.transform;
             }
         }
-
-
-        var navMeshSurface = planeTile.GetComponent<NavMeshSurface>();
-        if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
 
         for (int y = -m_buildableTileSize.y / 2; y <= m_buildableTileSize.y / 2; y++)
         {
@@ -83,11 +81,24 @@ public class TileManager : MonoBehaviour
                     else if (x >= -1 && x <= 1 && y == m_groundYArea.y + 1)
                         tileIndex = 5;
 
-                    var tile = Instantiate(m_buildableTile[tileIndex]);
-                    tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
-                    tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
-                    tile.transform.parent = parentTiles.transform;
-                    monsterPathTile = tile;
+                    if (tileIndex == 1)
+                    {
+                        var tile = Instantiate(m_groundTile);
+                        tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                        tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
+                        tile.transform.parent = parentTiles.transform;
+                        var navMeshObstacle = tile.GetComponent<NavMeshObstacle>();
+                        navMeshObstacle.enabled = false;
+                        monsterPathTile = tile;
+                    }
+                    else
+                    {
+                        var tile = Instantiate(m_buildableTile[tileIndex]);
+                        tile.transform.position = new Vector3(x, 0, y) * m_tileSize;
+                        tile.transform.rotation = Quaternion.Euler(0, randomRotation * 90, 0);
+                        tile.transform.parent = parentTiles.transform;
+                        monsterPathTile = tile;
+                    }
                 }
                 else
                 {
@@ -97,7 +108,6 @@ public class TileManager : MonoBehaviour
                     buildableTile.transform.parent = parentTiles.transform;
                     monsterPathTile = buildableTile;
                 }
-
 
                 // 가로
                 if (y >= -m_buildableTileSize.y / 2 && y <= -m_buildableTileSize.y / 2 + 2 ||
@@ -112,7 +122,6 @@ public class TileManager : MonoBehaviour
                     m_availableMonsterSpawnTile.Add(monsterPathTile.transform.position);
                 }
 
-
                 //~ Legacy - Tile에 미리 Surface를 Build하더라도 Surface의 위치가 변하지 않기에 Runtime에 빌드
                 //~ var navMeshSurface = buildableTile.GetComponent<NavMeshSurface>();
                 //~ if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
@@ -122,6 +131,9 @@ public class TileManager : MonoBehaviour
                 //~ {
                 //~     link.UpdateLink();
                 //~ }
+
+                var navMeshSurface = planeTile.GetComponent<NavMeshSurface>();
+                if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
             }
         }
     }

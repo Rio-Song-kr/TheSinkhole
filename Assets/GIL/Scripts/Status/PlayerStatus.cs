@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
     public static PlayerStatus Instance { get; set; }
@@ -173,7 +174,6 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public void PlayerDeath()
     {
         GameManager.Instance.SetGameOver();
-        Debug.Log("플레이어 사망!");
     }
 
     /// <summary>
@@ -257,6 +257,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     private void HandleItemEffect()
     {
         if (!m_isConsumableItem) return;
+
+        if (!GameManager.Instance.IsCursorLocked) return;
 
         //# 소비 가능한 아이템인 경우, ItemDataSO를 가져옴
         var itemData = m_inventory.GetQuickSlotItemData();

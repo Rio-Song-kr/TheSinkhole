@@ -54,7 +54,7 @@ public class CraftingStationInteraction : MonoBehaviour
 
         m_uiManager.ClearInteractionUI(InteractionType.Crafting);
 
-        GameManager.Instance.SetCursorUnlock();
+        GameManager.Instance.UI.SetCursorUnlock();
         station.OpenStationUI();
     }
 

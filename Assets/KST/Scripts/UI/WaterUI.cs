@@ -80,7 +80,7 @@ public class WaterUI : Singleton<WaterUI>
 
             m_statusText.text = $"급수중 {FormatingTime.FormatMinTime(remain)}";
             // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
-            ProgressBarImg.color = Color.white;
+            ProgressBarImg.color = ColorUtil.Hexcode("#F28787", Color.red);
             ProgressBarImg.fillAmount = 1f;
             return;
         }
@@ -125,7 +125,7 @@ public class WaterUI : Singleton<WaterUI>
         // isPressingE = false;
 
         waterUIGO.SetActive(true);
-        GameManager.Instance.SetCursorUnlock();
+        GameManager.Instance.UI.SetCursorUnlock();
         OnIsUIOpen?.Invoke(true);
 
         m_isIneractionKeyPressed = false;
@@ -139,7 +139,7 @@ public class WaterUI : Singleton<WaterUI>
         currentTile = null;
         waterUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
         m_isEscapeKeyPressed = false;
     }
 

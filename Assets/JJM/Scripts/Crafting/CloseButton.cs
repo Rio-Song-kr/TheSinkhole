@@ -40,7 +40,7 @@ namespace CommonUI
                     parent = parent.parent;
                 }
             }
-            GameManager.Instance.SetCursorLock();
+            GameManager.Instance.UI.SetCursorLock();
         }
     }
 }

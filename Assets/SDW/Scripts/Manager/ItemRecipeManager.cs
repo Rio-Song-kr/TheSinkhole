@@ -32,6 +32,8 @@ public class ItemRecipeManager : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.Instance.SetItemRecipeManager(this);
+
         m_recipeIdData = new Dictionary<int, List<ItemRecipeFileData>>();
         m_stationIdRecipeList = new Dictionary<CraftingStationType, HashSet<int>>();
 

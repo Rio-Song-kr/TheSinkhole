@@ -70,7 +70,7 @@ namespace CraftingSystem
             if (!m_isUICloseKeyPressed) return;
             m_isUICloseKeyPressed = false;
 
-            GameManager.Instance.SetCursorLock();
+            GameManager.Instance.UI.SetCursorLock();
             gameObject.SetActive(false);
         }
 

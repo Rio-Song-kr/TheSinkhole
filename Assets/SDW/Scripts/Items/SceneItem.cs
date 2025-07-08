@@ -31,6 +31,13 @@ public class SceneItem : MonoBehaviour
         m_outline.enabled = false;
     }
 
+    private void Update()
+    {
+        if (!GameManager.Instance.IsGameOver) return;
+
+        ReturnToPool();
+    }
+
     /// <summary>
     /// 픽업 거리에 맞춰 콜라이더 크기를 설정
     /// SphereCollider의 경우 radius를, BoxCollider의 경우 size를 조정
@@ -47,6 +54,12 @@ public class SceneItem : MonoBehaviour
                 box.size = Vector3.one * PickUpDistance;
                 break;
         }
+    }
+
+    private void ReturnToPool()
+    {
+        transform.position = Vector3.down * 50;
+        GameManager.Instance.Item.ItemPools[ItemDataSO.ItemEnName].Pool.Release(this);
     }
 
     public void SetOutline(bool isEnable) => m_outline.enabled = isEnable;

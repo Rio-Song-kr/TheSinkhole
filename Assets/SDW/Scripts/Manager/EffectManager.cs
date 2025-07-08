@@ -18,6 +18,8 @@ public class EffectManager : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.Instance.SetEffectManager(this);
+
         m_effectIdData = new Dictionary<int, EffectFileData>();
 
         string[] effectLines = LoadCSV.LoadFromCsv("Effect");
