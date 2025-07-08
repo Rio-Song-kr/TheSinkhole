@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class PlayerStatus : MonoBehaviour, IDamageable
@@ -261,12 +262,14 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         var itemData = m_inventory.GetQuickSlotItemData();
         var itemEffect = itemData.ItemData.ItemEffect;
 
-        if(itemData.ItemData.ItemId == 20302)
+        if (itemData.ItemData.ItemId == 20302)
         {
             StartCoroutine(LoadOutroScene());
         }
-
-        HandleEffect(itemEffect);
+        else
+        {
+            HandleEffect(itemEffect);
+        }
 
         m_inventory.RemoveItemAmounts(itemData.ItemEnName, 1);
         // m_uiManager.ClearInteractionUI(InteractionType.ConsumableItem);
