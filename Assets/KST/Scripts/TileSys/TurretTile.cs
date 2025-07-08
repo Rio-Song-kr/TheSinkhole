@@ -14,12 +14,17 @@ public class TurretTile : Tile
     public float m_awakeTime;
 
     //Turret
+    [SerializeField] private Turret turretObj;
+    public Turret GetTurretObject() => turretObj;
     [SerializeField] private TurretSo builtTurretSo;
     [SerializeField] private float m_remainingBuildTime = 0f; //설치까지 남은 시간
     private bool isInstalling = false; // 현재 설치 중인지 여부
     public TurretSo GetBuiltTurret() => builtTurretSo;
     public float GetRemainingInstallTime() => m_remainingBuildTime;
     public bool IsInstalling() => isInstalling;
+    [SerializeField] private bool m_isTurretDeployed = false;
+    public bool IsDeployed() => m_isTurretDeployed;
+    public void SetDeployed(bool value) => m_isTurretDeployed = value;
 
     private void Awake() => m_awakeTime = Time.time;
 
@@ -54,10 +59,14 @@ public class TurretTile : Tile
     public override void OnInteract(ToolType toolType)
     {
         if (toolType == ToolType.None) return;
-
-        TurretUI.Instance.OpenUI(this);
-        TurretUI.Instance.SetTile(this);
-        InteractionUI.ClearInteractionUI(InteractionType.Turret);
+        
+        if (GameManager.Instance.IsCursorLocked)
+        {
+            TurretUI.Instance.OpenUI(this);
+            TurretUI.Instance.SetTile(this);
+            InteractionUI.ClearInteractionUI(InteractionType.Turret);
+        }
+        
     }
     private void SetInteraction(bool status)
     {

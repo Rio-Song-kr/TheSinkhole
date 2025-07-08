@@ -94,7 +94,7 @@ public class FarmUI : Singleton<FarmUI>
                 // isPressingE = true;
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
-                m_statusText.text = "작물 재배 중. . .";
+                m_statusText.text = $"작물 재배 중. . . {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
 
                 if (pressTimer >= pressDuration)
                 {
