@@ -21,7 +21,7 @@ public class FarmUI : Singleton<FarmUI>
 
     [Header("ScrollView")]
     [SerializeField] private GameObject cropBtnPrefab;
-    [SerializeField] private Transform scrollViewContentPos;//스크롤뷰 컨텐츠 위치
+    [SerializeField] private Transform scrollViewContentPos; //스크롤뷰 컨텐츠 위치
     public Button[] cropButtons;
 
     public CropDataSO[] CropList;
@@ -118,7 +118,8 @@ public class FarmUI : Singleton<FarmUI>
         if (currentTile.IsGrowing())
         {
             m_statusText.text = $"재배중 {FormatingTime.FormatMinTime(remain)}";
-            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+            // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.white);
             ProgressBarImg.fillAmount = 1f;
         }
         else
@@ -145,7 +146,9 @@ public class FarmUI : Singleton<FarmUI>
         // isPressingE = false;
 
         foreach (var btn in cropButtons)
+        {
             btn.interactable = true;
+        }
 
         FarmUIGO.SetActive(true);
         GameManager.Instance.SetCursorUnlock();
@@ -166,7 +169,6 @@ public class FarmUI : Singleton<FarmUI>
         GameManager.Instance.SetCursorLock();
         m_isEscapeKeyPressed = false;
     }
-
 
     public void SelectCrop(CropDataSO crop)
     {
@@ -208,11 +210,13 @@ public class FarmUI : Singleton<FarmUI>
         ProgressBarImg.fillAmount = 1f;
 
         foreach (var btn in cropButtons)
+        {
             btn.interactable = false;
+        }
         if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50301, out var effect))
-                {
-                    GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
-                }
+        {
+            GameManager.Instance.Action.OnActionEffect?.Invoke(effect);
+        }
     }
 
     private void CancelPlanting()
@@ -268,7 +272,9 @@ public class FarmUI : Singleton<FarmUI>
         m_statusText.text = "재배하기 [E]키를 5초 동안 눌러주세요";
 
         foreach (var btn in cropButtons)
+        {
             btn.interactable = true;
+        }
 
         selectedCrop = null;
         DetailGO.SetActive(false);

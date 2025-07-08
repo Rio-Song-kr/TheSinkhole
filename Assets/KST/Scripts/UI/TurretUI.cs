@@ -23,7 +23,6 @@ public class TurretUI : Singleton<TurretUI>
     [SerializeField] private TMP_Text turretDesc;
     [SerializeField] private TMP_Text turretRequiedTime;
 
-
     [SerializeField] private TMP_Text m_statusText; //상태 메세지
     public Image ProgressBarImg;
     public Button[] turretButtons;
@@ -37,7 +36,6 @@ public class TurretUI : Singleton<TurretUI>
 
     //오픈 관련 이벤트 처리
     public event Action<bool> OnIsUIOpen;
-
 
     [Header("Tile")]
     [SerializeField] private TurretTile currentTile;
@@ -53,15 +51,16 @@ public class TurretUI : Singleton<TurretUI>
     private static bool m_isIneractionKeyPressed;
     private static bool m_isEscapeKeyPressed;
 
+    private bool isComplete;
 
-    void Start()
+    private void Start()
     {
         ScrollViewSetting();
         m_statusText.text = "";
         ProgressBarImg.fillAmount = 0f;
         TurretUIGO.SetActive(false);
     }
-    void Update()
+    private void Update()
     {
         if (currentTile == null) return;
 
@@ -106,7 +105,8 @@ public class TurretUI : Singleton<TurretUI>
                 pressTimer += Time.deltaTime;
                 ProgressBarImg.fillAmount = pressTimer / pressDuration;
                 m_statusText.text = $"설치 준비 중... {FormatingTime.FormatSecTime(pressDuration - pressTimer)}초";
-                ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+                // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+                ProgressBarImg.color = Color.white;
 
                 if (pressTimer >= pressDuration)
                 {
@@ -127,7 +127,6 @@ public class TurretUI : Singleton<TurretUI>
                         }
                     }
                     StartBuilding(selectedTurret);
-
                 }
             }
             else if (pressTimer > 0f)
@@ -162,6 +161,9 @@ public class TurretUI : Singleton<TurretUI>
             ProgressBarImg.fillAmount = 1f;
             ProgressBarImg.color = ColorUtil.Hexcode("#8CEF8F", Color.green);
 
+            isComplete = true;
+            isBuiltOnce = currentTile.IsBuild();
+
             if (m_isIneractionKeyPressed)
             {
                 Build();
@@ -169,7 +171,7 @@ public class TurretUI : Singleton<TurretUI>
         }
     }
 
-    void CancelBuilding()
+    private void CancelBuilding()
     {
         //상태 전부 초기화
 
@@ -181,7 +183,6 @@ public class TurretUI : Singleton<TurretUI>
     public void SetTile(TurretTile tile)
     {
         currentTile = tile;
-        isBuiltOnce = tile.IsBuild();
         //해당 타일이 이미 설치중이라면 해당 터렛 표시
         if (tile.IsBuild())
         {
@@ -207,7 +208,7 @@ public class TurretUI : Singleton<TurretUI>
         // selectedTurret = null;
         pressTimer = 0f;
         // isPressingE = false;
-        isBuiltOnce = tile.IsBuild();
+        isBuiltOnce = tile.IsBuild() && isComplete;
 
         TurretUIGO.SetActive(true);
         GameManager.Instance.SetCursorUnlock();
@@ -269,7 +270,7 @@ public class TurretUI : Singleton<TurretUI>
         foreach (var btn in turretButtons)
         {
             btn.interactable = false
-            ;
+                ;
         }
 
         if (GameManager.Instance.Action.ActionIdEffect.TryGetValue(50502, out var effect))
@@ -304,21 +305,19 @@ public class TurretUI : Singleton<TurretUI>
             {
                 ItemUI.Set(item.Icon, item.ItemData.ItemName, req.RequireCount, currentAmount);
             }
-
         }
-
     }
     public void ScrollViewSetting()
     {
-        List<Button> btnList = new();
+        var btnList = new List<Button>();
         foreach (Transform child in scrollViewContentPos)
         {
             Destroy(child.gameObject);
         }
         foreach (var turret in TurretList)
         {
-            GameObject go = Instantiate(turretBtnPrefab, scrollViewContentPos);
-            TurretBtn btn = go.GetComponent<TurretBtn>();
+            var go = Instantiate(turretBtnPrefab, scrollViewContentPos);
+            var btn = go.GetComponent<TurretBtn>();
             btn.Init(turret);
             btnList.Add(btn.Btn);
         }
@@ -371,10 +370,7 @@ public class TurretUI : Singleton<TurretUI>
         return true;
     }
 
-
     public static void OnInteractionKeyPressed() => m_isIneractionKeyPressed = true;
     public static void OnInteractionKeyReleased() => m_isIneractionKeyPressed = false;
     public static void OnCloseKeyPressed() => m_isEscapeKeyPressed = true;
-
-
 }
