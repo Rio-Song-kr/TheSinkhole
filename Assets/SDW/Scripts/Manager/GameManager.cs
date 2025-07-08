@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -52,6 +53,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public ItemRecipeManager Recipe { get; private set; }
 
+    public AudioManager Audio { get; private set; }
+
     public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
     /// <summary>
@@ -98,6 +101,17 @@ public class GameManager : MonoBehaviour
         int targetHeight = 1080;
 
         Screen.SetResolution(targetWidth, targetHeight, true);
+        Audio = GetComponent<AudioManager>();
+        Audio.PlayBGM(AudioClipName.Intro_Rain);
+
+        StartCoroutine(PlaySFX());
+    }
+
+    private IEnumerator PlaySFX()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Audio.PlaySFX(AudioClipName.M_Hole, Vector3.zero);
     }
 
     private void Update()

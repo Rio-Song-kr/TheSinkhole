@@ -14,9 +14,9 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private Sprite m_daySprite;
     [SerializeField] private Sprite m_nightSprite;
 
-    // private const double GameMultiplier = 3600.0 / 30.0;
+    private const double GameMultiplier = 3600.0 / 30.0;
     // private const double GameMultiplier = 3600.0 / 5.0;
-    private const double GameMultiplier = 3600.0 / 1.0;
+    // private const double GameMultiplier = 3600.0 / 1.0;
     private DateTime realStartTime;
     private int count = 1;
 
@@ -63,6 +63,8 @@ public class GameTimer : MonoBehaviour
                 m_icon.sprite = m_daySprite;
             IsDay = true;
             m_light.color = m_dayColor;
+
+            GameManager.Instance.Audio.PlayBGM(AudioClipName.A_Pioneer);
         }
         else if (gameTimeFormatted == "PM 06")
         {
@@ -70,6 +72,7 @@ public class GameTimer : MonoBehaviour
                 m_icon.sprite = m_nightSprite;
             IsDay = false;
             m_light.color = m_nightColor;
+            GameManager.Instance.Audio.PlayBGM(AudioClipName.F_Night);
         }
 
         if (m_RealtimeCount >= 60f)

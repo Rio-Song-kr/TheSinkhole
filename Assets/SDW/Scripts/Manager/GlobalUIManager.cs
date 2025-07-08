@@ -51,7 +51,8 @@ public class GlobalUIManager : MonoBehaviour
     public void SceneReload()
     {
         EnableGameOverCanvas(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(0);
     }
 
     public void EnableGameOverCanvas(bool value) => m_gameOverCanvas.SetActive(value);
