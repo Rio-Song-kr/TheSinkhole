@@ -79,7 +79,8 @@ public class WaterUI : Singleton<WaterUI>
             float remain = currentTile.GetRemainingWaterTime();
 
             m_statusText.text = $"급수중 {FormatingTime.FormatMinTime(remain)}";
-            ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+            // ProgressBarImg.color = ColorUtil.Hexcode("#8CB4EF", Color.blue);
+            ProgressBarImg.color = Color.white;
             ProgressBarImg.fillAmount = 1f;
             return;
         }
@@ -151,7 +152,6 @@ public class WaterUI : Singleton<WaterUI>
 
         m_statusText.text = "급수 시작됨";
         ProgressBarImg.fillAmount = 1f;
-
     }
 
     private void CancelWatering()
@@ -180,7 +180,6 @@ public class WaterUI : Singleton<WaterUI>
         pressTimer = 0f;
         // isPressingE = false;
     }
-
 
     private bool AddInventory()
     {
