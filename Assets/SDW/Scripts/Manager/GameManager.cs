@@ -1,4 +1,6 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 게임 전반을 관리하는 Singleton 매니저 클래스
@@ -64,6 +66,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool IsGameOver => m_isGameOver;
 
+    [SerializeField] private GameObject m_gameOverCanvas;
+
     [SerializeField] private GameObject m_crosshairUI;
 
     //todo 추후 통합시 이용
@@ -109,6 +113,14 @@ public class GameManager : MonoBehaviour
         Screen.SetResolution(targetWidth, targetHeight, true);
     }
 
+    private void Update()
+    {
+        if (!m_isGameOver) return;
+
+        SetCursorUnlock();
+        m_gameOverCanvas.SetActive(true);
+    }
+
     /// <summary>
     /// UI가 Close 되거나 게임 시작이 CursorLockMode = Locked;
     /// </summary>
@@ -128,4 +140,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void SetGameOver() => m_isGameOver = true;
+
+    public void SceneReload() => SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+    public void Exit() => Application.Quit();
 }
