@@ -151,7 +151,7 @@ public class FarmUI : Singleton<FarmUI>
         }
 
         FarmUIGO.SetActive(true);
-        GameManager.Instance.SetCursorUnlock();
+        GameManager.Instance.UI.SetCursorUnlock();
         OnIsUIOpen?.Invoke(true);
 
         m_isIneractionKeyPressed = false;
@@ -166,7 +166,7 @@ public class FarmUI : Singleton<FarmUI>
         currentTile = null;
         FarmUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
         m_isEscapeKeyPressed = false;
     }
 

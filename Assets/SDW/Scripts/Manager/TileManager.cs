@@ -32,6 +32,8 @@ public class TileManager : MonoBehaviour
     //todo 울타리 - 출구 주변 3개 block은 개척이 가능한 tile로 변경되어야 함
     private void Awake()
     {
+        GameManager.Instance.SetTileManager(this);
+
         var parentTiles = new GameObject();
         parentTiles.name = "Tiles";
 

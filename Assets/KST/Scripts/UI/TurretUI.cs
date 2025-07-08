@@ -208,7 +208,7 @@ public class TurretUI : Singleton<TurretUI>
         isBuiltOnce = false; // 중요: Open 시점에는 false로 초기화
 
         TurretUIGO.SetActive(true);
-        GameManager.Instance.SetCursorUnlock();
+        GameManager.Instance.UI.SetCursorUnlock();
         OnIsUIOpen?.Invoke(true);
         m_isIneractionKeyPressed = false;
 
@@ -237,7 +237,7 @@ public class TurretUI : Singleton<TurretUI>
         currentTile = null;
         TurretUIGO.SetActive(false);
         OnIsUIOpen?.Invoke(false);
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
         m_isEscapeKeyPressed = false;
     }
 
