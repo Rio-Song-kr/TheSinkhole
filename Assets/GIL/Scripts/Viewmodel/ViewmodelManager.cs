@@ -62,7 +62,7 @@ public class ViewmodelManager : MonoBehaviour
         }
         catch (NullReferenceException n)
         {
-            ActivateSelectedToolOnly(8);
+            ActivateSelectedToolOnly(9);
             isAttakable = false;
             return;
         }
