@@ -240,7 +240,6 @@ public class Tile : MonoBehaviour, IToolInteractable, ITileInteractable
     //TurretTile로 변경시 부착
     public void SetDefenceArea()
     {
-        Debug.Log("방어타일로 변경");
         SetTileState(TileState.DefenceArea);
 
         var newTileObject = Instantiate(developSO.TilePrefab[0]);

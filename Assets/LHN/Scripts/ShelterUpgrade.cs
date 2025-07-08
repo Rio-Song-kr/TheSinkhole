@@ -81,7 +81,7 @@ public class ShelterUpgrade : MonoBehaviour
         m_materials = GetMaterials();
 
         m_uiManager.ClearInteractionUI(InteractionType.Shelter);
-        GameManager.Instance.SetCursorUnlock();
+        GameManager.Instance.UI.SetCursorUnlock();
 
 
         ShelterUpgradeUI.gameObject.SetActive(true);

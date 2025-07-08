@@ -32,6 +32,8 @@ public class MonsterManager : MonoBehaviour
     /// </summary>
     public Dictionary<int, MonsterDataSO> MonsterIdDataSO => m_monsterIdDataSO;
 
+    public void Awake() => GameManager.Instance.SetMonsterManager(this);
+
     /// <summary>
     /// CSV 데이터를 로드하여 몬스터 데이터베이스와 오브젝트 풀을 초기화
     /// </summary>

@@ -1,5 +1,9 @@
 ﻿public enum AudioClipName
 {
+    //# BGM
+    A_Pioneer,
+    F_Night,
+
     //# 인트로
     Intro_Rain,
     M_Hole,

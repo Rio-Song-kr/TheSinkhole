@@ -47,7 +47,6 @@ public class SceneMonster : MonoBehaviour
     {
         m_targetTransform = m_fenceTransform;
         m_targetColliders = m_targetTransform.GetComponents<Collider>();
-        Debug.Log("Is On NavMesh: " + m_navMeshAgent.isOnNavMesh);
     }
 
     private void Update()

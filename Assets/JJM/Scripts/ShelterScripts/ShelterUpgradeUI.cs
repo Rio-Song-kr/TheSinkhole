@@ -135,7 +135,7 @@ public class ShelterUpgradeUI : MonoBehaviour
         yield return new WaitForSeconds(1f); // 1초 대기
         enforceButtonText.text = "업그레이드"; // 버튼 텍스트 초기화
 
-        GameManager.Instance.SetCursorLock();
+        GameManager.Instance.UI.SetCursorLock();
         ;
         Hide(); // UI 닫기
     }
