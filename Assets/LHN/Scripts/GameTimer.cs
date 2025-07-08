@@ -14,8 +14,9 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private Sprite m_daySprite;
     [SerializeField] private Sprite m_nightSprite;
 
-    // private const double GameMultiplier = 3600.0 / 30.0;
-    private const double GameMultiplier = 3600.0 / 5.0;
+    private const double GameMultiplier = 3600.0 / 30.0;
+    // private const double GameMultiplier = 3600.0 / 5.0;
+    // private const double GameMultiplier = 3600.0 / 1.0;
     private DateTime realStartTime;
     private int count = 1;
 

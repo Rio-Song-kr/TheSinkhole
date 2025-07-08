@@ -126,7 +126,7 @@ public class MonsterSpawner : MonoBehaviour
                     var monsterEnName = GameManager.Instance.Monster.MonsterIdDataSO[monsterId].MonsterEnName;
                     var monster = GameManager.Instance.Monster.MonsterPools[monsterEnName].Pool.Get();
                     int randomPosition = Random.Range(0, GameManager.Instance.Tile.MonsterSwanTile.Count);
-                    monster.transform.position = GameManager.Instance.Tile.MonsterSwanTile[randomPosition];
+                    monster.transform.position = GameManager.Instance.Tile.MonsterSwanTile[randomPosition] + Vector3.up * -0.5f;
                     monster.Initialize();
                     monster.StartTrace();
 

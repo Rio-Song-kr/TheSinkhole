@@ -26,12 +26,6 @@ public class Monster : MonoBehaviour, IDamageable
 
     private void OnEnable() => IsAlive = true;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-            TakenDamage(50);
-    }
-
     public void Attack()
     {
         if (MonsterHealth <= 0) return;

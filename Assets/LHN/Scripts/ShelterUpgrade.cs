@@ -50,6 +50,7 @@ public class ShelterUpgrade : MonoBehaviour
         }
 
         // 업그레이드 가능한 컴포넌트가 있는지 확인
+        if (hitObject.transform.parent == null) return;
         m_upgradeableObject = hitObject.transform.parent.GetComponent<Shelter>();
         m_prevShelter = m_upgradeableObject;
 

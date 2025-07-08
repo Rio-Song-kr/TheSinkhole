@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EPOOutline;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Shelter : MonoBehaviour, IDamageable
 {
@@ -15,6 +16,8 @@ public class Shelter : MonoBehaviour, IDamageable
     public GameObject MetalFence;
 
     public Image durabilityImage;
+    public TextMeshProUGUI m_percentText;
+    public TextMeshProUGUI m_valueText;
     // public Shelter shelterObject; //쉘터 오브젝트
     private Outlinable m_outline;
 
@@ -26,6 +29,9 @@ public class Shelter : MonoBehaviour, IDamageable
         ShelterName = GameManager.Instance.Shelter.ShelterLevelData[LevelId].ShelterName;
         m_outline = GetComponent<Outlinable>();
         m_outline.enabled = false;
+
+        m_percentText.text = $"{Durability * 100 / MaxDurability}%";
+        m_valueText.text = $"{Durability} / {MaxDurability}";
     }
 
     private void Update()
@@ -37,13 +43,15 @@ public class Shelter : MonoBehaviour, IDamageable
     public void TakenDamage(int damage)
     {
         Durability -= damage;
-        Debug.Log("쉘터가 " + damage + "의 피해를 받았습니다. 현재 내구도: " + Durability);
 
         if (Durability <= 0)
         {
             Durability = 0;
             OnShelterDestroyed();
         }
+
+        m_percentText.text = $"{Durability * 100 / MaxDurability}%";
+        m_valueText.text = $"{Durability} / {MaxDurability}";
     }
 
     public void Upgrade()

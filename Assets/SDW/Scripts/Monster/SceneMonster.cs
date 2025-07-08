@@ -26,7 +26,7 @@ public class SceneMonster : MonoBehaviour
 
     private static WaitForSeconds WaitTime = new WaitForSeconds(0.25f);
 
-    private Collider m_targetCollider;
+    private Collider[] m_targetColliders;
     private RaycastHit Hit;
 
     private void Awake()
@@ -46,7 +46,8 @@ public class SceneMonster : MonoBehaviour
     private void Start()
     {
         m_targetTransform = m_fenceTransform;
-        m_targetCollider = m_targetTransform.GetComponent<Collider>();
+        m_targetColliders = m_targetTransform.GetComponents<Collider>();
+        Debug.Log("Is On NavMesh: " + m_navMeshAgent.isOnNavMesh);
     }
 
     private void Update()
@@ -144,7 +145,7 @@ public class SceneMonster : MonoBehaviour
         {
             m_navMeshAgent.Warp(hit.position);
             m_navMeshAgent.stoppingDistance = 3f;
-            // m_navMeshAgent.Resume();
+            m_navMeshAgent.Resume();
             StartCoroutine(UpdatePath());
 
             //# MeshLink에서 사용했던 코드 - 레거시
@@ -163,13 +164,17 @@ public class SceneMonster : MonoBehaviour
     private bool IsTargetClose()
     {
         // 몬스터와 타겟 경계 간의 최소 거리 계산
-        if (m_targetTransform == null || m_targetCollider == null) return false;
+        if (m_targetTransform == null || m_targetColliders == null) return false;
+        foreach (var targetCollider in m_targetColliders)
+        {
+            var closestPoint = targetCollider.ClosestPoint(transform.position);
 
-        var closestPoint = m_targetCollider.ClosestPoint(transform.position);
+            float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
 
-        float distanceToBoundary = Vector3.Distance(transform.position, closestPoint);
-
-        return distanceToBoundary <= m_navMeshAgent.stoppingDistance;
+            if (distanceToBoundary < m_navMeshAgent.stoppingDistance)
+                return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -194,8 +199,8 @@ public class SceneMonster : MonoBehaviour
     /// </summary>
     private void HandleMoveAndStop(bool isTargetClose)
     {
-        m_targetCollider = m_targetTransform?.GetComponent<Collider>();
-        if (m_targetCollider != null)
+        m_targetColliders = m_targetTransform?.GetComponents<Collider>();
+        if (m_targetColliders != null)
         {
             if (isTargetClose)
             {

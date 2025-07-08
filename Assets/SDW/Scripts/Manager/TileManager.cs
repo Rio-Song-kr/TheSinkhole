@@ -56,6 +56,9 @@ public class TileManager : MonoBehaviour
         }
 
 
+        var navMeshSurface = planeTile.GetComponent<NavMeshSurface>();
+        if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
+
         for (int y = -m_buildableTileSize.y / 2; y <= m_buildableTileSize.y / 2; y++)
         {
             for (int x = -m_buildableTileSize.x / 2; x <= m_buildableTileSize.x / 2; x++)
@@ -121,9 +124,6 @@ public class TileManager : MonoBehaviour
                 //~ }
             }
         }
-
-        var navMeshSurface = planeTile.GetComponent<NavMeshSurface>();
-        if (navMeshSurface != null) navMeshSurface.BuildNavMesh();
     }
 
     public Vector2Int GetFenceXArea() => m_groundXArea * m_tileSize + Vector2Int.one * m_tileSize / 2;
