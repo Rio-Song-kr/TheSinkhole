@@ -62,7 +62,7 @@ public class TurretTile : Tile
     private void SetInteraction(bool status)
     {
         if (status)
-            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Turret);
     }
@@ -96,7 +96,7 @@ public class TurretTile : Tile
 
         var currentTool = player.CurrentTool;
         if (!FarmUI.Instance.GetActiveself() && currentTool == ToolType.Hammer)
-            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.");
+            InteractionUI.SetInteractionUI(InteractionType.Turret, true, "상호작용을 하려면 [E]를 눌러주세요.", false);
         else
             InteractionUI.ClearInteractionUI(InteractionType.Turret);
 
