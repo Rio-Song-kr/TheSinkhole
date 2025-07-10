@@ -211,7 +211,6 @@ public class Inventory : MonoBehaviour, ISaveable
     /// <returns>제거가 완료되면 true, 완료하지 못하면 false를 반환</returns>
     public bool RemoveItemAmounts(ItemEnName itemEnName, int amount)
     {
-        //todo 인벤토리 순회하면서 개수 채크
         int remainingAmounts = GetItemAmounts(itemEnName);
 
         if (amount > remainingAmounts) return false;
@@ -219,44 +218,49 @@ public class Inventory : MonoBehaviour, ISaveable
         //# 1. 아이템 수가 충분한 경우, 그냥 슬롯 하나에서 처리
         foreach (var slot in m_quickSlotInventorySystem.InventorySlots)
         {
-            if (slot.ItemDataSO == null) continue;
-            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            if (RemoveItem(slot, ref amount))
             {
-                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
-                if (slot.ItemCount >= amount)
-                {
-                    slot.RemoveItem(amount);
-                    m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
-                    break;
-                }
-                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
-                amount -= slot.ItemCount;
-                slot.RemoveItem(slot.ItemCount);
                 m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
+                break;
             }
+            m_quickSlotInventorySystem.OnSlotChanged?.Invoke(slot);
         }
         if (amount == 0) return true;
 
         foreach (var slot in m_dynamicInventorySystem.InventorySlots)
         {
-            if (slot.ItemDataSO == null) continue;
-            if (slot.ItemDataSO.ItemEnName == itemEnName)
+            if (RemoveItem(slot, ref amount))
             {
-                //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
-                if (slot.ItemCount >= amount)
-                {
-                    slot.RemoveItem(amount);
-                    m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
-                    break;
-                }
-                //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
-                amount -= slot.ItemCount;
-                slot.RemoveItem(slot.ItemCount);
                 m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
+                break;
             }
+            m_dynamicInventorySystem.OnSlotChanged?.Invoke(slot);
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// 슬롯 내 아이템을 제거하는 메서드
+    /// </summary>
+    /// <param name="slot">아이템을 제거하려는 슬롯</param>
+    /// <param name="amount">제거하려는 수량</param>
+    /// <returns>아이템 제거가 끝나면 true, 제거하려는 아이템이 남아있다면 false</returns>
+    private bool RemoveItem(InventorySlot slot, ref int amount)
+    {
+        if (slot.ItemDataSO == null) return false;
+
+        //# 슬롯에 있는 아이템의 수가 제거하려는 수보다 크거나 같을 때
+        if (slot.ItemCount >= amount)
+        {
+            slot.RemoveItem(amount);
+            return true;
+        }
+
+        //# 슬롯에 있는 수가 제거하려는 수보다 작은 경우
+        amount -= slot.ItemCount;
+        slot.RemoveItem(slot.ItemCount);
+        return false;
     }
 
     /// <summary>
